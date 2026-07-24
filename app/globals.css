@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+      Helvetica, Arial, sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-paper text-ink antialiased;
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-bold tracking-tight text-navy;
+    text-wrap: balance;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-6 lg:px-8;
+  }
+
+  /* Primary CTA — the phone. Visually distinct from nav everywhere it appears. */
+  .btn-call {
+    @apply inline-flex items-center justify-center gap-2 rounded-md bg-accent
+      px-6 py-3 text-base font-semibold text-white shadow-sm transition-colors
+      hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-accent
+      focus:ring-offset-2;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-md border
+      border-stone-200 px-6 py-3 text-base font-semibold text-navy
+      transition-colors hover:bg-stone-50;
+  }
+
+  .prose-copy {
+    @apply max-w-prose text-lg leading-relaxed text-stone-600;
+  }
+  .prose-copy p {
+    @apply mb-4;
+  }
+}
