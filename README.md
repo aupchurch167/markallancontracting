@@ -41,12 +41,34 @@ Brand hexes use the *assumed* values from the spec (`#1B3A5C` / `#2E75B6`) and
 must be verified against macont.com before launch — change them in
 `tailwind.config.ts` and `lib/constants.ts` together.
 
+## Seeding the CMS
+
+Once a project id and a write token exist, populate the structural content
+(settings singleton, the 7 services, and the Tier-1 cities with real county
+jurisdiction notes) in one command:
+
+```bash
+NEXT_PUBLIC_SANITY_PROJECT_ID=xxx SANITY_WRITE_TOKEN=xxx npm run seed
+```
+
+The seed intentionally does **not** create projects or `serviceCity` documents —
+those require real delivered work and CompanyCam photos, and fabricating them
+would violate the anti-thin-content and claim-honesty rules. The matrix stays
+gated until that content is real.
+
 ## Architecture notes
 
 - **Content lives in Sanity.** Query helpers in `lib/queries.ts` return safe
   empties when Sanity is not configured, so the site builds before the CMS is
-  provisioned. Service hubs and market pages ship with editorial fallback copy
-  (`lib/fallback-*.ts`) that Sanity content overrides with zero code changes.
+  provisioned. Service hubs, market pages, campaign LPs, and the blog ship with
+  editorial fallback copy (`lib/fallback-*.ts`) that Sanity content overrides
+  per-slug with zero code changes.
+- **Blog is written.** All 12 posts across the four clusters live in
+  `lib/fallback-insights.ts` (ground-up cluster first, per its strategic
+  weight). Service hubs carry genuine FAQ blocks with `FAQPage` schema.
+- **Redirect map is built.** `next.config.mjs` 301s the full legacy macont.com
+  URL set — 889 URLs, dominated by an 862-page `/service-city/*` matrix — to the
+  most relevant new destination. Nothing 404s on cutover.
 - **NAP single source of truth:** `lib/constants.ts` ← `sitewideSettings`.
 - **Anti-thin-content rule is enforced at the data layer.** A
   `/services/[service]/[city]` route 404s unless a `serviceCity` document exists

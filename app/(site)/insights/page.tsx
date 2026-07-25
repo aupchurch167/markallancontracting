@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getPosts, getSiteSettings } from '@/lib/queries';
+import { FALLBACK_POSTS } from '@/lib/fallback-insights';
 import { CallCTA } from '@/components/CallCTA';
 import { Section } from '@/components/Section';
 import { CLUSTERS } from '@/lib/clusters';
@@ -13,9 +14,33 @@ export const metadata: Metadata = pageMetadata({
   path: '/insights',
 });
 
+interface Card {
+  slug: string;
+  title: string;
+  excerpt?: string;
+  cluster?: string;
+}
+
 export default async function InsightsPage() {
-  const [posts, settings] = await Promise.all([getPosts(), getSiteSettings()]);
+  const [sanityPosts, settings] = await Promise.all([getPosts(), getSiteSettings()]);
   const { phone, phoneRaw } = settings;
+
+  // Sanity posts win per-slug; authored fallback fills the rest.
+  const sanitySlugs = new Set(sanityPosts.map((p) => p.slug));
+  const cards: Card[] = [
+    ...sanityPosts.map((p) => ({
+      slug: p.slug,
+      title: p.title,
+      excerpt: p.excerpt,
+      cluster: p.cluster,
+    })),
+    ...FALLBACK_POSTS.filter((p) => !sanitySlugs.has(p.slug)).map((p) => ({
+      slug: p.slug,
+      title: p.title,
+      excerpt: p.excerpt,
+      cluster: p.cluster,
+    })),
+  ];
 
   return (
     <>
@@ -31,7 +56,7 @@ export default async function InsightsPage() {
       <Section>
         <div className="space-y-14">
           {CLUSTERS.map((cluster) => {
-            const clusterPosts = posts.filter((p) => p.cluster === cluster.value);
+            const clusterPosts = cards.filter((p) => p.cluster === cluster.value);
             return (
               <div key={cluster.value}>
                 <h2 className="text-2xl font-bold text-navy">{cluster.title}</h2>
@@ -40,7 +65,7 @@ export default async function InsightsPage() {
                   <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {clusterPosts.map((p) => (
                       <Link
-                        key={p._id}
+                        key={p.slug}
                         href={`/insights/${p.slug}`}
                         className="group rounded-lg border border-stone-200 p-6 transition-colors hover:border-accent"
                       >

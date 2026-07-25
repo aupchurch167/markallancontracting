@@ -7,6 +7,7 @@ import { SERVICE_CONTENT } from '@/lib/fallback-content';
 import { CallButton } from '@/components/PhoneLink';
 import { CallCTA } from '@/components/CallCTA';
 import { PlanSteps } from '@/components/PlanSteps';
+import { FAQ } from '@/components/FAQ';
 import { ProjectCard } from '@/components/ProjectCard';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Section, Eyebrow } from '@/components/Section';
@@ -156,6 +157,18 @@ export default async function ServiceHubPage({
           </div>
         </div>
       </Section>
+
+      {/* FAQ — genuine questions only, with FAQPage schema */}
+      {c.faqs.length > 0 && (
+        <Section>
+          <div className="max-w-3xl">
+            <h2 className="text-2xl font-bold text-navy sm:text-3xl">Common questions</h2>
+            <div className="mt-6">
+              <FAQ faqs={c.faqs} />
+            </div>
+          </div>
+        </Section>
+      )}
 
       {/* City links — hub links down to every matrix page for this service */}
       {cities.length > 0 && (

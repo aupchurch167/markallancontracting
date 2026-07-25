@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getSiteSettings, getPosts } from '@/lib/queries';
+import { FALLBACK_POSTS } from '@/lib/fallback-insights';
 import { CallCTA } from '@/components/CallCTA';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Section, Eyebrow } from '@/components/Section';
@@ -24,7 +25,14 @@ export const metadata: Metadata = pageMetadata({
 export default async function NewConstructionPage() {
   const { phone, phoneRaw } = await getSiteSettings();
   const posts = await getPosts();
-  const groundUp = posts.filter((p) => p.cluster === 'ground-up').slice(0, 3);
+  const sanityGroundUp = posts.filter((p) => p.cluster === 'ground-up');
+  const sanitySlugs = new Set(sanityGroundUp.map((p) => p.slug));
+  const groundUp = [
+    ...sanityGroundUp,
+    ...FALLBACK_POSTS.filter(
+      (p) => p.cluster === 'ground-up' && !sanitySlugs.has(p.slug),
+    ),
+  ].slice(0, 3);
 
   return (
     <>
@@ -107,7 +115,7 @@ export default async function NewConstructionPage() {
           <div className="mt-6 grid gap-6 sm:grid-cols-3">
             {groundUp.map((p) => (
               <Link
-                key={p._id}
+                key={p.slug}
                 href={`/insights/${p.slug}`}
                 className="group rounded-lg border border-stone-200 bg-paper p-6 transition-colors hover:border-accent"
               >
