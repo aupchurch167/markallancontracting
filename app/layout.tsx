@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { CallRail } from '@/components/CallRail';
 import { Analytics } from '@/components/Analytics';
+import { ConversionTracking } from '@/components/ConversionTracking';
 import { JsonLd } from '@/components/JsonLd';
 import { getSiteSettings } from '@/lib/queries';
 import { localBusinessSchema } from '@/lib/schema';
@@ -41,6 +42,7 @@ export default async function RootLayout({
         <JsonLd data={localBusinessSchema({ phone: settings.phone, email: settings.email })} />
         {children}
         <Analytics ga4Id={settings.ga4Id} />
+        <ConversionTracking />
       </body>
     </html>
   );

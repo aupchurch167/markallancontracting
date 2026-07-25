@@ -53,6 +53,7 @@ export default async function ContactPage() {
               action={`mailto:${email}`}
               method="post"
               encType="text/plain"
+              data-lead-form
             >
               <div className="grid gap-4 sm:grid-cols-2">
                 <label className="block">

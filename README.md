@@ -91,6 +91,21 @@ those require real delivered work and CompanyCam photos, and fabricating them
 would violate the anti-thin-content and claim-honesty rules. The matrix stays
 gated until that content is real.
 
+## Backend & operations
+
+- **Live publishing** — `POST /api/revalidate` does on-demand revalidation. Point
+  a Sanity webhook at it (`?secret=$SANITY_REVALIDATE_SECRET`, projection in the
+  route header) and publishing updates the affected pages in seconds, no
+  redeploy. Refuses all requests until the secret env var is set.
+- **Conversion tracking** — `components/ConversionTracking.tsx` fires GA4 events
+  on every tap-to-call (`phone_call_click`) and lead-form submit
+  (`generate_lead`), via event delegation, sitewide. Mark either as a GA4 key
+  event to track the one thing that matters.
+- **Legal** — `/privacy` and `/terms`, written around the real stack (CallRail,
+  GA4, contact form), linked in the footer. Have counsel review before launch.
+- **Deferred:** the working scope form (owner wants leads in a CRM — needs to
+  pick which; the mailto form + `data-lead-form` marker are in place meanwhile).
+
 ## Architecture notes
 
 - **Content lives in Sanity.** Query helpers in `lib/queries.ts` return safe

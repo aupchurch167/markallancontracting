@@ -38,6 +38,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/projects',
     '/insights',
     '/contact',
+    '/team',
+    '/privacy',
+    '/terms',
   ];
 
   const [serviceCities, cities, projects, posts] = await Promise.all([

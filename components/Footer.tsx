@@ -119,7 +119,11 @@ export function Footer({
             © {SITE.established}–present {SITE.name}. Commercial general contractor
             serving {SITE.statesServed.join(', ')}.
           </div>
-          <div>Projects from {SITE.projectRange}.</div>
+          <div className="flex items-center gap-4">
+            <Link href="/privacy" className="hover:text-accent">Privacy</Link>
+            <Link href="/terms" className="hover:text-accent">Terms</Link>
+            <span>Projects from {SITE.projectRange}.</span>
+          </div>
         </div>
       </div>
     </footer>
