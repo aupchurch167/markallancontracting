@@ -22,6 +22,7 @@ export interface SiteSettings {
   hours?: string;
   gbpUrl?: string;
   callRailId?: string;
+  callRailResource?: string;
   ga4Id?: string;
 }
 

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getSiteSettings } from '@/lib/queries';
 import { TRADES, getTrade } from '@/lib/trade-partners';
+import { FEATURES } from '@/lib/site-data';
 import { CapabilityTable } from '@/components/CapabilityTable';
 import { CallButton } from '@/components/PhoneLink';
 import { CallCTA } from '@/components/CallCTA';
@@ -25,7 +26,7 @@ export async function generateMetadata({
     title: `${def.name} Subcontractor — Trade Partners`,
     description: def.blurb,
     path: `/trade-partners/${trade}`,
-    noindex: true, // gated
+    noindex: !FEATURES.tradePartnersPublished, // gated until capability figures arrive
   });
 }
 
@@ -65,11 +66,13 @@ export default async function TradePage({
       {/* PM-screening spec — labeled placeholders until real values arrive */}
       <Section>
         <Eyebrow>What PMs screen for</Eyebrow>
-        <p className="mt-2 max-w-2xl text-sm text-stone-500">
-          These values are unsupplied and shown as placeholders. This page is gated
-          (noindex) until they are provided and the schedule-reliability question is
-          resolved.
-        </p>
+        {!FEATURES.tradePartnersPublished && (
+          <p className="mt-2 max-w-2xl text-sm text-stone-500">
+            These values are unsupplied and shown as placeholders. This page is
+            gated (noindex) until they are provided and the schedule-reliability
+            question is resolved.
+          </p>
+        )}
         <div className="mt-6">
           <CapabilityTable />
         </div>

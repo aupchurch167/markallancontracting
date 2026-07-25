@@ -32,7 +32,10 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <head>
-        <CallRail callRailId={settings.callRailId} />
+        <CallRail
+          callRailId={settings.callRailId}
+          resource={settings.callRailResource}
+        />
       </head>
       <body className="flex min-h-screen flex-col">
         <JsonLd data={localBusinessSchema({ phone: settings.phone, email: settings.email })} />

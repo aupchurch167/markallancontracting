@@ -25,38 +25,52 @@ export const SITE = {
 } as const;
 
 /**
- * Contact placeholders. LITERAL TOKENS until CallRail-tracked values are supplied.
- * Every displayed number must be a tracked number (CallRail DNI swaps it at
- * runtime), so the human-readable value here is the fallback only.
+ * Contact. Verified from the live macont.com (its own LocalBusiness JSON-LD) and
+ * confirmed by the owner. The displayed phone is CallRail's DNI fallback — DNI
+ * swaps it to a tracked number at runtime. NAP here must stay in lockstep with
+ * the Google Business Profile; edit it in the Sanity sitewideSettings singleton
+ * (which overrides these) so there is one source of truth.
  */
 export const CONTACT = {
-  phone: '{{PHONE}}',
-  phoneRaw: '{{PHONE_RAW}}',
-  email: '{{EMAIL}}',
-  // Full NAP is an open item; must match Google Business Profile exactly at launch.
+  phone: '(404) 724-8709',
+  phoneRaw: '+14047248709',
+  email: 'hello@macont.com',
   address: {
-    street: '{{ADDRESS_STREET}}',
-    city: '{{ADDRESS_CITY}}',
-    state: '{{ADDRESS_STATE}}',
-    zip: '{{ADDRESS_ZIP}}',
+    street: '3420 Oakcliff Rd, Suite 103',
+    city: 'Atlanta',
+    state: 'GA',
+    zip: '30340',
   },
-  hours: '{{HOURS}}',
-  gbpUrl: '{{GBP_URL}}',
-} as const;
-
-/** Tracking IDs — open items, block Phase 0. Empty string = script does not render. */
-export const TRACKING = {
-  callRailId: process.env.NEXT_PUBLIC_CALLRAIL_ID || '', // {{CALLRAIL_ID}}
-  ga4Id: process.env.NEXT_PUBLIC_GA4_ID || '', // {{GA4_ID}}
+  hours: 'Mon–Fri 8am–5pm · Sat–Sun 9am–1pm',
+  gbpUrl:
+    'https://www.google.com/maps/place/3420+Oakcliff+Rd,+Atlanta,+GA+30340',
+  // Structured hours for LocalBusiness schema.
+  openingHours: [
+    { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '08:00', closes: '17:00' },
+    { days: ['Saturday', 'Sunday'], opens: '09:00', closes: '13:00' },
+  ],
+  geo: { lat: 33.9042153, lng: -84.25362 },
 } as const;
 
 /**
- * Brand tokens — assumed values from the spec, flagged for verification against
- * macont.com. Mirror any change in tailwind.config.ts.
+ * Tracking IDs, verified from the live site. Public client-side IDs (not secrets).
+ * Env vars override so staging can point elsewhere. CallRail DNI needs both the
+ * company id and the per-account swap resource.
+ */
+export const TRACKING = {
+  callRailId: process.env.NEXT_PUBLIC_CALLRAIL_ID || '571875192',
+  callRailResource: process.env.NEXT_PUBLIC_CALLRAIL_SWAP || '8a72377554f5e3b406a8',
+  ga4Id: process.env.NEXT_PUBLIC_GA4_ID || 'G-Z9YX6SX90M',
+} as const;
+
+/**
+ * Brand tokens. Decision (owner, confirmed): keep the navy palette rather than
+ * matching the live Webflow site, whose charcoal + default blue were not a
+ * deliberate identity. Mirror any change in tailwind.config.ts.
  */
 export const BRAND = {
-  navy: '#1B3A5C', // {{BRAND_NAVY}} — verify
-  accent: '#2E75B6', // {{BRAND_ACCENT}} — verify
+  navy: '#1B3A5C',
+  accent: '#2E75B6',
 } as const;
 
 /** tel: href helper. Uses raw token until a real number is supplied. */

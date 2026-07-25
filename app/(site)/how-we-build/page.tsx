@@ -84,10 +84,11 @@ export default async function HowWeBuildPage() {
             {SITE.name} has been building out commercial space since {SITE.established}.
             Family-owned, working across Georgia, Tennessee, Alabama, and South
             Carolina, on projects from {SITE.projectRange}. We started with over a
-            hundred Domino&apos;s buildouts and have done work for Darden since. The
-            people who price your job are the people who show up to build it — and
-            we&apos;ve developed and operated our own commercial property, so we know
-            what an owner is actually worried about.
+            hundred Domino&apos;s buildouts and have done work for Darden since.
+            Family-owned and hands-on: when we price your job, we stay on it through
+            the build — you&apos;re not handed off to a crew you never met. We&apos;ve
+            developed and operated our own commercial property, so we know what an
+            owner is actually worried about.
           </p>
         </div>
       </Section>

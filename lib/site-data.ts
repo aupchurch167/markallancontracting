@@ -98,7 +98,20 @@ export interface NavItem {
   children?: { label: string; href: string; heading?: boolean }[];
 }
 
-export const NAV: NavItem[] = [
+/**
+ * Feature gates.
+ *
+ * Trade Partners: owner decision is that it belongs in the MAIN nav — but it
+ * stays gated on real capability figures (insurance limits, W/C mod rate, crew
+ * capacity) and the schedule-reliability question. Flip this to true once those
+ * arrive: it surfaces Trade Partners in the nav, makes its pages indexable, and
+ * adds them to the sitemap, all in one place.
+ */
+export const FEATURES = {
+  tradePartnersPublished: false,
+} as const;
+
+const BASE_NAV: NavItem[] = [
   { label: 'Home', href: '/' },
   {
     label: 'Services',
@@ -122,3 +135,11 @@ export const NAV: NavItem[] = [
   { label: 'Insights', href: '/insights' },
   { label: 'Contact', href: '/contact' },
 ];
+
+export const NAV: NavItem[] = FEATURES.tradePartnersPublished
+  ? [
+      ...BASE_NAV.slice(0, -1),
+      { label: 'Trade Partners', href: '/trade-partners' },
+      BASE_NAV[BASE_NAV.length - 1],
+    ]
+  : BASE_NAV;

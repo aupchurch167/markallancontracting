@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getSiteSettings } from '@/lib/queries';
 import { TRADES } from '@/lib/trade-partners';
+import { FEATURES } from '@/lib/site-data';
 import { CallCTA } from '@/components/CallCTA';
 import { Section, Eyebrow } from '@/components/Section';
 import { pageMetadata } from '@/lib/seo';
@@ -15,7 +16,7 @@ export const metadata: Metadata = pageMetadata({
   description:
     'Self-performed interior trades for general contractors: framing, drywall, paint, ACT, and flooring under one contract.',
   path: '/trade-partners',
-  noindex: true,
+  noindex: !FEATURES.tradePartnersPublished,
 });
 
 export default async function TradePartnersPage() {

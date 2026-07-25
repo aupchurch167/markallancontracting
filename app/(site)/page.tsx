@@ -105,9 +105,10 @@ export default async function HomePage() {
             and work for Darden since.
           </p>
           <p className="mt-5 text-lg leading-relaxed text-stone-600">
-            Family-owned. The people who price your job are the people who show up
-            to build it. We&apos;ve also developed and operated our own commercial
-            property, so we know what an owner is actually worried about.
+            Family-owned and hands-on. When we price your job, we stay on it through
+            the build — you&apos;re not handed off to a crew you never met. We&apos;ve
+            also developed and operated our own commercial property, so we know what
+            an owner is actually worried about.
           </p>
           <p className="mt-5 text-base italic text-stone-500">
             Tenant improvements · Office renovation · Warehouse conversion ·

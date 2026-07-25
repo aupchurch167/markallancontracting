@@ -79,9 +79,9 @@ export default async function NewConstructionPage() {
         <div className="max-w-3xl">
           <Eyebrow>Why a smaller GC for ground-up</Eyebrow>
           <p className="mt-3 text-lg leading-relaxed text-stone-600">
-            On a project this size, the people who priced it should be the people who
-            build it — not a name on the contract who hands you to a team you never
-            met. We&apos;ve carried the owner&apos;s risk ourselves, so we scope for
+            On a project this size, the team that prices it should stay on it through
+            the build — not hand you off to a crew you never met once the contract is
+            signed. We&apos;ve carried the owner&apos;s risk ourselves, so we scope for
             what an owner actually worries about: the number holding, the schedule
             being real, and the trades performing. That is a different conversation
             than the one you get from a firm for whom your job is a rounding error.

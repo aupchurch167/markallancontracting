@@ -43,18 +43,22 @@ const planSteps = [
   { _type: 'planStep', _key: 'p3', stepNumber: 3, title: 'We build', description: 'Crews mobilize. Work gets done. You get your space back.' },
 ];
 
-// --- Settings (placeholders kept as literal tokens — do not invent values) ---
+// --- Settings — verified from the live macont.com, confirmed by the owner. ---
 const settings = {
   _id: 'sitewideSettings',
   _type: 'sitewideSettings',
-  phone: '{{PHONE}}',
-  phoneRaw: '{{PHONE_RAW}}',
-  email: '{{EMAIL}}',
-  addressStreet: '{{ADDRESS_STREET}}',
-  addressCity: '{{ADDRESS_CITY}}',
-  addressState: '{{ADDRESS_STATE}}',
-  addressZip: '{{ADDRESS_ZIP}}',
-  hours: '{{HOURS}}',
+  phone: '(404) 724-8709',
+  phoneRaw: '+14047248709',
+  email: 'hello@macont.com',
+  addressStreet: '3420 Oakcliff Rd, Suite 103',
+  addressCity: 'Atlanta',
+  addressState: 'GA',
+  addressZip: '30340',
+  hours: 'Mon–Fri 8am–5pm · Sat–Sun 9am–1pm',
+  gbpUrl: 'https://www.google.com/maps/place/3420+Oakcliff+Rd,+Atlanta,+GA+30340',
+  callRailId: '571875192',
+  callRailResource: '8a72377554f5e3b406a8',
+  ga4Id: 'G-Z9YX6SX90M',
 };
 
 // --- Services ---

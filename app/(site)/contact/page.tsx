@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { getSiteSettings } from '@/lib/queries';
 import { CallButton, PhoneLink } from '@/components/PhoneLink';
 import { Section, Eyebrow } from '@/components/Section';
-import { SITE } from '@/lib/constants';
+import { SITE, CONTACT } from '@/lib/constants';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = pageMetadata({
@@ -103,13 +103,13 @@ export default async function ContactPage() {
             <div className="mt-2 rounded-lg border border-stone-200 bg-stone-50 p-6">
               <div className="text-lg font-bold text-navy">{SITE.name}</div>
               <address className="mt-3 space-y-1 text-stone-600 not-italic">
-                <div>{raw?.addressStreet || '{{ADDRESS_STREET}}'}</div>
+                <div>{raw?.addressStreet || CONTACT.address.street}</div>
                 <div>
-                  {(raw?.addressCity || '{{ADDRESS_CITY}}') +
+                  {(raw?.addressCity || CONTACT.address.city) +
                     ', ' +
-                    (raw?.addressState || '{{ADDRESS_STATE}}') +
+                    (raw?.addressState || CONTACT.address.state) +
                     ' ' +
-                    (raw?.addressZip || '{{ADDRESS_ZIP}}')}
+                    (raw?.addressZip || CONTACT.address.zip)}
                 </div>
                 <div className="pt-3">
                   <PhoneLink phone={phone} phoneRaw={phoneRaw} className="font-semibold text-navy hover:text-accent" />
@@ -117,7 +117,7 @@ export default async function ContactPage() {
                 <div>
                   <a href={`mailto:${email}`} className="hover:text-accent">{email}</a>
                 </div>
-                <div className="pt-2 text-sm text-stone-500">{raw?.hours || '{{HOURS}}'}</div>
+                <div className="pt-2 text-sm text-stone-500">{raw?.hours || CONTACT.hours}</div>
               </address>
             </div>
 

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { SITE } from '@/lib/constants';
+import { SITE, CONTACT } from '@/lib/constants';
 import { SERVICES, MARKETS } from '@/lib/site-data';
 import { PhoneLink } from './PhoneLink';
 import type { SiteSettings } from '@/lib/types';
@@ -29,13 +29,13 @@ export function Footer({
           <div className="text-lg font-bold text-navy">{SITE.name}</div>
           <p className="mt-2 text-sm text-stone-600">{SITE.tagline}</p>
           <address className="mt-4 space-y-1 text-sm not-italic text-stone-600">
-            <div>{addr?.addressStreet || '{{ADDRESS_STREET}}'}</div>
+            <div>{addr?.addressStreet || CONTACT.address.street}</div>
             <div>
-              {(addr?.addressCity || '{{ADDRESS_CITY}}') +
+              {(addr?.addressCity || CONTACT.address.city) +
                 ', ' +
-                (addr?.addressState || '{{ADDRESS_STATE}}') +
+                (addr?.addressState || CONTACT.address.state) +
                 ' ' +
-                (addr?.addressZip || '{{ADDRESS_ZIP}}')}
+                (addr?.addressZip || CONTACT.address.zip)}
             </div>
             <div className="pt-2">
               <PhoneLink

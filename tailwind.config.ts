@@ -3,9 +3,9 @@ import type { Config } from 'tailwindcss';
 /**
  * Custom design tokens. No UI kit.
  *
- * Brand hex values are the *assumed* values from the build spec and are flagged
- * as an open item ({{BRAND_NAVY}} / {{BRAND_ACCENT}}) — verify against
- * macont.com before launch and update here + in lib/constants.ts together.
+ * Brand palette: navy + blue accent. Decision (owner, confirmed) is to keep this
+ * rather than match the live Webflow site, whose charcoal + default blue were not
+ * a deliberate identity. Keep these in sync with BRAND in lib/constants.ts.
  */
 const config: Config = {
   content: [
@@ -16,7 +16,6 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // TODO(brand): verify against macont.com — assumed values only.
         navy: {
           DEFAULT: '#1B3A5C',
           900: '#122A44',

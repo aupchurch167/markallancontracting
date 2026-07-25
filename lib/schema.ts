@@ -1,4 +1,4 @@
-import { SITE } from './constants';
+import { SITE, CONTACT } from './constants';
 
 /**
  * JSON-LD builders. NAP values are passed in from merged site settings so the
@@ -11,6 +11,7 @@ interface Nap {
 }
 
 export function localBusinessSchema({ phone }: Nap) {
+  const a = CONTACT.address;
   return {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
@@ -18,7 +19,28 @@ export function localBusinessSchema({ phone }: Nap) {
     description: SITE.oneLiner,
     url: SITE.url,
     telephone: phone,
+    email: CONTACT.email,
     foundingDate: String(SITE.established),
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: a.street,
+      addressLocality: a.city,
+      addressRegion: a.state,
+      postalCode: a.zip,
+      addressCountry: 'US',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: CONTACT.geo.lat,
+      longitude: CONTACT.geo.lng,
+    },
+    openingHoursSpecification: CONTACT.openingHours.map((h) => ({
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: h.days,
+      opens: h.opens,
+      closes: h.closes,
+    })),
+    hasMap: CONTACT.gbpUrl,
     areaServed: SITE.statesServed.map((name) => ({
       '@type': 'State',
       name,

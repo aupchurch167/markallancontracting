@@ -22,24 +22,31 @@ npm run dev
 Embedded Sanity Studio is at [`/studio`](http://localhost:3000/studio) once a
 project id is set.
 
-## Open items (blocking — do not invent values)
+## Resolved inputs
 
-These are literal placeholder tokens, centralized in `lib/constants.ts` and
-overridable from the Sanity `sitewideSettings` singleton. Nothing ships until
-they are real:
+Verified from the live macont.com (its own LocalBusiness JSON-LD) and confirmed
+by the owner. All live in `lib/constants.ts` and are overridable from the Sanity
+`sitewideSettings` singleton (`npm run seed` writes the same values):
 
-| Token | Where | Blocks |
-|---|---|---|
-| `{{PHONE}}` / `{{PHONE_RAW}}` | constants + settings | everything |
-| `{{EMAIL}}`, full NAP | constants + settings | Phase 0 |
-| `{{CALLRAIL_ID}}` | `NEXT_PUBLIC_CALLRAIL_ID` | everything |
-| `{{GA4_ID}}` | `NEXT_PUBLIC_GA4_ID` | Phase 0 |
-| `{{SANITY_PROJECT_ID}}` | `NEXT_PUBLIC_SANITY_PROJECT_ID` | content |
-| `{{BRAND_NAVY}}` / `{{BRAND_ACCENT}}` | `tailwind.config.ts` + constants | Phase 0 |
+| Item | Value |
+|---|---|
+| Phone (tracked CTA / CallRail DNI fallback) | (404) 724-8709 |
+| Primary email | hello@macont.com |
+| NAP | 3420 Oakcliff Rd, Suite 103, Atlanta, GA 30340 |
+| Hours | Mon–Fri 8am–5pm · Sat–Sun 9am–1pm |
+| CallRail | company `571875192`, swap `8a72377554f5e3b406a8` |
+| GA4 | `G-Z9YX6SX90M` |
+| Brand palette | navy `#1B3A5C` + accent `#2E75B6` (owner: keep, don't match live Webflow charcoal) |
+| Trade Partners placement | main nav, once ungated (`FEATURES.tradePartnersPublished`) |
+| Homepage price/build claim | softened (no strict estimator = builder claim) |
 
-Brand hexes use the *assumed* values from the spec (`#1B3A5C` / `#2E75B6`) and
-must be verified against macont.com before launch — change them in
-`tailwind.config.ts` and `lib/constants.ts` together.
+## Still open (need real assets, not decisions)
+
+| Item | Unlocks |
+|---|---|
+| `NEXT_PUBLIC_SANITY_PROJECT_ID` + write token | Authored CMS content overrides the code fallbacks |
+| Delivered projects + CompanyCam photos | `/projects` and the service×city matrix (gated by design until real local work exists) |
+| Trade Partner figures — insurance limits, W/C mod rate, crew capacity, bonding | Ungate Trade Partners (flip `FEATURES.tradePartnersPublished`) |
 
 ## Seeding the CMS
 

@@ -39,6 +39,7 @@ export async function getSiteSettings(): Promise<{
   phoneRaw: string;
   email: string;
   callRailId: string;
+  callRailResource: string;
   ga4Id: string;
   raw: SiteSettings | null;
 }> {
@@ -53,6 +54,7 @@ export async function getSiteSettings(): Promise<{
     phoneRaw: s?.phoneRaw || CONTACT.phoneRaw,
     email: s?.email || CONTACT.email,
     callRailId: s?.callRailId || TRACKING.callRailId,
+    callRailResource: s?.callRailResource || TRACKING.callRailResource,
     ga4Id: s?.ga4Id || TRACKING.ga4Id,
     raw: s,
   };
