@@ -117,6 +117,9 @@ const BASE_NAV: NavItem[] = [
     label: 'Services',
     href: '/services',
     children: [
+      // Pre-construction is a sold service and the entry point — surfaced first.
+      { label: 'Pre-Construction', href: '/pre-construction' },
+      { label: 'Build', href: '#', heading: true },
       ...SERVICES.map((s) => ({ label: s.name, href: `/services/${s.slug}` })),
       { label: 'Markets', href: '#', heading: true },
       ...MARKETS.map((m) => ({ label: m.name, href: `/markets/${m.slug}` })),

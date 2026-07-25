@@ -58,6 +58,11 @@ export function Footer({
             Services
           </div>
           <ul className="mt-3 space-y-2 text-sm text-stone-600">
+            <li>
+              <Link href="/pre-construction" className="hover:text-accent">
+                Pre-Construction
+              </Link>
+            </li>
             {SERVICES.map((s) => (
               <li key={s.slug}>
                 <Link href={`/services/${s.slug}`} className="hover:text-accent">
@@ -91,7 +96,6 @@ export function Footer({
           </div>
           <ul className="mt-3 space-y-2 text-sm text-stone-600">
             <li><Link href="/how-we-build" className="hover:text-accent">How We Build</Link></li>
-            <li><Link href="/pre-construction" className="hover:text-accent">Pre-Construction</Link></li>
             <li><Link href="/construction-process" className="hover:text-accent">Our Process</Link></li>
             <li><Link href="/new-construction" className="hover:text-accent">New Construction</Link></li>
             <li><Link href="/projects" className="hover:text-accent">Projects</Link></li>

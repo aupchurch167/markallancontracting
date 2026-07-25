@@ -32,7 +32,30 @@ export default async function ServicesHub() {
       </section>
 
       <Section>
-        <div className="grid gap-6 md:grid-cols-2">
+        {/* Start here — pre-construction as a sold, entry-point service */}
+        <Link
+          href="/pre-construction"
+          className="group flex flex-col justify-between gap-4 rounded-xl border border-accent bg-navy p-7 text-white transition-colors hover:bg-navy-600 sm:flex-row sm:items-center"
+        >
+          <div>
+            <div className="text-sm font-semibold uppercase tracking-widest text-accent">
+              Start here
+            </div>
+            <div className="mt-1 text-xl font-bold text-white">Pre-Construction</div>
+            <p className="mt-2 max-w-2xl text-stone-100/90">
+              A defined, paid engagement for a defensible budget and a real schedule
+              before you build — and the fee credits back if we do the work.
+            </p>
+          </div>
+          <span className="shrink-0 font-semibold text-white">
+            See the engagement →
+          </span>
+        </Link>
+
+        <div className="mt-12">
+          <Eyebrow>Build services</Eyebrow>
+        </div>
+        <div className="mt-6 grid gap-6 md:grid-cols-2">
           {SERVICES.map((s) => {
             const c = SERVICE_CONTENT[s.slug];
             return (
