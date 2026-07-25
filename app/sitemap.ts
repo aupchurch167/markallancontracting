@@ -1,6 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { SITE } from '@/lib/constants';
 import { SERVICE_SLUGS, MARKETS } from '@/lib/site-data';
+import { FALLBACK_CITIES } from '@/lib/fallback-cities';
+import { FALLBACK_POSTS } from '@/lib/fallback-insights';
 import {
   getServiceCitySlugs,
   getCitySlugs,
@@ -36,11 +38,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getPostSlugs(),
   ]);
 
+  // Merge Sanity-authored slugs with the authored fallbacks (dedup by path).
+  const cityPaths = new Set([
+    ...cities.map((c) => `/locations/${c}`),
+    ...FALLBACK_CITIES.map((c) => `/locations/${c.slug}`),
+  ]);
+  const postPaths = new Set([
+    ...posts.map((p) => `/insights/${p}`),
+    ...FALLBACK_POSTS.map((p) => `/insights/${p.slug}`),
+  ]);
+
   const dynamicPaths = [
     ...serviceCities.map((p) => `/services/${p.service}/${p.city}`),
-    ...cities.map((c) => `/locations/${c}`),
+    ...cityPaths,
     ...projects.map((p) => `/projects/${p}`),
-    ...posts.map((p) => `/insights/${p}`),
+    ...postPaths,
   ];
 
   return [...staticPaths, ...dynamicPaths].map((path) => ({

@@ -7,6 +7,8 @@ import {
   getServicesForCity,
   getSiteSettings,
 } from '@/lib/queries';
+import { FALLBACK_CITIES, FALLBACK_CITIES_BY_SLUG } from '@/lib/fallback-cities';
+import { SERVICES } from '@/lib/site-data';
 import { CallButton } from '@/components/PhoneLink';
 import { CallCTA } from '@/components/CallCTA';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
@@ -15,8 +17,9 @@ import { PortableText } from '@/components/PortableText';
 import { pageMetadata } from '@/lib/seo';
 
 export async function generateStaticParams() {
-  const slugs = await getCitySlugs();
-  return slugs.map((city) => ({ city }));
+  const sanitySlugs = await getCitySlugs();
+  const all = new Set([...sanitySlugs, ...FALLBACK_CITIES.map((c) => c.slug)]);
+  return Array.from(all).map((city) => ({ city }));
 }
 
 export async function generateMetadata({
@@ -26,8 +29,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { city } = await params;
   const doc = await getCity(city);
-  if (!doc) return {};
-  const label = `${doc.name}, ${doc.state.toUpperCase()}`;
+  const fb = FALLBACK_CITIES_BY_SLUG[city];
+  const name = doc?.name || fb?.name;
+  const state = (doc?.state || fb?.state || '').toUpperCase();
+  if (!name) return {};
+  const label = `${name}, ${state}`;
   return pageMetadata({
     title: `Commercial General Contractor in ${label} | Mark Allan Contracting`,
     description: `Commercial buildouts, renovations, and repairs in ${label}. Family-owned since 1999. Get a scoped number, not a range.`,
@@ -42,21 +48,26 @@ export default async function CityHubPage({
 }) {
   const { city } = await params;
   const doc = await getCity(city);
-  if (!doc) notFound();
+  const fb = FALLBACK_CITIES_BY_SLUG[city];
+  if (!doc && !fb) notFound();
 
-  const [services, settings] = await Promise.all([
+  const [servicesInCity, settings] = await Promise.all([
     getServicesForCity(city),
     getSiteSettings(),
   ]);
   const { phone, phoneRaw } = settings;
-  const label = `${doc.name}, ${doc.state.toUpperCase()}`;
+
+  const name = doc?.name || fb!.name;
+  const county = doc?.county || fb?.county;
+  const state = (doc?.state || fb!.state).toUpperCase();
+  const label = `${name}, ${state}`;
 
   return (
     <>
       <Breadcrumbs
         crumbs={[
           { name: 'Home', path: '/' },
-          { name: doc.name, path: `/locations/${city}` },
+          { name, path: `/locations/${city}` },
         ]}
       />
 
@@ -71,45 +82,64 @@ export default async function CityHubPage({
         </div>
       </section>
 
-      {doc.intro?.length ? (
-        <Section>
-          <div className="max-w-3xl text-lg">
+      {/* Intro */}
+      <Section>
+        <div className="max-w-3xl text-lg">
+          {doc?.intro?.length ? (
             <PortableText value={doc.intro} />
-          </div>
-        </Section>
-      ) : null}
+          ) : fb ? (
+            <p className="leading-relaxed text-stone-600">{fb.intro}</p>
+          ) : null}
+        </div>
+      </Section>
 
-      {/* Service grid — links to service × city pages */}
-      {services.length > 0 && (
-        <Section muted>
-          <Eyebrow>What we do in {doc.name}</Eyebrow>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {services.map((s) => (
-              <Link
-                key={s.slug}
-                href={`/services/${s.slug}/${city}`}
-                className="rounded-lg border border-stone-200 bg-paper p-5 font-semibold text-navy transition-colors hover:border-accent hover:text-accent"
-              >
-                {s.title}
-              </Link>
-            ))}
+      {/* Service grid — links to matrix pages where they exist, else service hubs */}
+      <Section muted>
+        <Eyebrow>What we do in {name}</Eyebrow>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {servicesInCity.length > 0
+            ? servicesInCity.map((s) => (
+                <Link
+                  key={s.slug}
+                  href={`/services/${s.slug}/${city}`}
+                  className="rounded-lg border border-stone-200 bg-paper p-5 font-semibold text-navy transition-colors hover:border-accent hover:text-accent"
+                >
+                  {s.title}
+                </Link>
+              ))
+            : SERVICES.map((s) => (
+                <Link
+                  key={s.slug}
+                  href={`/services/${s.slug}`}
+                  className="rounded-lg border border-stone-200 bg-paper p-5 font-semibold text-navy transition-colors hover:border-accent hover:text-accent"
+                >
+                  {s.name}
+                </Link>
+              ))}
+        </div>
+      </Section>
+
+      {/* Jurisdiction note */}
+      {(doc?.jurisdictionNote?.length || fb?.jurisdiction?.length) && (
+        <Section>
+          <div className="max-w-3xl">
+            <Eyebrow>Permitting in {county || name}</Eyebrow>
+            <div className="mt-3 text-lg">
+              {doc?.jurisdictionNote?.length ? (
+                <PortableText value={doc.jurisdictionNote} />
+              ) : (
+                fb?.jurisdiction.map((p, i) => (
+                  <p key={i} className="mb-4 leading-relaxed text-stone-600">
+                    {p}
+                  </p>
+                ))
+              )}
+            </div>
           </div>
         </Section>
       )}
 
-      {/* Jurisdiction note */}
-      {doc.jurisdictionNote?.length ? (
-        <Section>
-          <div className="max-w-3xl">
-            <Eyebrow>Permitting in {doc.county || doc.name}</Eyebrow>
-            <div className="mt-3 text-lg">
-              <PortableText value={doc.jurisdictionNote} />
-            </div>
-          </div>
-        </Section>
-      ) : null}
-
-      <CallCTA phone={phone} phoneRaw={phoneRaw} heading={`Building in ${doc.name}?`} />
+      <CallCTA phone={phone} phoneRaw={phoneRaw} heading={`Building in ${name}?`} />
     </>
   );
 }

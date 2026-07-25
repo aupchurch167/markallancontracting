@@ -92,6 +92,8 @@ export function Header({ phone, phoneRaw }: { phone: string; phoneRaw: string })
           <button
             type="button"
             aria-label="Toggle menu"
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-nav"
             className="lg:hidden"
             onClick={() => setMobileOpen((v) => !v)}
           >
@@ -104,7 +106,7 @@ export function Header({ phone, phoneRaw }: { phone: string; phoneRaw: string })
 
       {/* Mobile drawer */}
       {mobileOpen && (
-        <nav className="border-t border-stone-200 bg-paper lg:hidden">
+        <nav id="mobile-nav" className="border-t border-stone-200 bg-paper lg:hidden">
           <div className="container-page space-y-1 py-4">
             {NAV.map((item) => (
               <div key={item.label}>
