@@ -1,14 +1,14 @@
 import Link from 'next/link';
 import { SERVICES } from '@/lib/site-data';
 
-/** Links to all 7 service hubs. Used on the homepage and elsewhere. */
+/** Links to all 7 project-type pages. Used on the homepage and elsewhere. */
 export function ServiceGrid() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {SERVICES.map((s) => (
         <Link
           key={s.slug}
-          href={`/services/${s.slug}`}
+          href={`/project-types/${s.slug}`}
           className="group rounded-lg border border-stone-200 bg-paper p-6 transition-colors hover:border-accent hover:bg-stone-50"
         >
           <div className="text-lg font-semibold text-navy group-hover:text-accent">

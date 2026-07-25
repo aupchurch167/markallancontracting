@@ -58,7 +58,7 @@ export default async function MarketPage({
       <Breadcrumbs
         crumbs={[
           { name: 'Home', path: '/' },
-          { name: 'Services', path: '/services' },
+          { name: 'Who We Work For', path: '/markets' },
           { name: def.name, path: `/markets/${market}` },
         ]}
       />
@@ -101,7 +101,7 @@ export default async function MarketPage({
           {relevantServices.map((s) => (
             <Link
               key={s.slug}
-              href={`/services/${s.slug}`}
+              href={`/project-types/${s.slug}`}
               className="rounded-lg border border-stone-200 bg-paper p-5 font-semibold text-navy transition-colors hover:border-accent hover:text-accent"
             >
               {s.title}

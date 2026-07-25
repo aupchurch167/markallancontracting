@@ -15,47 +15,47 @@
  */
 
 const SERVICE_CITY_MAP = {
-  'commercial-flooring': '/services/flooring-interior-trades',
-  'commercial-general-construction': '/services',
-  'commercial-general-contracting': '/services',
-  'commercial-general-repairs': '/services/building-repair',
-  'commercial-lighting-install': '/services',
-  'commercial-painting': '/services/flooring-interior-trades',
-  'commercial-remodeling': '/services/office-renovation',
-  'commercial-repairs': '/services/building-repair',
-  'commercial-roof': '/services/building-repair',
-  construction: '/services',
+  'commercial-flooring': '/project-types/flooring-interior-trades',
+  'commercial-general-construction': '/general-contracting',
+  'commercial-general-contracting': '/general-contracting',
+  'commercial-general-repairs': '/project-types/building-repair',
+  'commercial-lighting-install': '/general-contracting',
+  'commercial-painting': '/project-types/flooring-interior-trades',
+  'commercial-remodeling': '/remodeling',
+  'commercial-repairs': '/project-types/building-repair',
+  'commercial-roof': '/project-types/building-repair',
+  construction: '/general-contracting',
   'facility-maintenance': '/markets/facility-managers',
-  'industrial-construction': '/services/warehouse-conversion',
-  'industrial-general-contracting': '/services',
-  'industrial-general-repairs': '/services/building-repair',
+  'industrial-construction': '/project-types/warehouse-conversion',
+  'industrial-general-contracting': '/general-contracting',
+  'industrial-general-repairs': '/project-types/building-repair',
   'industrial-maintenance': '/markets/facility-managers',
-  'industrial-repairs': '/services/building-repair',
-  'industrial-roof': '/services/building-repair',
-  'office-build-out': '/services/office-renovation',
-  'office-maintenance': '/services/office-renovation',
-  'office-painting': '/services/office-renovation',
-  'office-repairs': '/services/building-repair',
-  'residential-roof': '/services',
-  'restaurant-buildout': '/services/restaurant-buildout',
-  'restaurant-construction': '/services/restaurant-buildout',
-  'restaurant-maintenance': '/services/restaurant-buildout',
-  'restaurant-repairs': '/services/building-repair',
-  'restaurant-roof': '/services/building-repair',
-  'retail-build-out': '/services/retail-buildout',
-  'retail-maintenance': '/services/retail-buildout',
-  'retail-white-boxing': '/services/retail-buildout',
-  'roll-up-door-installation': '/services/warehouse-conversion',
-  'tenant-build-out': '/services/tenant-improvements',
-  'tenant-improvement': '/services/tenant-improvements',
-  'warehouse-construction': '/services/warehouse-conversion',
-  'warehouse-general-contracting': '/services/warehouse-conversion',
-  'warehouse-general-repairs': '/services/building-repair',
-  'warehouse-maintenance': '/services/warehouse-conversion',
-  'warehouse-painting': '/services/warehouse-conversion',
-  'warehouse-repairs': '/services/building-repair',
-  'warehouse-roof': '/services/building-repair',
-  'warehouse-white-boxing': '/services/warehouse-conversion',
+  'industrial-repairs': '/project-types/building-repair',
+  'industrial-roof': '/project-types/building-repair',
+  'office-build-out': '/project-types/office-renovation',
+  'office-maintenance': '/project-types/office-renovation',
+  'office-painting': '/project-types/office-renovation',
+  'office-repairs': '/project-types/building-repair',
+  'residential-roof': '/general-contracting',
+  'restaurant-buildout': '/project-types/restaurant-buildout',
+  'restaurant-construction': '/project-types/restaurant-buildout',
+  'restaurant-maintenance': '/project-types/restaurant-buildout',
+  'restaurant-repairs': '/project-types/building-repair',
+  'restaurant-roof': '/project-types/building-repair',
+  'retail-build-out': '/project-types/retail-buildout',
+  'retail-maintenance': '/project-types/retail-buildout',
+  'retail-white-boxing': '/project-types/retail-buildout',
+  'roll-up-door-installation': '/project-types/warehouse-conversion',
+  'tenant-build-out': '/project-types/tenant-improvements',
+  'tenant-improvement': '/project-types/tenant-improvements',
+  'warehouse-construction': '/project-types/warehouse-conversion',
+  'warehouse-general-contracting': '/project-types/warehouse-conversion',
+  'warehouse-general-repairs': '/project-types/building-repair',
+  'warehouse-maintenance': '/project-types/warehouse-conversion',
+  'warehouse-painting': '/project-types/warehouse-conversion',
+  'warehouse-repairs': '/project-types/building-repair',
+  'warehouse-roof': '/project-types/building-repair',
+  'warehouse-white-boxing': '/project-types/warehouse-conversion',
 };
 
 // Longer phrases first so a shorter phrase never shadows a more specific one.
@@ -71,7 +71,7 @@ const staticRedirects = [
   { source: '/about', destination: '/how-we-build', statusCode: 301 },
   { source: '/our-services', destination: '/services', statusCode: 301 },
   { source: '/blog', destination: '/insights', statusCode: 301 },
-  { source: '/glossary', destination: '/insights', statusCode: 301 },
+  { source: '/glossary', destination: '/construction-process', statusCode: 301 },
   { source: '/faq', destination: '/how-we-build', statusCode: 301 },
   {
     source: '/faq-what-to-expect-when-working-with-mac',
@@ -79,8 +79,8 @@ const staticRedirects = [
     statusCode: 301,
   },
   // Legacy "products"
-  { source: '/product/general-contracting', destination: '/services', statusCode: 301 },
-  { source: '/product/electrical', destination: '/services', statusCode: 301 },
+  { source: '/product/general-contracting', destination: '/general-contracting', statusCode: 301 },
+  { source: '/product/electrical', destination: '/general-contracting', statusCode: 301 },
   { source: '/product/estimating-and-planning', destination: '/pre-construction', statusCode: 301 },
   { source: '/product/facility-maintenance', destination: '/markets/facility-managers', statusCode: 301 },
   // Legacy blog posts — map to the closest new article where one exists.
@@ -101,15 +101,23 @@ const staticRedirects = [
   },
   {
     source: '/post/what-to-expect-during-a-tenant-buildout',
-    destination: '/services/tenant-improvements',
+    destination: '/project-types/tenant-improvements',
     statusCode: 301,
   },
   { source: '/post/we-are-mark-allan-contracting', destination: '/how-we-build', statusCode: 301 },
 ];
 
+// The project types moved from /services/* to /project-types/*. Redirect the old
+// internal URLs so nothing that briefly linked to them 404s. ('/services' itself
+// is a live page now — the service-lines hub — so only sub-paths redirect.)
+const movedProjectTypeRedirects = [
+  { source: '/services/:type/:city', destination: '/project-types/:type/:city', statusCode: 301 },
+  { source: '/services/:type', destination: '/project-types/:type', statusCode: 301 },
+];
+
 // Catch-alls — must come AFTER the specific rules above.
 const fallbackRedirects = [
-  { source: '/service-city/:slug*', destination: '/services', statusCode: 301 },
+  { source: '/service-city/:slug*', destination: '/project-types', statusCode: 301 },
   { source: '/project/:slug*', destination: '/projects', statusCode: 301 },
   { source: '/post/:slug*', destination: '/insights', statusCode: 301 },
   { source: '/categories-posts/:slug*', destination: '/insights', statusCode: 301 },
@@ -121,7 +129,12 @@ const nextConfig = {
     remotePatterns: [{ protocol: 'https', hostname: 'cdn.sanity.io' }],
   },
   async redirects() {
-    return [...staticRedirects, ...serviceCityRedirects, ...fallbackRedirects];
+    return [
+      ...staticRedirects,
+      ...serviceCityRedirects,
+      ...movedProjectTypeRedirects,
+      ...fallbackRedirects,
+    ];
   },
 };
 

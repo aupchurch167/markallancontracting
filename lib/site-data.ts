@@ -111,28 +111,60 @@ export const FEATURES = {
   tradePartnersPublished: false,
 } as const;
 
+/**
+ * Service lines — how we engage (distinct from project types, which are the
+ * kinds of space). These drive the "Services" menu and the /services hub.
+ */
+export interface ServiceLine {
+  slug: string;
+  name: string;
+  href: string;
+  blurb: string;
+}
+
+export const SERVICE_LINES: ServiceLine[] = [
+  {
+    slug: 'pre-construction',
+    name: 'Pre-Construction',
+    href: '/pre-construction',
+    blurb: 'Budget, feasibility, and a plan before you build — a fixed fee, credited to the build if we do it.',
+  },
+  {
+    slug: 'general-contracting',
+    name: 'General Contracting',
+    href: '/general-contracting',
+    blurb: 'We run the whole commercial build — self-performed trades, one team accountable start to finish.',
+  },
+  {
+    slug: 'remodeling',
+    name: 'Remodeling',
+    href: '/remodeling',
+    blurb: 'Commercial renovations and remodels, phased around a space that’s still in use.',
+  },
+  {
+    slug: 'new-construction',
+    name: 'New Construction',
+    href: '/new-construction',
+    blurb: 'Ground-up, from the owner’s side — strongest at the shell and the pre-construction that sets the budget.',
+  },
+];
+
 const BASE_NAV: NavItem[] = [
   { label: 'Home', href: '/' },
   {
     label: 'Services',
     href: '/services',
-    children: [
-      // Pre-construction is a sold service and the entry point — surfaced first.
-      { label: 'Pre-Construction', href: '/pre-construction' },
-      { label: 'Build', href: '#', heading: true },
-      ...SERVICES.map((s) => ({ label: s.name, href: `/services/${s.slug}` })),
-      { label: 'Markets', href: '#', heading: true },
-      ...MARKETS.map((m) => ({ label: m.name, href: `/markets/${m.slug}` })),
-    ],
+    children: SERVICE_LINES.map((l) => ({ label: l.name, href: l.href })),
   },
   {
-    label: 'How We Build',
-    href: '/how-we-build',
-    children: [
-      { label: 'Pre-Construction', href: '/pre-construction' },
-      { label: 'Our Process', href: '/construction-process' },
-      { label: 'New Construction', href: '/new-construction' },
-    ],
+    label: 'Project Types',
+    href: '/project-types',
+    children: SERVICES.map((s) => ({ label: s.name, href: `/project-types/${s.slug}` })),
+  },
+  {
+    label: 'Who We Work For',
+    href: '/markets',
+    children: MARKETS.map((m) => ({ label: m.name, href: `/markets/${m.slug}` })),
   },
   { label: 'Projects', href: '/projects' },
   { label: 'Insights', href: '/insights' },

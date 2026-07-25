@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { SITE, CONTACT } from '@/lib/constants';
-import { SERVICES, MARKETS } from '@/lib/site-data';
+import { SERVICES, MARKETS, SERVICE_LINES } from '@/lib/site-data';
 import { PhoneLink } from './PhoneLink';
 import type { SiteSettings } from '@/lib/types';
 
@@ -52,20 +52,31 @@ export function Footer({
           </address>
         </div>
 
-        {/* Services */}
+        {/* Services (lines) */}
         <div>
           <div className="text-sm font-semibold uppercase tracking-wider text-stone-400">
             Services
           </div>
           <ul className="mt-3 space-y-2 text-sm text-stone-600">
-            <li>
-              <Link href="/pre-construction" className="hover:text-accent">
-                Pre-Construction
-              </Link>
-            </li>
+            {SERVICE_LINES.map((l) => (
+              <li key={l.slug}>
+                <Link href={l.href} className="hover:text-accent">
+                  {l.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Project Types */}
+        <div>
+          <div className="text-sm font-semibold uppercase tracking-wider text-stone-400">
+            Project Types
+          </div>
+          <ul className="mt-3 space-y-2 text-sm text-stone-600">
             {SERVICES.map((s) => (
               <li key={s.slug}>
-                <Link href={`/services/${s.slug}`} className="hover:text-accent">
+                <Link href={`/project-types/${s.slug}`} className="hover:text-accent">
                   {s.name}
                 </Link>
               </li>
@@ -73,10 +84,10 @@ export function Footer({
           </ul>
         </div>
 
-        {/* Markets */}
+        {/* Who We Work For */}
         <div>
           <div className="text-sm font-semibold uppercase tracking-wider text-stone-400">
-            Who We Work With
+            Who We Work For
           </div>
           <ul className="mt-3 space-y-2 text-sm text-stone-600">
             {MARKETS.map((m) => (
@@ -88,20 +99,16 @@ export function Footer({
             ))}
           </ul>
         </div>
+      </div>
 
-        {/* Company */}
-        <div>
-          <div className="text-sm font-semibold uppercase tracking-wider text-stone-400">
-            Company
-          </div>
-          <ul className="mt-3 space-y-2 text-sm text-stone-600">
-            <li><Link href="/how-we-build" className="hover:text-accent">How We Build</Link></li>
-            <li><Link href="/construction-process" className="hover:text-accent">Our Process</Link></li>
-            <li><Link href="/new-construction" className="hover:text-accent">New Construction</Link></li>
-            <li><Link href="/projects" className="hover:text-accent">Projects</Link></li>
-            <li><Link href="/insights" className="hover:text-accent">Insights</Link></li>
-            <li><Link href="/contact" className="hover:text-accent">Contact</Link></li>
-          </ul>
+      {/* Secondary company links */}
+      <div className="border-t border-stone-200">
+        <div className="container-page flex flex-wrap gap-x-6 gap-y-2 py-4 text-sm text-stone-600">
+          <Link href="/how-we-build" className="hover:text-accent">How We Build</Link>
+          <Link href="/construction-process" className="hover:text-accent">Our Process</Link>
+          <Link href="/projects" className="hover:text-accent">Projects</Link>
+          <Link href="/insights" className="hover:text-accent">Insights</Link>
+          <Link href="/contact" className="hover:text-accent">Contact</Link>
         </div>
       </div>
 

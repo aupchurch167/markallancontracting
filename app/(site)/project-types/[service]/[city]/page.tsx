@@ -38,11 +38,11 @@ export async function generateMetadata({
   const { service, city } = await params;
   const sc = await getServiceCity(service, city);
   if (!sc) return {};
-  // City pages canonical to themselves, never to the service hub.
+  // City pages canonical to themselves, never to the project-type hub.
   return pageMetadata({
     title: sc.metaTitle,
     description: sc.metaDescription,
-    path: `/services/${service}/${city}`,
+    path: `/project-types/${service}/${city}`,
   });
 }
 
@@ -67,9 +67,9 @@ export default async function ServiceCityPage({
       <Breadcrumbs
         crumbs={[
           { name: 'Home', path: '/' },
-          { name: 'Services', path: '/services' },
-          { name: def.name, path: `/services/${service}` },
-          { name: sc.cityName, path: `/services/${service}/${city}` },
+          { name: 'Project Types', path: '/project-types' },
+          { name: def.name, path: `/project-types/${service}` },
+          { name: sc.cityName, path: `/project-types/${service}/${city}` },
         ]}
       />
       <JsonLd
@@ -175,7 +175,7 @@ export default async function ServiceCityPage({
       <Section muted>
         <div className="flex flex-wrap gap-3">
           <Link
-            href={`/services/${service}`}
+            href={`/project-types/${service}`}
             className="rounded-md border border-stone-200 bg-paper px-4 py-2 text-sm font-medium text-navy hover:border-accent hover:text-accent"
           >
             ← All {def.name}

@@ -101,7 +101,7 @@ export default async function CityHubPage({
             ? servicesInCity.map((s) => (
                 <Link
                   key={s.slug}
-                  href={`/services/${s.slug}/${city}`}
+                  href={`/project-types/${s.slug}/${city}`}
                   className="rounded-lg border border-stone-200 bg-paper p-5 font-semibold text-navy transition-colors hover:border-accent hover:text-accent"
                 >
                   {s.title}
@@ -110,7 +110,7 @@ export default async function CityHubPage({
             : SERVICES.map((s) => (
                 <Link
                   key={s.slug}
-                  href={`/services/${s.slug}`}
+                  href={`/project-types/${s.slug}`}
                   className="rounded-lg border border-stone-200 bg-paper p-5 font-semibold text-navy transition-colors hover:border-accent hover:text-accent"
                 >
                   {s.name}

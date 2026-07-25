@@ -19,16 +19,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = SITE.url;
   const staticPaths = [
     '',
+    // Service lines
     '/services',
-    '/how-we-build',
     '/pre-construction',
-    '/construction-process',
+    '/general-contracting',
+    '/remodeling',
     '/new-construction',
+    // Process
+    '/how-we-build',
+    '/construction-process',
+    // Project types
+    '/project-types',
+    ...SERVICE_SLUGS.map((s) => `/project-types/${s}`),
+    // Who we work for
+    '/markets',
+    ...MARKETS.map((m) => `/markets/${m.slug}`),
+    // Other
     '/projects',
     '/insights',
     '/contact',
-    ...SERVICE_SLUGS.map((s) => `/services/${s}`),
-    ...MARKETS.map((m) => `/markets/${m.slug}`),
   ];
 
   const [serviceCities, cities, projects, posts] = await Promise.all([
@@ -49,7 +58,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]);
 
   const dynamicPaths = [
-    ...serviceCities.map((p) => `/services/${p.service}/${p.city}`),
+    ...serviceCities.map((p) => `/project-types/${p.service}/${p.city}`),
     ...cityPaths,
     ...projects.map((p) => `/projects/${p}`),
     ...postPaths,

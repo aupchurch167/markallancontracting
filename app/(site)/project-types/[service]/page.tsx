@@ -37,7 +37,7 @@ export async function generateMetadata({
   return pageMetadata({
     title: doc?.metaTitle || c.metaTitle,
     description: doc?.metaDescription || c.metaDescription,
-    path: `/services/${service}`,
+    path: `/project-types/${service}`,
   });
 }
 
@@ -73,8 +73,8 @@ export default async function ServiceHubPage({
       <Breadcrumbs
         crumbs={[
           { name: 'Home', path: '/' },
-          { name: 'Services', path: '/services' },
-          { name: def.name, path: `/services/${service}` },
+          { name: 'Project Types', path: '/project-types' },
+          { name: def.name, path: `/project-types/${service}` },
         ]}
       />
       <JsonLd
@@ -193,7 +193,7 @@ export default async function ServiceHubPage({
             {cities.map((city) => (
               <Link
                 key={city.slug}
-                href={`/services/${service}/${city.slug}`}
+                href={`/project-types/${service}/${city.slug}`}
                 className="rounded-full border border-stone-200 bg-stone-50 px-4 py-2 text-sm font-medium text-navy hover:border-accent hover:text-accent"
               >
                 {city.name}, {city.state.toUpperCase()}
