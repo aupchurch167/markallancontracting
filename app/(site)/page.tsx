@@ -100,22 +100,18 @@ export default async function HomePage() {
       {/* 4. Authority */}
       <Section>
         <div className="max-w-3xl">
-          <Eyebrow>Built Different. Est. 1999.</Eyebrow>
-          <p className="mt-4 text-2xl font-semibold text-navy sm:text-3xl">
-            Twenty-five years. Four states. Over a hundred Domino&apos;s buildouts,
-            and work for Darden since.
+          <p className="text-sm font-semibold uppercase tracking-widest text-stone-400">
+            Since 1999
+          </p>
+          <p className="mt-3 text-2xl font-semibold text-navy sm:text-3xl">
+            Twenty-five years. Georgia, Tennessee, Alabama, South Carolina. Over a
+            hundred Domino&apos;s buildouts, and work for Darden since.
           </p>
           <p className="mt-5 text-lg leading-relaxed text-stone-600">
-            Family-owned and hands-on. When we price your job, we stay on it through
-            the build — you&apos;re not handed off to a crew you never met. We&apos;ve
-            also developed and operated our own commercial property, so we know what
-            an owner is actually worried about.
+            Family-owned, hands-on — and we&apos;ve been the owner too, so we know
+            what an owner worries about.
           </p>
-          <p className="mt-5 text-base italic text-stone-500">
-            Tenant improvements · Office renovation · Warehouse conversion ·
-            Restaurant and retail buildouts · Building repair
-          </p>
-          <p className="mt-4 text-lg font-semibold text-navy">
+          <p className="mt-6 text-lg font-semibold text-navy">
             Projects from $50K to $500K.
           </p>
         </div>
