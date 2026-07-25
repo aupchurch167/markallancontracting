@@ -8,6 +8,7 @@ import { CallButton } from '@/components/PhoneLink';
 import { CallCTA } from '@/components/CallCTA';
 import { PlanSteps } from '@/components/PlanSteps';
 import { ProjectCard } from '@/components/ProjectCard';
+import { summariesFromSanityCards } from '@/lib/projects';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Section, Eyebrow } from '@/components/Section';
 import { PortableText } from '@/components/PortableText';
@@ -113,8 +114,8 @@ export default async function MarketPage({
         <Section muted>
           <h2 className="text-2xl font-bold text-navy sm:text-3xl">Work in this space</h2>
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {doc.relatedProjects.map((p) => (
-              <ProjectCard key={p._id} project={p} />
+            {summariesFromSanityCards(doc.relatedProjects).map((p) => (
+              <ProjectCard key={p.id} project={p} />
             ))}
           </div>
         </Section>

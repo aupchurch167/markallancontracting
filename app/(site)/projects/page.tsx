@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { getProjects, getSiteSettings } from '@/lib/queries';
+import { getSiteSettings } from '@/lib/queries';
+import { getAllProjectSummaries } from '@/lib/projects';
 import { CallCTA } from '@/components/CallCTA';
 import { ProjectCard } from '@/components/ProjectCard';
 import { Section } from '@/components/Section';
@@ -13,7 +14,10 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default async function ProjectsPage() {
-  const [projects, settings] = await Promise.all([getProjects(), getSiteSettings()]);
+  const [projects, settings] = await Promise.all([
+    getAllProjectSummaries(),
+    getSiteSettings(),
+  ]);
   const { phone, phoneRaw } = settings;
 
   return (
@@ -32,7 +36,7 @@ export default async function ProjectsPage() {
         {projects.length > 0 ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {projects.map((p) => (
-              <ProjectCard key={p._id} project={p} />
+              <ProjectCard key={p.id} project={p} />
             ))}
           </div>
         ) : (

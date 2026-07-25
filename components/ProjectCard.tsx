@@ -1,26 +1,19 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { urlForImage } from '@/sanity/lib/image';
-import type { ProjectCard as ProjectCardType } from '@/lib/types';
+import type { ProjectSummary } from '@/lib/projects';
 
 /** Portfolio card: photo, client type, location, scope one-liner. */
-export function ProjectCard({ project }: { project: ProjectCardType }) {
-  const img = urlForImage(project.image)?.width(800).height(600).url();
-  const location =
-    project.cityName && project.cityState
-      ? `${project.cityName}, ${project.cityState.toUpperCase()}`
-      : undefined;
-
+export function ProjectCard({ project }: { project: ProjectSummary }) {
   return (
     <Link
       href={`/projects/${project.slug}`}
       className="group overflow-hidden rounded-lg border border-stone-200 bg-paper transition-shadow hover:shadow-md"
     >
       <div className="relative aspect-[4/3] bg-stone-100">
-        {img ? (
+        {project.imageUrl ? (
           <Image
-            src={img}
-            alt={project.image?.alt || project.title}
+            src={project.imageUrl}
+            alt={project.title}
             fill
             sizes="(max-width: 768px) 100vw, 33vw"
             className="object-cover"
@@ -34,7 +27,7 @@ export function ProjectCard({ project }: { project: ProjectCardType }) {
       <div className="p-5">
         <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-stone-400">
           {project.clientType && <span>{project.clientType}</span>}
-          {location && <span>· {location}</span>}
+          {project.location && <span>· {project.location}</span>}
         </div>
         <div className="mt-1 text-lg font-semibold text-navy group-hover:text-accent">
           {project.title}

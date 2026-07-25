@@ -9,6 +9,10 @@ import { CallCTA } from '@/components/CallCTA';
 import { PlanSteps } from '@/components/PlanSteps';
 import { FAQ } from '@/components/FAQ';
 import { ProjectCard } from '@/components/ProjectCard';
+import {
+  summariesFromSanityCards,
+  getFallbackSummariesForService,
+} from '@/lib/projects';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Section, Eyebrow } from '@/components/Section';
 import { PortableText } from '@/components/PortableText';
@@ -58,6 +62,11 @@ export default async function ServiceHubPage({
   const scope = doc?.scopeItems?.length ? doc.scopeItems : c.scope;
   const range = doc?.typicalRange || c.typicalRange;
   const timeline = doc?.typicalTimeline || c.typicalTimeline;
+
+  // Sanity related projects win; otherwise show delivered fallback work for this service.
+  const projects = doc?.relatedProjects?.length
+    ? summariesFromSanityCards(doc.relatedProjects)
+    : getFallbackSummariesForService(service);
 
   return (
     <>
@@ -129,19 +138,19 @@ export default async function ServiceHubPage({
       </Section>
 
       {/* Project examples */}
-      {doc?.relatedProjects?.length ? (
+      {projects.length > 0 ? (
         <Section muted>
-          <h2 className="text-2xl font-bold text-navy sm:text-3xl">Recent {def.name.toLowerCase()}</h2>
+          <h2 className="text-2xl font-bold text-navy sm:text-3xl">Recent work</h2>
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {doc.relatedProjects.map((p) => (
-              <ProjectCard key={p._id} project={p} />
+            {projects.map((p) => (
+              <ProjectCard key={p.id} project={p} />
             ))}
           </div>
         </Section>
       ) : null}
 
       {/* Typical range and timeline */}
-      <Section muted={!doc?.relatedProjects?.length}>
+      <Section muted={projects.length === 0}>
         <div className="grid gap-6 sm:grid-cols-2">
           <div className="rounded-lg border border-stone-200 bg-paper p-7">
             <div className="text-sm font-semibold uppercase tracking-wider text-stone-400">

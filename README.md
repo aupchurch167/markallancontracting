@@ -40,12 +40,21 @@ by the owner. All live in `lib/constants.ts` and are overridable from the Sanity
 | Trade Partners placement | main nav, once ungated (`FEATURES.tradePartnersPublished`) |
 | Homepage price/build claim | softened (no strict estimator = builder claim) |
 
+## Projects
+
+`/projects`, the homepage, and the service hubs render four real delivered jobs
+carried over from the existing macont.com — Kennesaw Pilates studio, tanning
+salon buildout, office-to-warehouse flex conversion, and a 12-building exterior
+repaint — with their real photos in `public/projects/*`. Copy is rewritten in
+the site voice (`lib/fallback-projects.ts`); Sanity `project` documents override
+per-slug once authored with CompanyCam photos.
+
 ## Still open (need real assets, not decisions)
 
 | Item | Unlocks |
 |---|---|
-| `NEXT_PUBLIC_SANITY_PROJECT_ID` + write token | Authored CMS content overrides the code fallbacks |
-| Delivered projects + CompanyCam photos | `/projects` and the service×city matrix (gated by design until real local work exists) |
+| `NEXT_PUBLIC_SANITY_PROJECT_ID` + write token | Authored CMS content overrides all code fallbacks |
+| More delivered projects + CompanyCam photos | Deeper portfolio; local project references that ungate service×city matrix pages |
 | Trade Partner figures — insurance limits, W/C mod rate, crew capacity, bonding | Ungate Trade Partners (flip `FEATURES.tradePartnersPublished`) |
 
 ## Seeding the CMS

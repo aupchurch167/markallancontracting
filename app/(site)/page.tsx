@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { getSiteSettings, getFeaturedProjects } from '@/lib/queries';
+import { getSiteSettings } from '@/lib/queries';
+import { getFeaturedSummaries } from '@/lib/projects';
 import { CallButton } from '@/components/PhoneLink';
 import { CallCTA } from '@/components/CallCTA';
 import { ServiceGrid } from '@/components/ServiceGrid';
@@ -17,7 +18,7 @@ export const metadata: Metadata = pageMetadata({
 
 export default async function HomePage() {
   const settings = await getSiteSettings();
-  const featured = await getFeaturedProjects();
+  const featured = await getFeaturedSummaries();
   const { phone, phoneRaw } = settings;
 
   return (
@@ -145,7 +146,7 @@ export default async function HomePage() {
           </div>
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {featured.map((p) => (
-              <ProjectCard key={p._id} project={p} />
+              <ProjectCard key={p.id} project={p} />
             ))}
           </div>
         </Section>

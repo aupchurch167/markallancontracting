@@ -3,10 +3,10 @@ import { SITE } from '@/lib/constants';
 import { SERVICE_SLUGS, MARKETS } from '@/lib/site-data';
 import { FALLBACK_CITIES } from '@/lib/fallback-cities';
 import { FALLBACK_POSTS } from '@/lib/fallback-insights';
+import { getAllProjectSlugs } from '@/lib/projects';
 import {
   getServiceCitySlugs,
   getCitySlugs,
-  getProjectSlugs,
   getPostSlugs,
 } from '@/lib/queries';
 
@@ -34,7 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [serviceCities, cities, projects, posts] = await Promise.all([
     getServiceCitySlugs(),
     getCitySlugs(),
-    getProjectSlugs(),
+    getAllProjectSlugs(),
     getPostSlugs(),
   ]);
 
