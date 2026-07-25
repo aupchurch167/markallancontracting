@@ -9,18 +9,49 @@ import { pageMetadata } from '@/lib/seo';
 export const metadata: Metadata = pageMetadata({
   title: 'Pre-Construction Services in Metro Atlanta',
   description:
-    'Budgeting, feasibility, site assessment, and value engineering before scope is locked. Get a defensible number and a realistic schedule.',
+    'A paid pre-construction engagement — feasibility, budgeting, value engineering, permitting strategy, and a Matterport scan. Fixed fee, credited to the build if we do it.',
   path: '/pre-construction',
 });
 
-const COVERS = [
-  ['Budgeting', 'A real number built from scope, not a per-foot guess.'],
-  ['Feasibility', 'Whether the building and the use actually line up.'],
-  ['Site assessment', 'What the existing conditions are going to cost you.'],
-  ['Scope development', 'Turning an idea into something a GC can price.'],
-  ['Value engineering', 'Where the money is, and where it does not need to be.'],
-  ['Permitting strategy', 'What the jurisdiction will require, before you file.'],
-  ['Matterport scanning', 'An accurate model of the space to build against.'],
+const TIERS = [
+  {
+    name: 'Feasibility & Budget Check',
+    tagline: 'Does this project pencil?',
+    forWho: 'For owners and brokers deciding whether a deal or a project is worth chasing.',
+    includes: [
+      'Site walk and existing-conditions assessment',
+      'Order-of-magnitude budget',
+      'Feasibility read — does the building support the use',
+      'A rough schedule',
+      'A straight go / no-go',
+    ],
+    deliverable: 'A short written budget and feasibility summary.',
+    flagship: false,
+  },
+  {
+    name: 'Full Pre-Construction',
+    tagline: 'A number and a plan you can build from.',
+    forWho: 'For projects moving toward construction that need a defensible budget and a real schedule.',
+    includes: [
+      'Everything in the Budget Check',
+      'Trade-by-trade budgeting',
+      'Value engineering, with the cost of each option',
+      'Full scope development a GC can bid',
+      'Permitting strategy for your jurisdiction',
+      'Matterport 3D scan of the space',
+      'A construction-ready schedule',
+    ],
+    deliverable:
+      'A complete pre-construction package — budget, schedule, VE options, permitting roadmap, and scan.',
+    flagship: true,
+  },
+];
+
+const STEPS = [
+  ['Scope and fee', 'We agree what the engagement covers and a fixed fee before any work starts. No open meter.'],
+  ['Walk and assess', 'We walk the space and dig into existing conditions, systems, feasibility, and the jurisdiction.'],
+  ['Budget and plan', 'We build the budget, schedule, and value-engineering options — the number and the plan behind it.'],
+  ['Handoff', 'You get the package and a clear decision. If we build the project, the fee credits back against construction.'],
 ];
 
 export default async function PreConstructionPage() {
@@ -38,13 +69,20 @@ export default async function PreConstructionPage() {
 
       <section className="bg-navy text-white">
         <div className="container-page py-16 sm:py-20">
-          <h1 className="max-w-3xl text-4xl font-bold text-white sm:text-5xl">
-            Pre-construction
+          <p className="text-sm font-semibold uppercase tracking-widest text-accent">
+            A pre-construction engagement
+          </p>
+          <h1 className="mt-3 max-w-3xl text-4xl font-bold text-white sm:text-5xl">
+            Get the number before you commit
           </h1>
           <p className="mt-4 max-w-2xl text-lg text-stone-100/90">
-            The work that happens before the work — so the number holds up and the
-            schedule is real.
+            A defined, paid engagement that gets you a defensible budget and a real
+            schedule before construction starts — and if we build the project, the
+            fee comes off your construction cost.
           </p>
+          <div className="mt-8">
+            <CallButton phone={phone} phoneRaw={phoneRaw} />
+          </div>
         </div>
       </section>
 
@@ -60,49 +98,91 @@ export default async function PreConstructionPage() {
             is not fully settled, and the existing conditions are a question mark.
             Guess low and you eat the change orders. Guess high and you lose the
             deal. Pre-construction is how you get to a number you can actually stand
-            behind.
+            behind — as a defined piece of work, not a favor.
           </p>
         </div>
       </Section>
 
-      {/* What it covers */}
+      {/* Two tiers — the product */}
       <Section muted>
-        <Eyebrow>What pre-construction covers</Eyebrow>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          {COVERS.map(([title, body]) => (
-            <div key={title} className="rounded-lg border border-stone-200 bg-paper p-5">
-              <div className="font-semibold text-navy">{title}</div>
-              <p className="mt-1 text-sm text-stone-600">{body}</p>
+        <Eyebrow>Two ways to start</Eyebrow>
+        <h2 className="mt-2 text-2xl font-bold text-navy sm:text-3xl">
+          Pick the depth your project needs
+        </h2>
+        <div className="mt-8 grid gap-6 lg:grid-cols-2">
+          {TIERS.map((tier) => (
+            <div
+              key={tier.name}
+              className={`flex flex-col rounded-xl border bg-paper p-7 ${
+                tier.flagship ? 'border-accent shadow-sm ring-1 ring-accent/20' : 'border-stone-200'
+              }`}
+            >
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="text-xl font-bold text-navy">{tier.name}</h3>
+                {tier.flagship && (
+                  <span className="rounded-full bg-accent px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
+                    Most projects
+                  </span>
+                )}
+              </div>
+              <p className="mt-1 font-medium text-accent">{tier.tagline}</p>
+              <p className="mt-3 text-sm text-stone-600">{tier.forWho}</p>
+              <ul className="mt-5 space-y-2">
+                {tier.includes.map((item) => (
+                  <li key={item} className="flex items-start gap-2 text-stone-600">
+                    <span aria-hidden className="mt-1 text-accent">✓</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-6 border-t border-stone-200 pt-4">
+                <div className="text-xs font-semibold uppercase tracking-wider text-stone-400">
+                  You walk away with
+                </div>
+                <p className="mt-1 text-sm font-medium text-navy">{tier.deliverable}</p>
+              </div>
             </div>
           ))}
         </div>
       </Section>
 
-      {/* What you get */}
+      {/* Fee model — the sell */}
       <Section>
-        <div className="max-w-3xl">
-          <Eyebrow>What you get out of it</Eyebrow>
-          <ul className="mt-4 space-y-3 text-lg text-stone-600">
-            <li className="flex gap-3">
-              <span aria-hidden className="text-accent">→</span>
-              A defensible number you can hand to an owner or a lender.
-            </li>
-            <li className="flex gap-3">
-              <span aria-hidden className="text-accent">→</span>
-              A realistic schedule that accounts for permitting and lead times.
-            </li>
-            <li className="flex gap-3">
-              <span aria-hidden className="text-accent">→</span>
-              Fewer change orders, because the surprises got found early.
-            </li>
-          </ul>
+        <div className="mx-auto max-w-3xl rounded-xl border border-navy/15 bg-navy/[0.03] p-8">
+          <Eyebrow>How the fee works</Eyebrow>
+          <p className="mt-3 text-xl font-semibold text-navy">
+            A fixed fee, agreed up front. If we build the project, it comes off your
+            construction cost.
+          </p>
+          <p className="mt-4 text-lg leading-relaxed text-stone-600">
+            No open meter and no surprise invoice — you know the number before we
+            start. You get a defensible budget and a real plan either way. And if you
+            hire us for the build, the pre-construction fee is credited back against
+            construction, so the work pays for itself.
+          </p>
         </div>
       </Section>
 
-      {/* When to bring a GC in */}
+      {/* How the engagement runs */}
       <Section muted>
+        <Eyebrow>How the engagement runs</Eyebrow>
+        <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {STEPS.map(([title, body], i) => (
+            <div key={title}>
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-navy text-lg font-bold text-white">
+                {i + 1}
+              </div>
+              <h3 className="mt-4 text-lg font-bold text-navy">{title}</h3>
+              <p className="mt-2 text-sm text-stone-600">{body}</p>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* When to bring us in */}
+      <Section>
         <div className="max-w-3xl">
-          <Eyebrow>When to bring a GC in</Eyebrow>
+          <Eyebrow>When to bring us in</Eyebrow>
           <p className="mt-3 text-lg leading-relaxed text-stone-600">
             Early. The cheapest time to change something is before it is drawn, and
             the most expensive time is after it is built. A GC in the room during
@@ -116,8 +196,8 @@ export default async function PreConstructionPage() {
       <CallCTA
         phone={phone}
         phoneRaw={phoneRaw}
-        heading="Being asked for a number?"
-        body="Call us before you guess. We'll help you get to one you can defend."
+        heading="Start with a call"
+        body="Tell us about the project and we'll scope a pre-construction engagement — and what it'll cost."
       />
     </>
   );
