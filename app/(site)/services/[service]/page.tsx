@@ -135,6 +135,12 @@ export default async function ServiceHubPage({
         <div className="mt-8">
           <PlanSteps steps={doc?.planSteps} />
         </div>
+        <Link
+          href="/construction-process"
+          className="mt-8 inline-block font-semibold text-accent hover:text-accent-700"
+        >
+          See how a job runs day to day →
+        </Link>
       </Section>
 
       {/* Project examples */}

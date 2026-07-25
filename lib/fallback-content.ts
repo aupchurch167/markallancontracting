@@ -280,8 +280,25 @@ export const SERVICE_CONTENT: Record<ServiceKey, ServiceContent> = {
   },
 };
 
+/**
+ * The 3-step plan, down-funnel version — educational, per the voice guide (the
+ * service/city reader wants specifics: what actually happens, what you bring,
+ * roughly how long). The homepage keeps its own punchy inline version.
+ */
 export const PLAN_STEPS = [
-  { n: '1', title: 'Walk the space', body: 'We come out and ask the questions that change the price.' },
-  { n: '2', title: 'Get a real number', body: 'A scoped estimate you can hand to your owner. Not a range.' },
-  { n: '3', title: 'We build', body: 'Crews mobilize. Work gets done. You get your space back.' },
+  {
+    n: '1',
+    title: 'Walk the space',
+    body: 'We come out and look at what’s actually there — existing conditions, the capacity of the HVAC, electrical, and plumbing, and what your use will trigger for code and accessibility. Bring whatever you have: drawings, the lease exhibit, your target date. It takes about an hour, and we get on the calendar within days.',
+  },
+  {
+    n: '2',
+    title: 'Get a real number',
+    body: 'We scope it trade by trade — not a per-foot guess — and account for permitting and the long-lead items that actually move a schedule. You get a scoped estimate with the inclusions and exclusions spelled out, so you can hand it to your owner or lender and defend it. Not a range, and usually back in days.',
+  },
+  {
+    n: '3',
+    title: 'We build',
+    body: 'We pull the permits, order the long-lead items, and mobilize — self-performing the interior trades and managing the rest, in sequence. You get a point of contact and updates at the milestones that matter, through punch and closeout, including the documents you need to occupy.',
+  },
 ];
