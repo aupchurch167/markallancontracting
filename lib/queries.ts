@@ -5,11 +5,13 @@ import type {
   LandingPage,
   Market,
   Post,
+  PostCard,
   Project,
   ProjectCard,
   Service,
   ServiceCity,
   SiteSettings,
+  TeamMember,
 } from './types';
 
 /**
@@ -28,6 +30,25 @@ const projectCardProjection = `
   scopeSummary,
   "serviceSlug": service->slug.current,
   "image": images[0]
+`;
+
+const authorProjection = `
+  "name": author->name,
+  "role": author->role,
+  "slug": author->slug.current,
+  "photo": author->photo
+`;
+
+const postCardProjection = `
+  _id,
+  title,
+  "slug": slug.current,
+  excerpt,
+  cluster,
+  publishedAt,
+  featured,
+  mainImage,
+  "author": { ${authorProjection} }
 `;
 
 /**
@@ -171,7 +192,8 @@ export async function getProject(slug: string): Promise<Project | null> {
   return client.fetch<Project | null>(
     `*[_type == "project" && slug.current == $slug && status == "delivered"][0]{
       ${projectCardProjection},
-      timeline, challenge, solution, images, status
+      timeline, challenge, solution, images, status,
+      testimonial, highlights, completedDate, squareFootage
     }`,
     { slug },
   );
@@ -197,11 +219,11 @@ export async function getMarket(slug: string): Promise<Market | null> {
   );
 }
 
-export async function getPosts(): Promise<Post[]> {
+export async function getPosts(): Promise<PostCard[]> {
   if (!client) return [];
-  return client.fetch<Post[]>(
+  return client.fetch<PostCard[]>(
     `*[_type == "post" && defined(publishedAt)] | order(publishedAt desc){
-      _id, title, "slug": slug.current, excerpt, author, publishedAt, cluster, ogImage
+      ${postCardProjection}
     }`,
   );
 }
@@ -210,8 +232,9 @@ export async function getPost(slug: string): Promise<Post | null> {
   if (!client) return null;
   return client.fetch<Post | null>(
     `*[_type == "post" && slug.current == $slug][0]{
-      _id, title, "slug": slug.current, excerpt, body, author, publishedAt,
-      cluster, metaTitle, metaDescription, ogImage
+      ${postCardProjection},
+      body, tags, metaTitle, metaDescription, ogImage,
+      "relatedPosts": relatedPosts[]->{ ${postCardProjection} }
     }`,
     { slug },
   );
@@ -221,6 +244,25 @@ export async function getPostSlugs(): Promise<string[]> {
   if (!client) return [];
   return client.fetch<string[]>(
     `*[_type == "post" && defined(slug.current)].slug.current`,
+  );
+}
+
+export async function getTeam(): Promise<TeamMember[]> {
+  if (!client) return [];
+  return client.fetch<TeamMember[]>(
+    `*[_type == "teamMember"] | order(order asc){
+      _id, name, "slug": slug.current, role, photo, bio, email, phone, linkedin, order
+    }`,
+  );
+}
+
+export async function getTeamMember(slug: string): Promise<TeamMember | null> {
+  if (!client) return null;
+  return client.fetch<TeamMember | null>(
+    `*[_type == "teamMember" && slug.current == $slug][0]{
+      _id, name, "slug": slug.current, role, photo, bio, email, phone, linkedin, order
+    }`,
+    { slug },
   );
 }
 

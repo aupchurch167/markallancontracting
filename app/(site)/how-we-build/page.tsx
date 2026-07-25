@@ -90,6 +90,12 @@ export default async function HowWeBuildPage() {
             developed and operated our own commercial property, so we know what an
             owner is actually worried about.
           </p>
+          <Link
+            href="/team"
+            className="mt-4 inline-block font-semibold text-accent hover:text-accent-700"
+          >
+            Meet the team →
+          </Link>
         </div>
       </Section>
 

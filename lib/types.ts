@@ -65,12 +65,27 @@ export interface ProjectCard {
   serviceSlug?: string;
 }
 
+export interface Testimonial {
+  quote?: string;
+  attribution?: string;
+  role?: string;
+}
+
+export interface StatHighlight {
+  value: string;
+  label: string;
+}
+
 export interface Project extends ProjectCard {
   timeline?: string;
   challenge?: PortableTextBlock[];
   solution?: PortableTextBlock[];
   images?: SanityImage[];
   status?: string;
+  testimonial?: Testimonial;
+  highlights?: StatHighlight[];
+  completedDate?: string;
+  squareFootage?: string;
 }
 
 export interface ServiceCity {
@@ -100,18 +115,46 @@ export interface Market {
   relatedProjects?: ProjectCard[];
 }
 
-export interface Post {
+export interface TeamMember {
+  _id: string;
+  name: string;
+  slug: string;
+  role: string;
+  photo?: SanityImage;
+  bio?: PortableTextBlock[];
+  email?: string;
+  phone?: string;
+  linkedin?: string;
+  order?: number;
+}
+
+/** Author summary as rendered on a post (resolved from the teamMember ref). */
+export interface Author {
+  name: string;
+  role?: string;
+  slug?: string;
+  photo?: SanityImage;
+}
+
+export interface PostCard {
   _id: string;
   title: string;
   slug: string;
   excerpt?: string;
-  body?: PortableTextBlock[];
-  author?: string;
-  publishedAt?: string;
   cluster?: string;
+  publishedAt?: string;
+  mainImage?: SanityImage;
+  author?: Author;
+  featured?: boolean;
+}
+
+export interface Post extends PostCard {
+  body?: PortableTextBlock[];
+  tags?: string[];
   metaTitle?: string;
   metaDescription?: string;
   ogImage?: SanityImage;
+  relatedPosts?: PostCard[];
 }
 
 export interface LandingPage {

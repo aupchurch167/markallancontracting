@@ -106,6 +106,7 @@ export function Footer({
         <div className="container-page flex flex-wrap gap-x-6 gap-y-2 py-4 text-sm text-stone-600">
           <Link href="/how-we-build" className="hover:text-accent">How We Build</Link>
           <Link href="/construction-process" className="hover:text-accent">Our Process</Link>
+          <Link href="/team" className="hover:text-accent">Team</Link>
           <Link href="/projects" className="hover:text-accent">Projects</Link>
           <Link href="/insights" className="hover:text-accent">Insights</Link>
           <Link href="/contact" className="hover:text-accent">Contact</Link>

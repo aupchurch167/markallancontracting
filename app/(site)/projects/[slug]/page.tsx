@@ -62,6 +62,12 @@ export default async function ProjectPage({
   const cityState = project?.cityState || fb?.cityState;
   const location =
     cityName && cityState ? `${cityName}, ${cityState.toUpperCase()}` : undefined;
+  const highlights = project?.highlights;
+  const testimonial = project?.testimonial;
+  const squareFootage = project?.squareFootage;
+  const completed = project?.completedDate
+    ? new Date(project.completedDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })
+    : undefined;
 
   // Images: Sanity assets → CDN URLs, else the downloaded fallback photos.
   const images: { url: string; alt: string }[] = project?.images?.length
@@ -99,6 +105,20 @@ export default async function ProjectPage({
       {hero && (
         <div className="relative aspect-video w-full bg-stone-200">
           <Image src={hero.url} alt={hero.alt} fill priority sizes="100vw" className="object-cover" />
+        </div>
+      )}
+
+      {/* Highlights stat row */}
+      {highlights && highlights.length > 0 && (
+        <div className="border-b border-stone-200 bg-stone-50">
+          <div className="container-page grid grid-cols-2 gap-6 py-8 sm:grid-cols-4">
+            {highlights.map((h) => (
+              <div key={h.label}>
+                <div className="text-2xl font-bold text-navy sm:text-3xl">{h.value}</div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-stone-400">{h.label}</div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -153,8 +173,37 @@ export default async function ProjectPage({
                 <div className="mt-1 text-stone-600">{location}</div>
               </div>
             )}
+            {squareFootage && (
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-stone-400">Size</div>
+                <div className="mt-1 text-stone-600">{squareFootage}</div>
+              </div>
+            )}
+            {completed && (
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-stone-400">Completed</div>
+                <div className="mt-1 text-stone-600">{completed}</div>
+              </div>
+            )}
           </aside>
         </div>
+
+        {/* Testimonial */}
+        {testimonial?.quote && (
+          <figure className="mt-12 rounded-xl border-l-4 border-accent bg-stone-50 p-8">
+            <blockquote className="text-xl font-medium leading-relaxed text-navy">
+              “{testimonial.quote}”
+            </blockquote>
+            {(testimonial.attribution || testimonial.role) && (
+              <figcaption className="mt-4 text-sm text-stone-500">
+                {testimonial.attribution && (
+                  <span className="font-semibold text-navy">{testimonial.attribution}</span>
+                )}
+                {testimonial.role && <span> · {testimonial.role}</span>}
+              </figcaption>
+            )}
+          </figure>
+        )}
 
         {/* Gallery */}
         {images.length > 1 && (

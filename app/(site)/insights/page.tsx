@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getPosts, getSiteSettings } from '@/lib/queries';
 import { FALLBACK_POSTS } from '@/lib/fallback-insights';
+import { urlForImage } from '@/sanity/lib/image';
 import { CallCTA } from '@/components/CallCTA';
 import { Section } from '@/components/Section';
 import { CLUSTERS } from '@/lib/clusters';
@@ -19,13 +21,15 @@ interface Card {
   title: string;
   excerpt?: string;
   cluster?: string;
+  imageUrl?: string;
+  authorName?: string;
+  featured?: boolean;
 }
 
 export default async function InsightsPage() {
   const [sanityPosts, settings] = await Promise.all([getPosts(), getSiteSettings()]);
   const { phone, phoneRaw } = settings;
 
-  // Sanity posts win per-slug; authored fallback fills the rest.
   const sanitySlugs = new Set(sanityPosts.map((p) => p.slug));
   const cards: Card[] = [
     ...sanityPosts.map((p) => ({
@@ -33,14 +37,20 @@ export default async function InsightsPage() {
       title: p.title,
       excerpt: p.excerpt,
       cluster: p.cluster,
+      imageUrl: urlForImage(p.mainImage)?.width(800).height(500).url() || undefined,
+      authorName: p.author?.name,
+      featured: p.featured,
     })),
     ...FALLBACK_POSTS.filter((p) => !sanitySlugs.has(p.slug)).map((p) => ({
       slug: p.slug,
       title: p.title,
       excerpt: p.excerpt,
       cluster: p.cluster,
+      authorName: p.author,
     })),
   ];
+
+  const featured = cards.find((c) => c.featured);
 
   return (
     <>
@@ -53,7 +63,33 @@ export default async function InsightsPage() {
         </div>
       </section>
 
-      <Section>
+      {/* Featured post */}
+      {featured && (
+        <Section>
+          <Link
+            href={`/insights/${featured.slug}`}
+            className="group grid gap-6 overflow-hidden rounded-xl border border-stone-200 bg-paper lg:grid-cols-2"
+          >
+            <div className="relative aspect-[16/10] bg-stone-100 lg:aspect-auto">
+              {featured.imageUrl ? (
+                <Image src={featured.imageUrl} alt={featured.title} fill sizes="(max-width:1024px) 100vw, 50vw" className="object-cover" />
+              ) : (
+                <div className="flex h-full min-h-48 items-center justify-center text-sm text-stone-400">Featured</div>
+              )}
+            </div>
+            <div className="flex flex-col justify-center p-7">
+              <div className="text-xs font-semibold uppercase tracking-wider text-accent">Featured</div>
+              <h2 className="mt-2 text-2xl font-bold text-navy group-hover:text-accent">{featured.title}</h2>
+              {featured.excerpt && <p className="mt-2 text-stone-600">{featured.excerpt}</p>}
+              {featured.authorName && (
+                <div className="mt-4 text-sm text-stone-400">By {featured.authorName}</div>
+              )}
+            </div>
+          </Link>
+        </Section>
+      )}
+
+      <Section muted={!!featured}>
         <div className="space-y-14">
           {CLUSTERS.map((cluster) => {
             const clusterPosts = cards.filter((p) => p.cluster === cluster.value);
@@ -67,12 +103,22 @@ export default async function InsightsPage() {
                       <Link
                         key={p.slug}
                         href={`/insights/${p.slug}`}
-                        className="group rounded-lg border border-stone-200 p-6 transition-colors hover:border-accent"
+                        className="group flex flex-col overflow-hidden rounded-lg border border-stone-200 bg-paper transition-colors hover:border-accent"
                       >
-                        <div className="text-lg font-semibold text-navy group-hover:text-accent">
-                          {p.title}
+                        {p.imageUrl && (
+                          <div className="relative aspect-[16/10] bg-stone-100">
+                            <Image src={p.imageUrl} alt={p.title} fill sizes="(max-width:768px) 100vw, 33vw" className="object-cover" />
+                          </div>
+                        )}
+                        <div className="flex flex-1 flex-col p-6">
+                          <div className="text-lg font-semibold text-navy group-hover:text-accent">
+                            {p.title}
+                          </div>
+                          {p.excerpt && <p className="mt-2 text-sm text-stone-600">{p.excerpt}</p>}
+                          {p.authorName && (
+                            <div className="mt-3 text-xs text-stone-400">By {p.authorName}</div>
+                          )}
                         </div>
-                        {p.excerpt && <p className="mt-2 text-sm text-stone-600">{p.excerpt}</p>}
                       </Link>
                     ))}
                   </div>

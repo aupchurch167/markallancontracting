@@ -40,6 +40,25 @@ by the owner. All live in `lib/constants.ts` and are overridable from the Sanity
 | Trade Partners placement | main nav, once ungated (`FEATURES.tradePartnersPublished`) |
 | Homepage price/build claim | softened (no strict estimator = builder claim) |
 
+## CMS (blog, projects, team)
+
+The Sanity schemas are built out for real editing, organized in the Studio desk
+into Blog (Posts + Team/Authors), Projects, Team, Services & Types, Locations &
+Matrix, and Campaign groups.
+
+- **Blog** — posts carry a hero image, a rich body (`blockContent` with inline
+  images + captions), an author reference to a **Team Member**, tags, featured
+  flag, and curated related posts. Index shows a featured hero + author bylines;
+  detail shows the byline (with photo), reading time, tags, and related.
+- **Team** — a `teamMember` type (name, role, photo, bio, contact, order). The
+  real team (Justin, Brian, Nick, Adam Upchurch) ships on `/team` from
+  `lib/fallback-team.ts` + `public/team/*`, overridden per-slug by Sanity.
+- **Projects** — add completed date, square footage, a testimonial, and a stat
+  highlights row on top of the existing scope/challenge/solution/gallery.
+
+`npm run seed` populates settings, services, cities, and the four team members
+(add photos in Studio; they already render on `/team` until then).
+
 ## Projects
 
 `/projects`, the homepage, and the service hubs render four real delivered jobs

@@ -215,13 +215,35 @@ const cities = [
   ]),
 }));
 
+// --- Team (real people from macont.com/about). Photos are uploaded in Studio. ---
+const team = [
+  { slug: 'adam-upchurch', name: 'Adam Upchurch', role: 'Business Development', email: 'adam@macont.com', order: 10,
+    bio: 'Usually the first person you talk to. Adam walks the space, scopes the work, and gets you a real number you can take to your owner.' },
+  { slug: 'justin-upchurch', name: 'Justin Upchurch', role: 'Sr. Project Manager', email: 'justin@macont.com', order: 20,
+    bio: 'Runs jobs start to finish — scope, budget, schedule, and the paperwork. If you’re getting an update, it’s usually coming from Justin.' },
+  { slug: 'brian-helton', name: 'Brian Helton', role: 'Superintendent', email: 'brian@macont.com', order: 30,
+    bio: 'Runs the site day to day — sequencing the trades, keeping the work moving, and catching problems in the field before they cost you.' },
+  { slug: 'nick-demarco', name: 'Nick DeMarco', role: 'Project Coordinator', email: 'nick@macont.com', order: 40,
+    bio: 'Keeps the moving parts moving — permits, submittals, scheduling, and the coordination that keeps a job from stalling.' },
+].map((m) => ({
+  _id: `teamMember.${m.slug}`,
+  _type: 'teamMember',
+  name: m.name,
+  slug: { _type: 'slug', current: m.slug },
+  role: m.role,
+  email: m.email,
+  order: m.order,
+  bio: blocks([m.bio]),
+}));
+
 async function run() {
-  const docs = [settings, ...services, ...cities];
+  const docs = [settings, ...services, ...cities, ...team];
   console.log(`Seeding ${docs.length} documents to ${projectId}/${dataset}...`);
   const tx = client.transaction();
   for (const doc of docs) tx.createOrReplace(doc);
   await tx.commit();
-  console.log('Done. Settings + 7 services + 8 cities seeded.');
+  console.log('Done. Settings + 7 services + 8 cities + 4 team members seeded.');
+  console.log('Add team photos in Studio (they already render on /team from public/team until then).');
   console.log('Note: projects and serviceCity docs are intentionally NOT seeded — the matrix stays gated until real delivered work exists.');
 }
 
