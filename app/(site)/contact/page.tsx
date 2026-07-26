@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getSiteSettings } from '@/lib/queries';
 import { CallButton, PhoneLink } from '@/components/PhoneLink';
+import { BookingEmbed } from '@/components/BookingEmbed';
 import { Section, Eyebrow } from '@/components/Section';
 import { SITE, CONTACT } from '@/lib/constants';
 import { pageMetadata } from '@/lib/seo';
@@ -131,6 +132,11 @@ export default async function ContactPage() {
               </p>
             </div>
           </div>
+        </div>
+
+        {/* Optional site-walk scheduler (hidden until a Calendly URL is set) */}
+        <div className="mt-12">
+          <BookingEmbed />
         </div>
       </Section>
     </>

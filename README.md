@@ -103,8 +103,24 @@ gated until that content is real.
   event to track the one thing that matters.
 - **Legal** — `/privacy` and `/terms`, written around the real stack (CallRail,
   GA4, contact form), linked in the footer. Have counsel review before launch.
-- **Deferred:** the working scope form (owner wants leads in a CRM — needs to
-  pick which; the mailto form + `data-lead-form` marker are in place meanwhile).
+- **Security headers + CSP** — `next.config.mjs` `headers()` applies HSTS,
+  nosniff, frame-options, referrer + permissions policy, and one pragmatic CSP
+  (locks script/connect/frame to self + GA4/CallRail/Sanity/Calendly; permissive
+  on inline/eval so the embedded Studio still runs).
+- **Dynamic OG images** — `/api/og` renders a branded 1200×630 card per page;
+  `pageMetadata` defaults every route's social card to it (title + eyebrow).
+- **RSS** — `/feed.xml` (Sanity posts over the authored fallback), advertised via
+  a discovery `<link>` sitewide.
+- **Error boundaries** — branded `app/(site)/error.tsx` + root `global-error.tsx`
+  (the graceful-failure foundation; Sentry is a drop-in once a DSN exists).
+- **Site-walk booking** — `BookingEmbed` shows a Calendly scheduler on `/contact`
+  when `NEXT_PUBLIC_CALENDLY_URL` is set; hidden otherwise (calls stay primary).
+- **Deferred, need external setup:**
+  - Working scope form (owner wants leads in a CRM — needs to pick which; mailto
+    form + `data-lead-form` marker in place).
+  - Sanity draft/preview (Presentation) — needs a viewer token; deferred to avoid
+    half-wiring the static build before Sanity is live.
+  - Sentry error reporting — needs a DSN; error boundaries already capture the UI.
 
 ## Architecture notes
 

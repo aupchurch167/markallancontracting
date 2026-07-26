@@ -124,9 +124,45 @@ const fallbackRedirects = [
   { source: '/category/:slug*', destination: '/insights', statusCode: 301 },
 ];
 
+/**
+ * Content Security Policy. One pragmatic policy for the whole site — permissive
+ * on inline/eval (the embedded Sanity Studio and CallRail need it) but strict on
+ * *where* things can load from: locks script/connect/frame to self + the known
+ * third parties (GA4, CallRail, Sanity, Calendly), blocks framing and plugins,
+ * and pins base-uri/form-action. Meaningful hardening without breaking Studio.
+ */
+const csp = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "object-src 'none'",
+  "frame-ancestors 'self'",
+  "form-action 'self' mailto:",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://www.googletagmanager.com https://cdn.callrail.com https://*.callrail.com https://www.google-analytics.com https://assets.calendly.com",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https:",
+  "font-src 'self' data:",
+  "connect-src 'self' https://*.sanity.io wss://*.sanity.io https://www.google-analytics.com https://*.analytics.google.com https://*.google-analytics.com https://www.googletagmanager.com https://*.callrail.com https://calendly.com https://*.calendly.com",
+  "frame-src 'self' https://calendly.com https://*.calendly.com",
+  "media-src 'self' https:",
+  "worker-src 'self' blob:",
+].join('; ');
+
+const securityHeaders = [
+  { key: 'Content-Security-Policy', value: csp },
+  { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), browsing-topics=()' },
+  { key: 'X-DNS-Prefetch-Control', value: 'on' },
+];
+
 const nextConfig = {
   images: {
     remotePatterns: [{ protocol: 'https', hostname: 'cdn.sanity.io' }],
+  },
+  async headers() {
+    return [{ source: '/:path*', headers: securityHeaders }];
   },
   async redirects() {
     return [

@@ -15,6 +15,9 @@ export const metadata: Metadata = {
     template: `%s · ${SITE.name}`,
   },
   description: SITE.oneLiner,
+  alternates: {
+    types: { 'application/rss+xml': `${SITE.url}/feed.xml` },
+  },
 };
 
 /**

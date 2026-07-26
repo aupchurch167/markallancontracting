@@ -73,6 +73,15 @@ export const BRAND = {
   accent: '#2E75B6',
 } as const;
 
+/**
+ * Optional site-walk booking. Set NEXT_PUBLIC_CALENDLY_URL to a Calendly event
+ * link to surface an inline scheduler on /contact as a secondary path. Empty =
+ * hidden (calls stay the primary conversion).
+ */
+export const BOOKING = {
+  calendlyUrl: process.env.NEXT_PUBLIC_CALENDLY_URL || '',
+} as const;
+
 /** tel: href helper. Uses raw token until a real number is supplied. */
 export function telHref(phoneRaw: string = CONTACT.phoneRaw): string {
   return `tel:${phoneRaw}`;
