@@ -115,6 +115,16 @@ gated until that content is real.
   (the graceful-failure foundation; Sentry is a drop-in once a DSN exists).
 - **Site-walk booking** — `BookingEmbed` shows a Calendly scheduler on `/contact`
   when `NEXT_PUBLIC_CALENDLY_URL` is set; hidden otherwise (calls stay primary).
+- **`/admin` content console** — a password-gated console for drafting blog posts
+  and projects with Claude. Pick a type, write a brief, attach images/PDFs for
+  context, and `Generate with Claude` (`claude-opus-5`, vision + PDF reading)
+  produces a structured draft in the site voice. Every field is editable before
+  `Save as draft to Sanity`, which uploads attached images as assets and writes a
+  `drafts.*` document that opens straight in the Studio to review and publish.
+  Auth is a signed session cookie (`ADMIN_PASSWORD` + `ADMIN_SESSION_SECRET`);
+  generation needs `ANTHROPIC_API_KEY`; saving needs `SANITY_WRITE_TOKEN`. The
+  console denies access and returns clear errors until each is set. `noindex`,
+  disallowed in robots, and never invents figures not in the brief/attachments.
 - **Deferred, need external setup:**
   - Working scope form (owner wants leads in a CRM — needs to pick which; mailto
     form + `data-lead-form` marker in place).

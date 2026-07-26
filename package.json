@@ -11,6 +11,7 @@
     "seed": "node scripts/seed.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.115.0",
     "@portabletext/react": "^3.1.0",
     "@sanity/image-url": "^1.1.0",
     "@sanity/vision": "^3.70.0",
@@ -19,6 +20,7 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "sanity": "^3.70.0",
+    "server-only": "^0.0.1",
     "styled-components": "^6.1.14"
   },
   "devDependencies": {
