@@ -26,8 +26,18 @@ export async function POST(req: Request) {
   let form: FormData;
   try {
     form = await req.formData();
-  } catch {
-    return NextResponse.json({ error: 'Expected multipart form data.' }, { status: 400 });
+  } catch (err) {
+    // Surface WHY it failed. The usual prod cause is the POST being redirected
+    // (apex→www, http→https, or a domain forward), which drops the body and its
+    // multipart content-type. The received content-type makes that diagnosable.
+    const ct = req.headers.get('content-type') || '(none)';
+    const detail = err instanceof Error ? err.message : 'unknown';
+    return NextResponse.json(
+      {
+        error: `Could not read the upload (content-type: ${ct}). If you're on a redirecting URL, open /admin on the canonical domain. [${detail}]`,
+      },
+      { status: 400 },
+    );
   }
 
   const contentType = String(form.get('contentType') || '') as ContentType;
