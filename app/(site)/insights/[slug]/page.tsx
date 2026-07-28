@@ -40,7 +40,10 @@ export async function generateMetadata({
     title,
     description: post?.metaDescription || post?.excerpt || fb?.metaDescription || '',
     path: `/insights/${slug}`,
-    ogImage: urlForImage(post?.mainImage)?.width(1200).height(630).url() || undefined,
+    ogImage:
+      urlForImage(post?.mainImage)?.width(1200).height(630).url() ||
+      post?.heroImageUrl ||
+      undefined,
   });
 }
 
@@ -92,7 +95,9 @@ export default async function PostPage({
   const clusterValue = sanityPost?.cluster || fb?.cluster;
   const cluster = clusterTitle(clusterValue);
   const description = sanityPost?.metaDescription || sanityPost?.excerpt || fb?.excerpt;
-  const heroUrl = urlForImage(sanityPost?.mainImage)?.width(1600).height(900).url();
+  const heroUrl =
+    urlForImage(sanityPost?.mainImage)?.width(1600).height(900).url() ||
+    sanityPost?.heroImageUrl;
   const rt = readingTime(sanityPost?.body, fb);
   const tags = sanityPost?.tags;
 

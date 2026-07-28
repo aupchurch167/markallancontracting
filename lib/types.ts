@@ -62,6 +62,7 @@ export interface ProjectCard {
   cityState?: string;
   scopeSummary?: string;
   image?: SanityImage;
+  imageUrls?: { url: string; alt?: string }[];
   serviceSlug?: string;
 }
 
@@ -76,11 +77,21 @@ export interface StatHighlight {
   label: string;
 }
 
+/** A source file stored in R2 (image or PDF) attached to a post or project. */
+export interface Attachment {
+  label?: string;
+  url: string;
+  contentType?: string;
+}
+
 export interface Project extends ProjectCard {
   timeline?: string;
   challenge?: PortableTextBlock[];
   solution?: PortableTextBlock[];
   images?: SanityImage[];
+  /** External photo URLs (R2), used when no Sanity `images` are present. */
+  imageUrls?: { url: string; alt?: string }[];
+  attachments?: Attachment[];
   status?: string;
   testimonial?: Testimonial;
   highlights?: StatHighlight[];
@@ -144,6 +155,8 @@ export interface PostCard {
   cluster?: string;
   publishedAt?: string;
   mainImage?: SanityImage;
+  /** External hero URL (R2), used when no Sanity `mainImage` is present. */
+  heroImageUrl?: string;
   author?: Author;
   featured?: boolean;
 }
@@ -154,6 +167,7 @@ export interface Post extends PostCard {
   metaTitle?: string;
   metaDescription?: string;
   ogImage?: SanityImage;
+  attachments?: Attachment[];
   relatedPosts?: PostCard[];
 }
 

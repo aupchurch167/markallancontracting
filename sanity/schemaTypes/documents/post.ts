@@ -32,6 +32,32 @@ export const post = defineType({
       options: { hotspot: true },
       fields: [{ name: 'alt', type: 'string', title: 'Alt text' }],
     }),
+    defineField({
+      name: 'heroImageUrl',
+      title: 'Hero image URL (R2)',
+      type: 'url',
+      group: 'content',
+      description:
+        'External hero image (Cloudflare R2), set by the /admin console. Used when no Sanity hero image is uploaded above.',
+    }),
+    defineField({
+      name: 'attachments',
+      title: 'Attachments (R2)',
+      type: 'array',
+      group: 'content',
+      description: 'Source files uploaded with this post (images, PDFs) stored in R2.',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            { name: 'label', type: 'string', title: 'Label' },
+            { name: 'url', type: 'url', title: 'URL' },
+            { name: 'contentType', type: 'string', title: 'Content type' },
+          ],
+          preview: { select: { title: 'label', subtitle: 'contentType' } },
+        },
+      ],
+    }),
     defineField({ name: 'excerpt', type: 'text', rows: 2, group: 'content' }),
     defineField({ name: 'body', type: 'blockContent', group: 'content' }),
     defineField({

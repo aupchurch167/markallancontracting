@@ -29,7 +29,8 @@ const projectCardProjection = `
   "cityState": city->state,
   scopeSummary,
   "serviceSlug": service->slug.current,
-  "image": images[0]
+  "image": images[0],
+  "imageUrls": imageUrls
 `;
 
 const authorProjection = `
@@ -48,6 +49,7 @@ const postCardProjection = `
   publishedAt,
   featured,
   mainImage,
+  heroImageUrl,
   "author": { ${authorProjection} }
 `;
 
@@ -192,7 +194,7 @@ export async function getProject(slug: string): Promise<Project | null> {
   return client.fetch<Project | null>(
     `*[_type == "project" && slug.current == $slug && status == "delivered"][0]{
       ${projectCardProjection},
-      timeline, challenge, solution, images, status,
+      timeline, challenge, solution, images, imageUrls, attachments, status,
       testimonial, highlights, completedDate, squareFootage
     }`,
     { slug },
@@ -233,7 +235,7 @@ export async function getPost(slug: string): Promise<Post | null> {
   return client.fetch<Post | null>(
     `*[_type == "post" && slug.current == $slug][0]{
       ${postCardProjection},
-      body, tags, metaTitle, metaDescription, ogImage,
+      body, tags, metaTitle, metaDescription, ogImage, attachments,
       "relatedPosts": relatedPosts[]->{ ${postCardProjection} }
     }`,
     { slug },

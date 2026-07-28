@@ -125,6 +125,14 @@ gated until that content is real.
   generation needs `ANTHROPIC_API_KEY`; saving needs `SANITY_WRITE_TOKEN`. The
   console denies access and returns clear errors until each is set. `noindex`,
   disallowed in robots, and never invents figures not in the brief/attachments.
+- **Media storage (Cloudflare R2)** — `/admin` uploads (images + PDFs) go to R2
+  (S3-compatible), not Sanity's asset store. Images land on `heroImageUrl`
+  (posts) / `imageUrls[]` (projects); every file is also linked under
+  `attachments[]`, and PDFs render as a Documents list on the project page.
+  Rendering prefers a Sanity-uploaded image, then the R2 URL, then the built-in
+  fallback, so hand-uploaded Studio images still win. Needs `R2_ACCOUNT_ID`,
+  `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL`;
+  the public host is registered for `next/image` in `next.config.mjs`.
 - **Deferred, need external setup:**
   - Working scope form (owner wants leads in a CRM — needs to pick which; mailto
     form + `data-lead-form` marker in place).

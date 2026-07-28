@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
 import { writeClient, isWriteConfigured } from '@/sanity/lib/writeClient';
+import { uploadToR2, isR2Configured, type R2Object } from '@/lib/r2';
 import { blocksToPortableText } from '@/lib/portable-text';
 import type { GeneratedPost, GeneratedProject } from '@/lib/anthropic';
 
@@ -29,6 +30,15 @@ export async function POST(req: Request) {
       { status: 503 },
     );
   }
+  if (!isR2Configured) {
+    return NextResponse.json(
+      {
+        error:
+          'File storage is not configured. Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET, and R2_PUBLIC_BASE_URL.',
+      },
+      { status: 503 },
+    );
+  }
 
   let form: FormData;
   try {
@@ -52,32 +62,40 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Content needs at least a title and slug.' }, { status: 400 });
   }
 
-  // Upload attached images as Sanity assets (PDFs are context-only, skipped here).
+  // Upload every attached file (images + PDFs) to Cloudflare R2.
   const uploads = form.getAll('files').filter((f): f is File => f instanceof File);
   if (uploads.length > MAX_FILES) {
     return NextResponse.json({ error: `Attach at most ${MAX_FILES} files.` }, { status: 400 });
   }
 
-  const imageRefs: Array<{ _type: 'image'; _key: string; asset: { _type: 'reference'; _ref: string }; alt: string }> = [];
+  const stored: R2Object[] = [];
   try {
     for (const f of uploads) {
-      if (!f.type.startsWith('image/')) continue; // skip PDFs — reference material only
       if (f.size > MAX_FILE_BYTES) {
         return NextResponse.json({ error: `"${f.name}" is too large.` }, { status: 400 });
       }
       const buf = Buffer.from(await f.arrayBuffer());
-      const asset = await writeClient.assets.upload('image', buf, { filename: f.name });
-      imageRefs.push({
-        _type: 'image',
-        _key: randomUUID().replace(/-/g, '').slice(0, 12),
-        asset: { _type: 'reference', _ref: asset._id },
-        alt: content.title,
-      });
+      stored.push(
+        await uploadToR2({
+          buffer: buf,
+          contentType: f.type || 'application/octet-stream',
+          filename: f.name,
+          prefix: contentType === 'post' ? 'insights' : 'projects',
+        }),
+      );
     }
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Image upload failed.';
-    return NextResponse.json({ error: `Image upload failed: ${message}` }, { status: 502 });
+    const message = err instanceof Error ? err.message : 'Upload failed.';
+    return NextResponse.json({ error: `File upload to R2 failed: ${message}` }, { status: 502 });
   }
+
+  const images = stored.filter((s) => s.contentType.startsWith('image/'));
+  const attachments = stored.map((s) => ({
+    _key: randomUUID().replace(/-/g, '').slice(0, 12),
+    label: s.filename,
+    url: s.url,
+    contentType: s.contentType,
+  }));
 
   const baseId = randomUUID();
   const draftId = `drafts.${baseId}`;
@@ -99,9 +117,8 @@ export async function POST(req: Request) {
       featured: false,
       metaTitle: c.metaTitle || '',
       metaDescription: c.metaDescription || '',
-      ...(imageRefs[0]
-        ? { mainImage: { _type: 'image', asset: imageRefs[0].asset, alt: c.title } }
-        : {}),
+      ...(images[0] ? { heroImageUrl: images[0].url } : {}),
+      ...(attachments.length ? { attachments } : {}),
     };
   } else {
     const c = content as GeneratedProject;
@@ -120,7 +137,16 @@ export async function POST(req: Request) {
       featured: false,
       metaTitle: c.metaTitle || '',
       metaDescription: c.metaDescription || '',
-      ...(imageRefs.length ? { images: imageRefs } : {}),
+      ...(images.length
+        ? {
+            imageUrls: images.map((im) => ({
+              _key: randomUUID().replace(/-/g, '').slice(0, 12),
+              url: im.url,
+              alt: c.title,
+            })),
+          }
+        : {}),
+      ...(attachments.length ? { attachments } : {}),
     };
   }
 

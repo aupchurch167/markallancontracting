@@ -37,7 +37,8 @@ export default async function InsightsPage() {
       title: p.title,
       excerpt: p.excerpt,
       cluster: p.cluster,
-      imageUrl: urlForImage(p.mainImage)?.width(800).height(500).url() || undefined,
+      imageUrl:
+        urlForImage(p.mainImage)?.width(800).height(500).url() || p.heroImageUrl || undefined,
       authorName: p.author?.name,
       featured: p.featured,
     })),

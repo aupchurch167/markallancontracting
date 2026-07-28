@@ -30,7 +30,8 @@ function sanityToSummary(c: SanityCard): ProjectSummary {
     clientType: c.clientType,
     location: locationOf(c.cityName, c.cityState),
     scopeSummary: c.scopeSummary,
-    imageUrl: urlForImage(c.image)?.width(800).height(600).url() || undefined,
+    imageUrl:
+      urlForImage(c.image)?.width(800).height(600).url() || c.imageUrls?.[0]?.url || undefined,
   };
 }
 

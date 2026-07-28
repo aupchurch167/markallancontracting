@@ -30,6 +30,42 @@ export const project = defineType({
         },
       ],
     }),
+    defineField({
+      name: 'imageUrls',
+      title: 'Photo URLs (R2)',
+      type: 'array',
+      group: 'content',
+      description:
+        'External photos (Cloudflare R2), set by the /admin console. Used when no Sanity photos are uploaded above.',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            { name: 'url', type: 'url', title: 'URL' },
+            { name: 'alt', type: 'string', title: 'Alt text' },
+          ],
+          preview: { select: { title: 'alt', subtitle: 'url' } },
+        },
+      ],
+    }),
+    defineField({
+      name: 'attachments',
+      title: 'Attachments (R2)',
+      type: 'array',
+      group: 'content',
+      description: 'Source files uploaded with this project (images, PDFs) stored in R2.',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            { name: 'label', type: 'string', title: 'Label' },
+            { name: 'url', type: 'url', title: 'URL' },
+            { name: 'contentType', type: 'string', title: 'Content type' },
+          ],
+          preview: { select: { title: 'label', subtitle: 'contentType' } },
+        },
+      ],
+    }),
     defineField({ name: 'scopeSummary', type: 'text', rows: 2, group: 'content' }),
     defineField({ name: 'challenge', type: 'blockContent', group: 'content' }),
     defineField({ name: 'solution', type: 'blockContent', group: 'content' }),

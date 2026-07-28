@@ -157,9 +157,23 @@ const securityHeaders = [
   { key: 'X-DNS-Prefetch-Control', value: 'on' },
 ];
 
+// Cloudflare R2 public host for admin-uploaded media. Covers the default
+// pub-*.r2.dev domains and, if a custom domain is set on the public base URL,
+// that host too (derived at build time from R2_PUBLIC_BASE_URL).
+const r2Patterns = [{ protocol: 'https', hostname: '*.r2.dev' }];
+try {
+  const base = process.env.R2_PUBLIC_BASE_URL;
+  if (base) {
+    const host = new URL(base).hostname;
+    if (!host.endsWith('.r2.dev')) r2Patterns.push({ protocol: 'https', hostname: host });
+  }
+} catch {
+  // ignore a malformed R2_PUBLIC_BASE_URL — the *.r2.dev pattern still applies.
+}
+
 const nextConfig = {
   images: {
-    remotePatterns: [{ protocol: 'https', hostname: 'cdn.sanity.io' }],
+    remotePatterns: [{ protocol: 'https', hostname: 'cdn.sanity.io' }, ...r2Patterns],
   },
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }];

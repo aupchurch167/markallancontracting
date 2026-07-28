@@ -69,7 +69,7 @@ export default async function ProjectPage({
     ? new Date(project.completedDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })
     : undefined;
 
-  // Images: Sanity assets → CDN URLs, else the downloaded fallback photos.
+  // Images: Sanity assets → CDN URLs, else R2 photo URLs, else fallback photos.
   const images: { url: string; alt: string }[] = project?.images?.length
     ? project.images
         .map((img, i) => ({
@@ -77,8 +77,17 @@ export default async function ProjectPage({
           alt: img.alt || `${title} — photo ${i + 1}`,
         }))
         .filter((x) => x.url)
-    : fb?.images || [];
+    : project?.imageUrls?.length
+      ? project.imageUrls
+          .map((img, i) => ({ url: img.url, alt: img.alt || `${title} — photo ${i + 1}` }))
+          .filter((x) => x.url)
+      : fb?.images || [];
   const hero = images[0];
+
+  // PDFs and other non-image source files attached to the project.
+  const docs = (project?.attachments || []).filter(
+    (a) => a.url && a.contentType !== undefined && !a.contentType.startsWith('image/'),
+  );
 
   return (
     <>
@@ -219,6 +228,30 @@ export default async function ProjectPage({
                 />
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Attachments (PDFs, spec sheets) */}
+        {docs.length > 0 && (
+          <div className="mt-12">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-stone-400">
+              Documents
+            </h2>
+            <ul className="mt-3 space-y-2">
+              {docs.map((doc, i) => (
+                <li key={i}>
+                  <a
+                    href={doc.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 text-navy hover:text-accent"
+                  >
+                    <span aria-hidden="true">📄</span>
+                    {doc.label || `Document ${i + 1}`}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </Section>
