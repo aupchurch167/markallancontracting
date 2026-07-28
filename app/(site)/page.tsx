@@ -112,23 +112,41 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      {/* 4. Authority */}
+      {/* 4. About / history */}
       <Section>
-        <div className="max-w-3xl">
-          <p className="text-sm font-semibold uppercase tracking-widest text-stone-400">
-            Since 1999
-          </p>
-          <p className="mt-3 text-2xl font-semibold text-navy sm:text-3xl">
-            Twenty-five years. Georgia, Tennessee, Alabama, South Carolina. Over a
-            hundred Domino&apos;s buildouts, and work for Darden since.
-          </p>
-          <p className="mt-5 text-lg leading-relaxed text-stone-600">
-            Family-owned, hands-on — and we&apos;ve been the owner too, so we know
-            what an owner worries about.
-          </p>
-          <p className="mt-6 text-lg font-semibold text-navy">
-            Projects from $50K to $500K.
-          </p>
+        <div className="grid items-center gap-12 lg:grid-cols-2">
+          <div>
+            <Eyebrow>Since 1999</Eyebrow>
+            <h2 className="mt-3 text-2xl font-semibold text-navy sm:text-3xl">
+              A family-owned builder that came up on the hard, repeatable work.
+            </h2>
+            <p className="mt-5 text-lg leading-relaxed text-stone-600">
+              We started in 1999 doing franchise restaurant buildouts — over a
+              hundred Domino&apos;s, and work for Darden ever since. That kind of
+              work rewards one thing: getting it right, on schedule, every time.
+            </p>
+            <p className="mt-4 text-lg leading-relaxed text-stone-600">
+              Twenty-five years later we&apos;re a family-owned commercial general
+              contractor working across Georgia, Tennessee, Alabama, and South
+              Carolina — tenant buildouts, renovations, conversions, and repairs,
+              mostly in the $50K to $500K range.
+            </p>
+            <p className="mt-4 text-lg leading-relaxed text-stone-600">
+              We&apos;ve been the owner too, so we know what it&apos;s like to wait
+              on a number and a date. That&apos;s why we run jobs the way we do:
+              real scope up front, straight updates along the way, and a space that
+              opens when we said it would.
+            </p>
+          </div>
+          <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-stone-100 ring-1 ring-stone-200">
+            <Image
+              src="/projects/paint-12-buildings/1.jpg"
+              alt="Exterior repaint across a 12-building commercial property"
+              fill
+              sizes="(min-width: 1024px) 40vw, 100vw"
+              className="object-cover"
+            />
+          </div>
         </div>
       </Section>
 
@@ -160,10 +178,6 @@ export default async function HomePage() {
             {
               src: '/projects/tanning-salon-buildout/4.jpg',
               alt: 'Tanning salon buildout — completed interior',
-            },
-            {
-              src: '/projects/paint-12-buildings/1.jpg',
-              alt: 'Exterior repaint across a 12-building commercial property',
             },
           ].map((photo) => (
             <div
