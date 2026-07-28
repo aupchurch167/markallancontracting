@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { NAV } from '@/lib/site-data';
 import { SITE } from '@/lib/constants';
-import { CallButton, PhoneLink } from './PhoneLink';
+import { CallButton } from './PhoneLink';
 
 export function Header({ phone, phoneRaw }: { phone: string; phoneRaw: string }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -79,11 +79,6 @@ export function Header({ phone, phoneRaw }: { phone: string; phoneRaw: string })
 
         {/* Persistent phone CTA — not a nav item */}
         <div className="flex items-center gap-3">
-          <PhoneLink
-            phone={phone}
-            phoneRaw={phoneRaw}
-            className="hidden text-sm font-semibold text-navy hover:text-accent md:inline lg:hidden xl:inline"
-          />
           <CallButton
             phone={phone}
             phoneRaw={phoneRaw}

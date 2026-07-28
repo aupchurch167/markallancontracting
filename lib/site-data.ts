@@ -161,13 +161,8 @@ const BASE_NAV: NavItem[] = [
     href: '/project-types',
     children: SERVICES.map((s) => ({ label: s.name, href: `/project-types/${s.slug}` })),
   },
-  {
-    label: 'Who We Work For',
-    href: '/markets',
-    children: MARKETS.map((m) => ({ label: m.name, href: `/markets/${m.slug}` })),
-  },
   { label: 'Projects', href: '/projects' },
-  { label: 'Insights', href: '/insights' },
+  { label: 'Blog', href: '/insights' },
   { label: 'Contact', href: '/contact' },
 ];
 
