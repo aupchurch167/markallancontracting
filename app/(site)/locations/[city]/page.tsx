@@ -35,7 +35,7 @@ export async function generateMetadata({
   if (!name) return {};
   const label = `${name}, ${state}`;
   return pageMetadata({
-    title: `Commercial General Contractor in ${label} | Mark Allan Contracting`,
+    title: `Commercial General Contractor in ${label}`,
     description: `Commercial buildouts, renovations, and repairs in ${label}. Family-owned since 1999. Get a scoped number, not a range.`,
     path: `/locations/${city}`,
   });

@@ -10,7 +10,7 @@ import { SITE } from '@/lib/constants';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Commercial General Contractor in Metro Atlanta | Mark Allan Contracting',
+  title: 'Commercial General Contractor in Metro Atlanta',
   description:
     'Commercial buildouts and renovations across Georgia, Tennessee, Alabama, and South Carolina. Family-owned since 1999. Get a real number, not a range.',
   path: '/',
