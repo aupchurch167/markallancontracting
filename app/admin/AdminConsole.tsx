@@ -224,6 +224,24 @@ export function AdminConsole() {
     }
   }
 
+  async function uploadCover(file: File | null) {
+    if (!content || !file) return;
+    setError('');
+    setCoverBusy(true);
+    try {
+      const fd = new FormData();
+      fd.set('file', file);
+      const res = await fetch('/api/admin/cover/upload', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Upload failed.');
+      patch({ coverImageUrl: data.url });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Upload failed.');
+    } finally {
+      setCoverBusy(false);
+    }
+  }
+
   async function publish() {
     if (!content) return;
     setError('');
@@ -506,18 +524,18 @@ export function AdminConsole() {
                 </button>
               </div>
 
-              {/* Cover image (posts) — AI-generated hero via Gemini */}
+              {/* Header image (posts) — upload a real photo, or generate one */}
               {contentType === 'post' && (
                 <div className="rounded-lg border border-stone-200 bg-stone-50 p-3">
                   <div className="text-xs font-semibold uppercase tracking-wide text-stone-500">
-                    Cover image
+                    Header image
                   </div>
                   {content.coverImageUrl ? (
                     <div className="relative mt-2 aspect-[16/9] overflow-hidden rounded-md bg-stone-100">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={content.coverImageUrl}
-                        alt="Generated cover"
+                        alt="Header"
                         className="h-full w-full object-cover"
                       />
                       <button
@@ -528,24 +546,39 @@ export function AdminConsole() {
                       </button>
                     </div>
                   ) : null}
-                  <textarea
-                    rows={2}
-                    className={inputClass}
-                    placeholder="Describe the cover (optional — defaults to the title). e.g. “A finished open-plan office buildout, warm daylight.”"
-                    value={coverPrompt}
-                    onChange={(e) => setCoverPrompt(e.target.value)}
-                  />
-                  <button
-                    onClick={generateCover}
-                    disabled={coverBusy}
-                    className="btn-ghost mt-2 text-sm disabled:opacity-60"
-                  >
-                    {coverBusy
-                      ? 'Generating…'
-                      : content.coverImageUrl
-                        ? 'Regenerate cover'
-                        : 'Generate cover with AI'}
-                  </button>
+
+                  {/* Upload a real photo */}
+                  <label className="mt-2 block">
+                    <span className="text-xs font-medium text-stone-500">
+                      Upload a photo{content.coverImageUrl ? ' (replaces the current header)' : ''}
+                    </span>
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/gif,image/webp"
+                      disabled={coverBusy}
+                      className="mt-1 block w-full text-sm text-stone-600 file:mr-3 file:rounded-md file:border-0 file:bg-stone-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-navy hover:file:bg-stone-200"
+                      onChange={(e) => uploadCover(e.target.files?.[0] || null)}
+                    />
+                  </label>
+
+                  {/* Or generate one with AI */}
+                  <div className="mt-3 border-t border-stone-200 pt-3">
+                    <span className="text-xs font-medium text-stone-500">Or generate one with AI</span>
+                    <textarea
+                      rows={2}
+                      className={inputClass}
+                      placeholder="Describe the header (optional — defaults to the title). e.g. “A finished open-plan office buildout, warm daylight.”"
+                      value={coverPrompt}
+                      onChange={(e) => setCoverPrompt(e.target.value)}
+                    />
+                    <button
+                      onClick={generateCover}
+                      disabled={coverBusy}
+                      className="btn-ghost mt-2 text-sm disabled:opacity-60"
+                    >
+                      {coverBusy ? 'Working…' : 'Generate with AI'}
+                    </button>
+                  </div>
                 </div>
               )}
 
