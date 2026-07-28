@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { getSiteSettings } from '@/lib/queries';
 import { getFeaturedSummaries } from '@/lib/projects';
 import { CallButton } from '@/components/PhoneLink';
@@ -26,22 +27,36 @@ export default async function HomePage() {
       {/* 1. Hero */}
       <section className="bg-navy text-white">
         <div className="container-page py-20 sm:py-28">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
-              Your space, open on time.
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg text-stone-100/90 sm:text-xl">
-              Commercial buildouts and renovations across Georgia, Tennessee,
-              Alabama, and South Carolina. Family-owned since 1999.
-            </p>
-            <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-              <CallButton phone={phone} phoneRaw={phoneRaw} />
-              <a
-                href="/contact"
-                className="text-base font-semibold text-white underline decoration-accent decoration-2 underline-offset-4 hover:text-stone-200"
-              >
-                Send us your scope
-              </a>
+          <div className="grid items-center gap-12 lg:grid-cols-2">
+            <div className="max-w-2xl">
+              <h1 className="text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
+                Your space, open on time.
+              </h1>
+              <p className="mt-6 max-w-2xl text-lg text-stone-100/90 sm:text-xl">
+                Commercial buildouts and renovations across Georgia, Tennessee,
+                Alabama, and South Carolina. Family-owned since 1999.
+              </p>
+              <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+                <CallButton phone={phone} phoneRaw={phoneRaw} />
+                <a
+                  href="/contact"
+                  className="text-base font-semibold text-white underline decoration-accent decoration-2 underline-offset-4 hover:text-stone-200"
+                >
+                  Send us your scope
+                </a>
+              </div>
+            </div>
+            {/* Real delivered project — hidden on small screens to keep the
+                phone CTA above the fold on mobile. */}
+            <div className="relative hidden aspect-[4/3] overflow-hidden rounded-xl ring-1 ring-white/15 lg:block">
+              <Image
+                src="/projects/kennesaw-pilates-studio/4.jpg"
+                alt="Completed Pilates studio buildout in Kennesaw, Georgia"
+                fill
+                priority
+                sizes="(min-width: 1024px) 40vw, 100vw"
+                className="object-cover"
+              />
             </div>
           </div>
         </div>
@@ -114,6 +129,56 @@ export default async function HomePage() {
           <p className="mt-6 text-lg font-semibold text-navy">
             Projects from $50K to $500K.
           </p>
+        </div>
+      </Section>
+
+      {/* 4b. From the field — real jobsite photos */}
+      <Section>
+        <Eyebrow>From the field</Eyebrow>
+        <h2 className="mt-2 text-3xl font-bold text-navy">On the job</h2>
+        <p className="mt-2 max-w-2xl text-stone-600">
+          A few shots from delivered commercial projects across Metro Atlanta.
+        </p>
+        <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
+          {[
+            {
+              src: '/projects/kennesaw-pilates-studio/2.jpg',
+              alt: 'Pilates studio buildout — open workout floor, Kennesaw, GA',
+            },
+            {
+              src: '/projects/kennesaw-pilates-studio/3.jpg',
+              alt: 'Interior finish work on a Pilates studio buildout',
+            },
+            {
+              src: '/projects/tanning-salon-buildout/2.jpg',
+              alt: 'Tanning salon buildout — interior finishes',
+            },
+            {
+              src: '/projects/tanning-salon-buildout/3.jpg',
+              alt: 'Tanning salon buildout — tenant space',
+            },
+            {
+              src: '/projects/tanning-salon-buildout/4.jpg',
+              alt: 'Tanning salon buildout — completed interior',
+            },
+            {
+              src: '/projects/paint-12-buildings/1.jpg',
+              alt: 'Exterior repaint across a 12-building commercial property',
+            },
+          ].map((photo) => (
+            <div
+              key={photo.src}
+              className="relative aspect-[4/3] overflow-hidden rounded-lg bg-stone-100"
+            >
+              <Image
+                src={photo.src}
+                alt={photo.alt}
+                fill
+                sizes="(max-width: 640px) 50vw, 33vw"
+                className="object-cover"
+              />
+            </div>
+          ))}
         </div>
       </Section>
 
