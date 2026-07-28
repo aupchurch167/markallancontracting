@@ -29,6 +29,7 @@ interface Content {
   squareFootage?: string;
   metaTitle: string;
   metaDescription: string;
+  coverImageUrl?: string;
 }
 
 const CLUSTERS = [
@@ -132,6 +133,8 @@ export function AdminConsole() {
   const [publishing, setPublishing] = useState(false);
   const [refining, setRefining] = useState(false);
   const [refineNotes, setRefineNotes] = useState('');
+  const [coverPrompt, setCoverPrompt] = useState('');
+  const [coverBusy, setCoverBusy] = useState(false);
   const [content, setContent] = useState<Content | null>(null);
   const [error, setError] = useState('');
   const [result, setResult] = useState<{ studioUrl: string } | null>(null);
@@ -188,6 +191,30 @@ export function AdminConsole() {
       setError(e instanceof Error ? e.message : 'Refine failed.');
     } finally {
       setRefining(false);
+    }
+  }
+
+  async function generateCover() {
+    if (!content) return;
+    setError('');
+    const subject =
+      coverPrompt.trim() ||
+      [content.title, content.excerpt].filter(Boolean).join(' — ') ||
+      content.title;
+    setCoverBusy(true);
+    try {
+      const res = await fetch('/api/admin/cover/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: subject }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Cover generation failed.');
+      patch({ coverImageUrl: data.url });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Cover generation failed.');
+    } finally {
+      setCoverBusy(false);
     }
   }
 
@@ -402,6 +429,49 @@ export function AdminConsole() {
                   {refining ? 'Rewriting…' : 'Rewrite draft'}
                 </button>
               </div>
+
+              {/* Cover image (posts) — AI-generated hero via Gemini */}
+              {contentType === 'post' && (
+                <div className="rounded-lg border border-stone-200 bg-stone-50 p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-stone-500">
+                    Cover image
+                  </div>
+                  {content.coverImageUrl ? (
+                    <div className="relative mt-2 aspect-[16/9] overflow-hidden rounded-md bg-stone-100">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={content.coverImageUrl}
+                        alt="Generated cover"
+                        className="h-full w-full object-cover"
+                      />
+                      <button
+                        onClick={() => patch({ coverImageUrl: undefined })}
+                        className="absolute right-2 top-2 rounded bg-white/90 px-2 py-1 text-xs font-medium text-red-600"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : null}
+                  <textarea
+                    rows={2}
+                    className={inputClass}
+                    placeholder="Describe the cover (optional — defaults to the title). e.g. “A finished open-plan office buildout, warm daylight.”"
+                    value={coverPrompt}
+                    onChange={(e) => setCoverPrompt(e.target.value)}
+                  />
+                  <button
+                    onClick={generateCover}
+                    disabled={coverBusy}
+                    className="btn-ghost mt-2 text-sm disabled:opacity-60"
+                  >
+                    {coverBusy
+                      ? 'Generating…'
+                      : content.coverImageUrl
+                        ? 'Regenerate cover'
+                        : 'Generate cover with AI'}
+                  </button>
+                </div>
+              )}
 
               <Field label="Title">
                 <input

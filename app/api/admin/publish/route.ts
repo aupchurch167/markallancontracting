@@ -117,7 +117,10 @@ export async function POST(req: Request) {
       featured: false,
       metaTitle: c.metaTitle || '',
       metaDescription: c.metaDescription || '',
-      ...(images[0] ? { heroImageUrl: images[0].url } : {}),
+      // A generated/chosen cover wins; otherwise the first uploaded image.
+      ...(c.coverImageUrl || images[0]
+        ? { heroImageUrl: c.coverImageUrl || images[0].url }
+        : {}),
       ...(attachments.length ? { attachments } : {}),
     };
   } else {

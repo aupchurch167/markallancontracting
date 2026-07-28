@@ -134,6 +134,12 @@ gated until that content is real.
     (`lib/internal-links.ts`): first mention only, longest phrase first, capped
     per paragraph, headings/lists left alone. Builds topical authority and
     funnels readers toward the conversion pages.
+  - **AI cover images (optional)** — a "Generate cover" button on posts sends a
+    subject (defaults to the title) to Gemini (`lib/gemini.ts` →
+    `POST /api/admin/cover/generate`), stores the 16:9 result in R2, and sets it
+    as the post hero. Best-effort and gated by `GEMINI_API_KEY` (retry +
+    45s timeout); without the key the button returns a clean message and covers
+    stay upload-only.
 - **Media storage (Cloudflare R2)** — `/admin` uploads (images + PDFs) go to R2
   (S3-compatible), not Sanity's asset store. Images land on `heroImageUrl`
   (posts) / `imageUrls[]` (projects); every file is also linked under
