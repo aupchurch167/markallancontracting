@@ -24,6 +24,14 @@ type Block = {
   markDefs: MarkDef[];
   children: Span[];
 };
+type ExternalImage = {
+  _type: 'externalImage';
+  _key: string;
+  url: string;
+  alt?: string;
+  caption?: string;
+};
+type PTNode = Block | ExternalImage;
 
 function plainBlock(style: string, text: string, listItem?: 'bullet' | 'number'): Block {
   return {
@@ -52,14 +60,16 @@ function linkedParagraph(text: string, used: Set<string>): Block {
 /**
  * @param link when false, paragraphs are not internally linked (e.g. short
  *   project blurbs where linking would be noise). Defaults to true.
+ * @param imageUrls maps a body image block's `imageIndex` to an R2 URL. Image
+ *   blocks with no matching URL are dropped. Omit to strip images entirely.
  */
 export function blocksToPortableText(
   blocks: GenBlock[] | undefined,
-  { link = true }: { link?: boolean } = {},
-): Block[] {
+  { link = true, imageUrls }: { link?: boolean; imageUrls?: string[] } = {},
+): PTNode[] {
   if (!Array.isArray(blocks)) return [];
   const used = new Set<string>();
-  const out: Block[] = [];
+  const out: PTNode[] = [];
   for (const b of blocks) {
     switch (b.type) {
       case 'heading':
@@ -80,6 +90,13 @@ export function blocksToPortableText(
       case 'numbers':
         for (const item of b.items || []) if (item) out.push(plainBlock('normal', item, 'number'));
         break;
+      case 'image': {
+        const url = imageUrls?.[b.imageIndex];
+        if (url) {
+          out.push({ _type: 'externalImage', _key: key(), url, alt: b.alt, caption: b.caption });
+        }
+        break;
+      }
     }
   }
   return out;

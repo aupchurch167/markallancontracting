@@ -32,6 +32,29 @@ const components: PortableTextComponents = {
         </figure>
       );
     },
+    // Externally-hosted image (R2) placed inline by the /admin generator.
+    externalImage: ({ value }) => {
+      if (!value?.url) return null;
+      return (
+        <figure className="my-8">
+          <div className="overflow-hidden rounded-lg border border-stone-200">
+            <Image
+              src={value.url}
+              alt={value.alt || ''}
+              width={1400}
+              height={933}
+              sizes="(max-width: 768px) 100vw, 720px"
+              className="h-auto w-full object-cover"
+            />
+          </div>
+          {value.caption && (
+            <figcaption className="mt-2 text-center text-sm text-stone-400">
+              {value.caption}
+            </figcaption>
+          )}
+        </figure>
+      );
+    },
   },
   block: {
     h2: ({ children }) => <h2 className="mt-10 text-2xl font-bold text-navy">{children}</h2>,

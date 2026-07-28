@@ -108,6 +108,15 @@ export async function POST(req: Request) {
   let doc: Record<string, unknown>;
   if (contentType === 'post') {
     const c = content as GeneratedPost;
+    const imageUrls = images.map((im) => im.url);
+    // Which photos the body places inline — so we don't reuse one as the hero.
+    const placedInline = new Set(
+      (Array.isArray(c.body) ? c.body : [])
+        .filter((b): b is Extract<GeneratedPost['body'][number], { type: 'image' }> => b.type === 'image')
+        .map((b) => b.imageIndex),
+    );
+    const heroFromUpload = images.find((_, i) => !placedInline.has(i))?.url;
+    const heroImageUrl = c.coverImageUrl || heroFromUpload;
     doc = {
       _id: draftId,
       _type: 'post',
@@ -116,15 +125,12 @@ export async function POST(req: Request) {
       excerpt: c.excerpt || '',
       cluster: c.cluster,
       tags: Array.isArray(c.tags) ? c.tags : [],
-      body: blocksToPortableText(c.body),
+      body: blocksToPortableText(c.body, { imageUrls }),
       publishedAt: new Date().toISOString(),
       featured: false,
       metaTitle: c.metaTitle || '',
       metaDescription: c.metaDescription || '',
-      // A generated/chosen cover wins; otherwise the first uploaded image.
-      ...(c.coverImageUrl || images[0]
-        ? { heroImageUrl: c.coverImageUrl || images[0].url }
-        : {}),
+      ...(heroImageUrl ? { heroImageUrl } : {}),
       ...(attachments.length ? { attachments } : {}),
     };
   } else {

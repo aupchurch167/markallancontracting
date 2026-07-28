@@ -19,7 +19,11 @@ export type GenBlock =
   | { type: 'paragraph'; text: string }
   | { type: 'quote'; text: string }
   | { type: 'bullets'; items: string[] }
-  | { type: 'numbers'; items: string[] };
+  | { type: 'numbers'; items: string[] }
+  // Places one attached photo inline in the body. imageIndex refers to the
+  // attached photos in order (Photo 0, Photo 1, …). Resolved to the R2 URL on
+  // publish (lib/portable-text).
+  | { type: 'image'; imageIndex: number; alt?: string; caption?: string };
 
 export interface GeneratedPost {
   title: string;
@@ -73,7 +77,7 @@ const BLOCK_SCHEMA = {
     properties: {
       type: {
         type: 'string',
-        enum: ['heading', 'subheading', 'paragraph', 'quote', 'bullets', 'numbers'],
+        enum: ['heading', 'subheading', 'paragraph', 'quote', 'bullets', 'numbers', 'image'],
       },
       text: { type: 'string', description: 'Used for heading/subheading/paragraph/quote.' },
       items: {
@@ -81,6 +85,12 @@ const BLOCK_SCHEMA = {
         items: { type: 'string' },
         description: 'Used for bullets/numbers.',
       },
+      imageIndex: {
+        type: 'integer',
+        description: 'For type "image": which attached photo (0-based, in order).',
+      },
+      caption: { type: 'string', description: 'For type "image": a short caption.' },
+      alt: { type: 'string', description: 'For type "image": alt text describing the photo.' },
     },
     required: ['type'],
   },
@@ -176,12 +186,31 @@ export async function generateContent(opts: {
     ? `Write a complete insight/blog post for macont.com from the brief below. Pick the single best cluster. Structure the body with headings, short paragraphs, and lists where they help. Aim for 500-900 words.`
     : `Write a project case study for macont.com from the brief below. Describe the client type, scope, the challenge, and how Mark Allan Contracting solved it. Ground every detail in the brief and attachments — do not invent specifics. Keep challenge and solution to a few blocks each.`;
 
-  // Attachments first, then the text instruction (per Claude vision/PDF guidance).
+  // Attachments first (per Claude vision/PDF guidance). Label each photo with
+  // its index so the model can place it inline via image blocks.
   const content: ContentBlockParam[] = [];
+  let photoCount = 0;
   for (const f of files) {
     const block = fileToContentBlock(f);
-    if (block) content.push(block);
+    if (!block) continue;
+    if (block.type === 'image') {
+      content.push({ type: 'text', text: `Photo ${photoCount}:` });
+      photoCount++;
+    }
+    content.push(block);
   }
+
+  const photoInstruction =
+    isPost && photoCount > 0
+      ? `\n${photoCount} photo(s) are attached, labeled Photo 0 to Photo ${photoCount - 1} in order. ` +
+        `Analyze each photo and place it in the body where it best supports the text by inserting ` +
+        `an image block: { "type": "image", "imageIndex": <n>, "caption": "<short caption>", "alt": "<what it shows>" }. ` +
+        `Use each photo at most once, and only where it genuinely fits — near the section it illustrates. ` +
+        `Write accurate captions from what you actually see; do not invent details.`
+      : files.length
+        ? `\n${files.length} file(s) are attached for reference. Use them to ground the write-up; describe only what you can actually see or read.`
+        : '';
+
   content.push({
     type: 'text',
     text: [
@@ -189,9 +218,7 @@ export async function generateContent(opts: {
       '',
       `BRIEF:\n${brief.trim()}`,
       context?.trim() ? `\nADDITIONAL CONTEXT:\n${context.trim()}` : '',
-      files.length
-        ? `\n${files.length} file(s) are attached above for reference. Use them to ground the write-up; describe only what you can actually see or read.`
-        : '',
+      photoInstruction,
     ]
       .filter(Boolean)
       .join('\n'),

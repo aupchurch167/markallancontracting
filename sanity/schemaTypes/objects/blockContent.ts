@@ -47,5 +47,18 @@ export const blockContent = defineType({
         { name: 'caption', type: 'string', title: 'Caption' },
       ],
     }),
+    // Externally-hosted image (Cloudflare R2), placed inline by the /admin
+    // generator. Kept alongside the Sanity `image` type so both render.
+    defineArrayMember({
+      type: 'object',
+      name: 'externalImage',
+      title: 'Image (external URL)',
+      fields: [
+        { name: 'url', type: 'url', title: 'Image URL' },
+        { name: 'alt', type: 'string', title: 'Alt text' },
+        { name: 'caption', type: 'string', title: 'Caption' },
+      ],
+      preview: { select: { title: 'caption', subtitle: 'url' } },
+    }),
   ],
 });

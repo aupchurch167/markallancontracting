@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { HomepagePhotos } from './HomepagePhotos';
 
@@ -12,7 +12,8 @@ type GenBlock =
   | { type: 'paragraph'; text: string }
   | { type: 'quote'; text: string }
   | { type: 'bullets'; items: string[] }
-  | { type: 'numbers'; items: string[] };
+  | { type: 'numbers'; items: string[] }
+  | { type: 'image'; imageIndex: number; alt?: string; caption?: string };
 
 interface Content {
   title: string;
@@ -46,6 +47,7 @@ const BLOCK_LABELS: Record<GenBlock['type'], string> = {
   quote: 'Quote',
   bullets: 'Bullet list',
   numbers: 'Numbered list',
+  image: 'Photo',
 };
 
 const inputClass =
@@ -64,9 +66,12 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 function BlockEditor({
   blocks,
   onChange,
+  imagePreviews = [],
 }: {
   blocks: GenBlock[];
   onChange: (next: GenBlock[]) => void;
+  /** Object URLs for attached photos, indexed by imageIndex, for previews. */
+  imagePreviews?: string[];
 }) {
   function update(i: number, patch: Partial<GenBlock>) {
     const next = blocks.slice();
@@ -80,6 +85,7 @@ function BlockEditor({
     <div className="space-y-3">
       {blocks.map((b, i) => {
         const isList = b.type === 'bullets' || b.type === 'numbers';
+        const isImage = b.type === 'image';
         return (
           <div key={i} className="rounded-md border border-stone-200 bg-stone-50 p-3">
             <div className="mb-1 flex items-center justify-between">
@@ -94,7 +100,30 @@ function BlockEditor({
                 Remove
               </button>
             </div>
-            {isList ? (
+            {isImage ? (
+              <div>
+                {imagePreviews[(b as { imageIndex: number }).imageIndex] ? (
+                  <div className="relative aspect-[16/9] overflow-hidden rounded bg-stone-100">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={imagePreviews[(b as { imageIndex: number }).imageIndex]}
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="rounded bg-stone-100 px-3 py-2 text-xs text-stone-400">
+                    Photo #{(b as { imageIndex: number }).imageIndex + 1}
+                  </div>
+                )}
+                <input
+                  className={inputClass}
+                  placeholder="Caption"
+                  value={(b as { caption?: string }).caption || ''}
+                  onChange={(e) => update(i, { caption: e.target.value } as Partial<GenBlock>)}
+                />
+              </div>
+            ) : isList ? (
               <textarea
                 rows={Math.max(2, (b as { items: string[] }).items.length)}
                 className={inputClass}
@@ -142,6 +171,17 @@ export function AdminConsole() {
   function patch(p: Partial<Content>) {
     setContent((c) => (c ? { ...c, ...p } : c));
   }
+
+  // Object-URL previews for attached photos, indexed to match imageIndex
+  // (image files only, in order). Used to show placed photos in the editor.
+  const imageFiles = useMemo(() => files.filter((f) => f.type.startsWith('image/')), [files]);
+  const imagePreviews = useMemo(
+    () => imageFiles.map((f) => URL.createObjectURL(f)),
+    [imageFiles],
+  );
+  useEffect(() => {
+    return () => imagePreviews.forEach((u) => URL.revokeObjectURL(u));
+  }, [imagePreviews]);
 
   function addFiles(list: FileList | null) {
     if (!list) return;
@@ -528,6 +568,7 @@ export function AdminConsole() {
                       <BlockEditor
                         blocks={content.body || []}
                         onChange={(body) => patch({ body })}
+                        imagePreviews={imagePreviews}
                       />
                     </div>
                   </div>

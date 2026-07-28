@@ -125,6 +125,10 @@ gated until that content is real.
   generation needs `ANTHROPIC_API_KEY`; saving needs `SANITY_WRITE_TOKEN`. The
   console denies access and returns clear errors until each is set. `noindex`,
   disallowed in robots, and never invents figures not in the brief/attachments.
+  - **Inline photos** — attach photos and Claude (vision) places them where they
+    fit in the body as `image` blocks (`imageIndex` + caption). On publish they
+    resolve to R2 URLs as `externalImage` Portable Text blocks (rendered in
+    `components/PortableText`); a photo used inline is not reused as the hero.
   - **Refine** — after generating, a note ("make it punchier, add a permitting
     section") rewrites the whole draft in place via `POST /api/admin/refine`,
     grounded on the current draft (no new facts). Truncated (`max_tokens`)
