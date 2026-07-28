@@ -133,6 +133,13 @@ gated until that content is real.
   fallback, so hand-uploaded Studio images still win. Needs `R2_ACCOUNT_ID`,
   `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL`;
   the public host is registered for `next/image` in `next.config.mjs`.
+- **Home-page photos (`/admin` → "Home page photos")** — replace the hero and
+  about photos and add/remove/reorder the "On the job" gallery, each with alt
+  text. Uploads go to R2; the slot config is saved to a `homepage` Sanity
+  singleton (`GET`/`POST /api/admin/homepage`) and the home page is revalidated
+  so changes go live immediately. `lib/homepage-media.ts` holds the shipped
+  fallback photos and merges the singleton over them, so the page always renders
+  even before the first edit. Editable in Studio too (🏠 Home Page).
 - **Deferred, need external setup:**
   - Working scope form (owner wants leads in a CRM — needs to pick which; mailto
     form + `data-lead-form` marker in place).

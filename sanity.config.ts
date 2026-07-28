@@ -31,6 +31,9 @@ export default defineConfig({
                   .schemaType('sitewideSettings')
                   .documentId('sitewideSettings'),
               ),
+            S.listItem()
+              .title('🏠 Home Page')
+              .child(S.document().schemaType('homepage').documentId('homepage')),
             S.divider(),
 
             S.listItem()

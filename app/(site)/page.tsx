@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import { getSiteSettings } from '@/lib/queries';
 import { getFeaturedSummaries } from '@/lib/projects';
+import { getHomepageMedia } from '@/lib/homepage-media';
 import { CallButton } from '@/components/PhoneLink';
 import { CallCTA } from '@/components/CallCTA';
 import { ServiceGrid } from '@/components/ServiceGrid';
@@ -20,6 +21,7 @@ export const metadata: Metadata = pageMetadata({
 export default async function HomePage() {
   const settings = await getSiteSettings();
   const featured = await getFeaturedSummaries();
+  const media = await getHomepageMedia();
   const { phone, phoneRaw } = settings;
 
   return (
@@ -50,8 +52,8 @@ export default async function HomePage() {
                 phone CTA above the fold on mobile. */}
             <div className="relative hidden aspect-[4/3] overflow-hidden rounded-xl ring-1 ring-white/15 lg:block">
               <Image
-                src="/projects/kennesaw-pilates-studio/4.jpg"
-                alt="Completed Pilates studio buildout in Kennesaw, Georgia"
+                src={media.hero.url}
+                alt={media.hero.alt}
                 fill
                 priority
                 sizes="(min-width: 1024px) 40vw, 100vw"
@@ -140,8 +142,8 @@ export default async function HomePage() {
           </div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-stone-100 ring-1 ring-stone-200">
             <Image
-              src="/projects/paint-12-buildings/1.jpg"
-              alt="Exterior repaint across a 12-building commercial property"
+              src={media.about.url}
+              alt={media.about.alt}
               fill
               sizes="(min-width: 1024px) 40vw, 100vw"
               className="object-cover"
@@ -158,34 +160,13 @@ export default async function HomePage() {
           A few shots from delivered commercial projects across Metro Atlanta.
         </p>
         <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
-          {[
-            {
-              src: '/projects/kennesaw-pilates-studio/2.jpg',
-              alt: 'Pilates studio buildout — open workout floor, Kennesaw, GA',
-            },
-            {
-              src: '/projects/kennesaw-pilates-studio/3.jpg',
-              alt: 'Interior finish work on a Pilates studio buildout',
-            },
-            {
-              src: '/projects/tanning-salon-buildout/2.jpg',
-              alt: 'Tanning salon buildout — interior finishes',
-            },
-            {
-              src: '/projects/tanning-salon-buildout/3.jpg',
-              alt: 'Tanning salon buildout — tenant space',
-            },
-            {
-              src: '/projects/tanning-salon-buildout/4.jpg',
-              alt: 'Tanning salon buildout — completed interior',
-            },
-          ].map((photo) => (
+          {media.gallery.map((photo, i) => (
             <div
-              key={photo.src}
+              key={`${photo.url}-${i}`}
               className="relative aspect-[4/3] overflow-hidden rounded-lg bg-stone-100"
             >
               <Image
-                src={photo.src}
+                src={photo.url}
                 alt={photo.alt}
                 fill
                 sizes="(max-width: 640px) 50vw, 33vw"

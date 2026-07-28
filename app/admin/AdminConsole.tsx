@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { HomepagePhotos } from './HomepagePhotos';
 
 type ContentType = 'post' | 'project';
 
@@ -121,6 +122,7 @@ export function AdminConsole() {
   const router = useRouter();
   const fileInput = useRef<HTMLInputElement>(null);
 
+  const [view, setView] = useState<'content' | 'homepage'>('content');
   const [contentType, setContentType] = useState<ContentType>('post');
   const [brief, setBrief] = useState('');
   const [context, setContext] = useState('');
@@ -204,8 +206,33 @@ export function AdminConsole() {
             Sign out
           </button>
         </div>
+        <div className="mx-auto flex max-w-5xl gap-1 px-6">
+          {([
+            { id: 'content', label: 'Create content' },
+            { id: 'homepage', label: 'Home page photos' },
+          ] as const).map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setView(t.id)}
+              className={`-mb-px border-b-2 px-4 py-2 text-sm font-medium ${
+                view === t.id
+                  ? 'border-white text-white'
+                  : 'border-transparent text-stone-300 hover:text-white'
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
       </header>
 
+      {view === 'homepage' && (
+        <div className="mx-auto max-w-5xl px-6 py-8">
+          <HomepagePhotos />
+        </div>
+      )}
+
+      {view === 'content' && (
       <div className="mx-auto grid max-w-5xl gap-8 px-6 py-8 lg:grid-cols-2">
         {/* Left: brief + attachments */}
         <section className="space-y-5">
@@ -477,6 +504,7 @@ export function AdminConsole() {
           )}
         </section>
       </div>
+      )}
     </main>
   );
 }

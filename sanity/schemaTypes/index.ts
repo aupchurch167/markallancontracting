@@ -15,6 +15,7 @@ import { teamMember } from './documents/teamMember';
 import { landingPage } from './documents/landingPage';
 import { tradePartnerService } from './documents/tradePartnerService';
 import { sitewideSettings } from './documents/sitewideSettings';
+import { homepage } from './documents/homepage';
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   // objects
@@ -25,6 +26,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   statHighlight,
   // documents
   sitewideSettings,
+  homepage,
   service,
   city,
   serviceCity,
