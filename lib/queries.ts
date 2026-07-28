@@ -235,7 +235,7 @@ export async function getPost(slug: string): Promise<Post | null> {
   return client.fetch<Post | null>(
     `*[_type == "post" && slug.current == $slug][0]{
       ${postCardProjection},
-      body, tags, metaTitle, metaDescription, ogImage, attachments,
+      body, bodyMarkdown, tags, metaTitle, metaDescription, ogImage, attachments,
       "relatedPosts": relatedPosts[]->{ ${postCardProjection} }
     }`,
     { slug },

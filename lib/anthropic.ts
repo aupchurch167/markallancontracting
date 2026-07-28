@@ -31,7 +31,8 @@ export interface GeneratedPost {
   excerpt: string;
   cluster: 'cost-budget' | 'process-timeline' | 'broker-pm' | 'ground-up';
   tags: string[];
-  body: GenBlock[];
+  /** Markdown body. Photos are referenced as ![caption](photo:INDEX). */
+  bodyMarkdown: string;
   metaTitle: string;
   metaDescription: string;
   /** Set by the editor (AI-generated or pasted R2 cover), not by the model. */
@@ -108,11 +109,15 @@ const POST_SCHEMA = {
       enum: ['cost-budget', 'process-timeline', 'broker-pm', 'ground-up'],
     },
     tags: { type: 'array', items: { type: 'string' }, description: '2-5 short tags.' },
-    body: BLOCK_SCHEMA,
+    bodyMarkdown: {
+      type: 'string',
+      description:
+        'The full post body in Markdown: ## / ### headings, paragraphs, - bullet and 1. numbered lists, > blockquotes, **bold**, and [text](/path) links. Reference attached photos as ![caption](photo:INDEX).',
+    },
     metaTitle: { type: 'string', description: 'Under 60 characters.' },
     metaDescription: { type: 'string', description: 'Under 160 characters.' },
   },
-  required: ['title', 'slug', 'excerpt', 'cluster', 'tags', 'body', 'metaTitle', 'metaDescription'],
+  required: ['title', 'slug', 'excerpt', 'cluster', 'tags', 'bodyMarkdown', 'metaTitle', 'metaDescription'],
 } as const;
 
 const PROJECT_SCHEMA = {
@@ -183,7 +188,7 @@ export async function generateContent(opts: {
   const schema = isPost ? POST_SCHEMA : PROJECT_SCHEMA;
 
   const instruction = isPost
-    ? `Write a complete insight/blog post for macont.com from the brief below. Pick the single best cluster. Structure the body with headings, short paragraphs, and lists where they help. Aim for 500-900 words.`
+    ? `Write a complete insight/blog post for macont.com from the brief below. Pick the single best cluster. Write the body as Markdown (bodyMarkdown): use ## and ### headings, short paragraphs, - bullet and 1. numbered lists, > blockquotes, and **bold** where it helps. Aim for 500-900 words.`
     : `Write a project case study for macont.com from the brief below. Describe the client type, scope, the challenge, and how Mark Allan Contracting solved it. Ground every detail in the brief and attachments — do not invent specifics. Keep challenge and solution to a few blocks each.`;
 
   // Attachments first (per Claude vision/PDF guidance). Label each photo with
@@ -203,10 +208,10 @@ export async function generateContent(opts: {
   const photoInstruction =
     isPost && photoCount > 0
       ? `\n${photoCount} photo(s) are attached, labeled Photo 0 to Photo ${photoCount - 1} in order. ` +
-        `Analyze each photo and place it in the body where it best supports the text by inserting ` +
-        `an image block: { "type": "image", "imageIndex": <n>, "caption": "<short caption>", "alt": "<what it shows>" }. ` +
-        `Use each photo at most once, and only where it genuinely fits — near the section it illustrates. ` +
-        `Write accurate captions from what you actually see; do not invent details.`
+        `Analyze each photo and place it in the Markdown body where it best supports the text, using ` +
+        `image syntax: ![caption](photo:INDEX) — e.g. ![Open-plan office buildout](photo:0). ` +
+        `Put each on its own line near the section it illustrates. Use each photo at most once, only ` +
+        `where it genuinely fits. Write accurate captions from what you actually see; do not invent details.`
       : files.length
         ? `\n${files.length} file(s) are attached for reference. Use them to ground the write-up; describe only what you can actually see or read.`
         : '';

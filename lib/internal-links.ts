@@ -62,6 +62,22 @@ export interface LinkedSpan {
   href?: string;
 }
 
+/** Collect up to `cap` non-overlapping matches of unused targets in `text`. */
+function collectMatches(text: string, used: Set<string>, cap: number): Match[] {
+  const lower = text.toLowerCase();
+  const matches: Match[] = [];
+  for (const target of LINK_TARGETS) {
+    if (used.has(target.path)) continue;
+    if (matches.length >= cap) break;
+    const start = boundaryIndex(lower, target.phrase.toLowerCase());
+    if (start === -1) continue;
+    const end = start + target.phrase.length;
+    if (matches.some((m) => (start < m.end && end > m.start) || m.path === target.path)) continue;
+    matches.push({ start, end, path: target.path });
+  }
+  return matches.sort((a, b) => a.start - b.start);
+}
+
 /**
  * Split a paragraph into spans, linking the first unused target(s) it contains.
  * `used` tracks targets already linked earlier in the document so each links
@@ -69,23 +85,9 @@ export interface LinkedSpan {
  * Portable Text.
  */
 export function linkifyParagraph(text: string, used: Set<string>): LinkedSpan[] {
-  const lower = text.toLowerCase();
-  const matches: Match[] = [];
-
-  for (const target of LINK_TARGETS) {
-    if (used.has(target.path)) continue;
-    if (matches.length >= MAX_LINKS_PER_PARAGRAPH) break;
-    const start = boundaryIndex(lower, target.phrase.toLowerCase());
-    if (start === -1) continue;
-    const end = start + target.phrase.length;
-    // Skip if it overlaps, or duplicates the page of, a match we already chose.
-    if (matches.some((m) => (start < m.end && end > m.start) || m.path === target.path)) continue;
-    matches.push({ start, end, path: target.path });
-  }
-
+  const matches = collectMatches(text, used, MAX_LINKS_PER_PARAGRAPH);
   if (matches.length === 0) return [{ text }];
 
-  matches.sort((a, b) => a.start - b.start);
   const spans: LinkedSpan[] = [];
   let cursor = 0;
   for (const m of matches) {
@@ -96,4 +98,57 @@ export function linkifyParagraph(text: string, used: Set<string>): LinkedSpan[] 
   }
   if (cursor < text.length) spans.push({ text: text.slice(cursor) });
   return spans;
+}
+
+/**
+ * Weave internal links into a Markdown string. Skips headings, fenced code, and
+ * standalone image lines; within text lines it protects existing links, images,
+ * and inline code before matching, so it never links inside them. First mention
+ * per target across the whole document (same rules as the Portable Text path).
+ */
+export function linkifyMarkdown(md: string): string {
+  const used = new Set<string>();
+  let inFence = false;
+  return md
+    .split('\n')
+    .map((line) => {
+      const t = line.trimStart();
+      if (t.startsWith('```') || t.startsWith('~~~')) {
+        inFence = !inFence;
+        return line;
+      }
+      if (inFence || t === '' || t.startsWith('#') || t.startsWith('![')) return line;
+      return linkifyLine(line, used);
+    })
+    .join('\n');
+}
+
+function linkifyLine(line: string, used: Set<string>): string {
+  // Mask existing images, links, and inline code so we never link inside them.
+  const store: string[] = [];
+  const mask = (s: string) => {
+    const token = `@@LM${store.length}LM@@`;
+    store.push(s);
+    return token;
+  };
+  let masked = line
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, mask) // images (before links)
+    .replace(/\[[^\]]*\]\([^)]*\)/g, mask) // links
+    .replace(/`[^`]*`/g, mask); // inline code
+
+  const matches = collectMatches(masked, used, MAX_LINKS_PER_PARAGRAPH);
+  if (matches.length) {
+    let out = '';
+    let cursor = 0;
+    for (const m of matches) {
+      out += masked.slice(cursor, m.start);
+      out += `[${masked.slice(m.start, m.end)}](${m.path})`;
+      used.add(m.path);
+      cursor = m.end;
+    }
+    out += masked.slice(cursor);
+    masked = out;
+  }
+
+  return masked.replace(/@@LM(\d+)LM@@/g, (_, i) => store[Number(i)]);
 }

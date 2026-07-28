@@ -3,8 +3,26 @@ import { randomUUID } from 'crypto';
 import { writeClient, isWriteConfigured } from '@/sanity/lib/writeClient';
 import { uploadToR2, isR2Configured, type R2Object } from '@/lib/r2';
 import { blocksToPortableText } from '@/lib/portable-text';
+import { linkifyMarkdown } from '@/lib/internal-links';
 import type { GeneratedPost, GeneratedProject } from '@/lib/anthropic';
 import { requireAdmin } from '@/lib/admin-guard';
+
+/**
+ * Replace ![caption](photo:N) placeholders in a Markdown body with the uploaded
+ * R2 URLs. Drops any image whose index has no upload. Returns which photo
+ * indices were used so they aren't reused as the hero.
+ */
+function resolvePhotoPlaceholders(md: string, urls: string[]) {
+  const used = new Set<number>();
+  const out = md.replace(/!\[([^\]]*)\]\(photo:(\d+)\)/g, (_m, caption, idx) => {
+    const n = Number(idx);
+    const url = urls[n];
+    if (!url) return '';
+    used.add(n);
+    return `![${caption}](${url})`;
+  });
+  return { md: out, usedIndices: used };
+}
 
 export const runtime = 'nodejs';
 export const maxDuration = 120;
@@ -109,13 +127,11 @@ export async function POST(req: Request) {
   if (contentType === 'post') {
     const c = content as GeneratedPost;
     const imageUrls = images.map((im) => im.url);
-    // Which photos the body places inline — so we don't reuse one as the hero.
-    const placedInline = new Set(
-      (Array.isArray(c.body) ? c.body : [])
-        .filter((b): b is Extract<GeneratedPost['body'][number], { type: 'image' }> => b.type === 'image')
-        .map((b) => b.imageIndex),
-    );
-    const heroFromUpload = images.find((_, i) => !placedInline.has(i))?.url;
+    // Resolve photo placeholders to R2 URLs, then weave in internal links.
+    const { md, usedIndices } = resolvePhotoPlaceholders(c.bodyMarkdown || '', imageUrls);
+    const bodyMarkdown = linkifyMarkdown(md);
+    // A photo placed inline isn't reused as the hero; cover wins over uploads.
+    const heroFromUpload = images.find((_, i) => !usedIndices.has(i))?.url;
     const heroImageUrl = c.coverImageUrl || heroFromUpload;
     doc = {
       _id: draftId,
@@ -125,7 +141,7 @@ export async function POST(req: Request) {
       excerpt: c.excerpt || '',
       cluster: c.cluster,
       tags: Array.isArray(c.tags) ? c.tags : [],
-      body: blocksToPortableText(c.body, { imageUrls }),
+      bodyMarkdown,
       publishedAt: new Date().toISOString(),
       featured: false,
       metaTitle: c.metaTitle || '',

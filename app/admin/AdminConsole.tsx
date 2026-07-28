@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { HomepagePhotos } from './HomepagePhotos';
+import { MarkdownBody } from '@/components/MarkdownBody';
 
 type ContentType = 'post' | 'project';
 
@@ -21,7 +22,7 @@ interface Content {
   excerpt?: string;
   cluster?: string;
   tags?: string[];
-  body?: GenBlock[];
+  bodyMarkdown?: string;
   clientType?: string;
   scopeSummary?: string;
   challenge?: GenBlock[];
@@ -59,6 +60,62 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       <span className="text-sm font-medium text-navy">{label}</span>
       {children}
     </label>
+  );
+}
+
+/**
+ * Single-pane Markdown body editor with a Write/Preview toggle. In preview,
+ * ![](photo:N) placeholders are swapped for local thumbnails so placed photos
+ * show before publishing (they resolve to R2 URLs on save).
+ */
+function MarkdownField({
+  value,
+  onChange,
+  imagePreviews,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  imagePreviews: string[];
+}) {
+  const [preview, setPreview] = useState(false);
+  const previewMarkdown = value.replace(
+    /\(photo:(\d+)\)/g,
+    (_m, i) => `(${imagePreviews[Number(i)] || ''})`,
+  );
+  return (
+    <div>
+      <div className="mb-2 flex items-center justify-between">
+        <span className="text-sm font-medium text-navy">Body (Markdown)</span>
+        <div className="flex gap-1 text-xs">
+          <button
+            type="button"
+            onClick={() => setPreview(false)}
+            className={`rounded px-2 py-1 font-medium ${!preview ? 'bg-navy text-white' : 'text-stone-500'}`}
+          >
+            Write
+          </button>
+          <button
+            type="button"
+            onClick={() => setPreview(true)}
+            className={`rounded px-2 py-1 font-medium ${preview ? 'bg-navy text-white' : 'text-stone-500'}`}
+          >
+            Preview
+          </button>
+        </div>
+      </div>
+      {preview ? (
+        <div className="min-h-[400px] rounded-md border border-stone-200 bg-white p-5">
+          <MarkdownBody>{previewMarkdown}</MarkdownBody>
+        </div>
+      ) : (
+        <textarea
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          spellCheck
+          className="min-h-[400px] w-full rounded-md border border-stone-200 px-3 py-2 font-mono text-sm leading-relaxed text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+        />
+      )}
+    </div>
   );
 }
 
@@ -323,8 +380,15 @@ export function AdminConsole() {
       )}
 
       {view === 'content' && (
-      <div className="mx-auto grid max-w-5xl gap-8 px-6 py-8 lg:grid-cols-2">
-        {/* Left: brief + attachments */}
+      <div className="mx-auto max-w-3xl space-y-6 px-6 py-8">
+        {error ? (
+          <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+            {error}
+          </div>
+        ) : null}
+
+        {/* Step 1 — brief + attachments */}
+        {!content && (
         <section className="space-y-5">
           <div className="rounded-xl bg-white p-5 shadow-sm">
             <div className="flex gap-2">
@@ -415,12 +479,22 @@ export function AdminConsole() {
               </button>
             </div>
           </div>
+        </section>
+        )}
 
-          {error ? (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-              {error}
-            </div>
-          ) : null}
+        {/* Step 2 — review & edit (full width, replaces the form) */}
+        {content && (
+        <section className="space-y-4">
+          <button
+            type="button"
+            onClick={() => {
+              setResult(null);
+              setContent(null);
+            }}
+            className="text-sm font-medium text-stone-500 hover:text-navy"
+          >
+            ← Back to the form
+          </button>
 
           {result ? (
             <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800">
@@ -438,16 +512,12 @@ export function AdminConsole() {
               </a>
             </div>
           ) : null}
-        </section>
 
-        {/* Right: editable generated content */}
-        <section>
-          {content ? (
-            <div className="space-y-4 rounded-xl bg-white p-5 shadow-sm">
-              <div className="flex items-center justify-between">
-                <h2 className="font-bold text-navy">Review &amp; edit</h2>
-                <span className="text-xs text-stone-400">Edits save with the draft</span>
-              </div>
+          <div className="space-y-4 rounded-xl bg-white p-5 shadow-sm">
+            <div className="flex items-center justify-between">
+              <h2 className="font-bold text-navy">Review &amp; edit</h2>
+              <span className="text-xs text-stone-400">Edits save with the draft</span>
+            </div>
 
               {/* Refine with Claude — rewrite the current draft from a note */}
               <div className="rounded-lg border border-stone-200 bg-stone-50 p-3">
@@ -562,16 +632,32 @@ export function AdminConsole() {
                       }
                     />
                   </Field>
-                  <div>
-                    <span className="text-sm font-medium text-navy">Body</span>
-                    <div className="mt-2">
-                      <BlockEditor
-                        blocks={content.body || []}
-                        onChange={(body) => patch({ body })}
-                        imagePreviews={imagePreviews}
-                      />
+                  {imagePreviews.length > 0 && (
+                    <div>
+                      <span className="text-sm font-medium text-navy">
+                        Attached photos — reference in the body as{' '}
+                        <code className="rounded bg-stone-100 px-1 text-xs">![caption](photo:0)</code>
+                      </span>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {imagePreviews.map((src, i) => (
+                          <div key={i} className="w-24">
+                            <div className="relative aspect-[4/3] overflow-hidden rounded bg-stone-100">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={src} alt="" className="h-full w-full object-cover" />
+                            </div>
+                            <div className="mt-0.5 text-center text-[10px] text-stone-500">
+                              photo:{i}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
+                  <MarkdownField
+                    value={content.bodyMarkdown || ''}
+                    onChange={(bodyMarkdown) => patch({ bodyMarkdown })}
+                    imagePreviews={imagePreviews}
+                  />
                 </>
               ) : (
                 <>
@@ -651,13 +737,8 @@ export function AdminConsole() {
                 {publishing ? 'Saving…' : 'Save as draft to Sanity'}
               </button>
             </div>
-          ) : (
-            <div className="flex h-full min-h-[300px] items-center justify-center rounded-xl border border-dashed border-stone-300 bg-white/50 p-8 text-center text-sm text-stone-400">
-              Generated content appears here for review and editing before it&apos;s saved
-              as a draft.
-            </div>
-          )}
         </section>
+        )}
       </div>
       )}
     </main>

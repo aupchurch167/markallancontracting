@@ -13,6 +13,7 @@ import { CallCTA } from '@/components/CallCTA';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Section } from '@/components/Section';
 import { PortableText } from '@/components/PortableText';
+import { MarkdownBody } from '@/components/MarkdownBody';
 import { FallbackArticle } from '@/components/FallbackArticle';
 import { JsonLd } from '@/components/JsonLd';
 import { articleSchema } from '@/lib/schema';
@@ -54,9 +55,15 @@ function formatDate(iso?: string): string | undefined {
 }
 
 /** Rough reading time from either Portable Text or the fallback block union. */
-function readingTime(sanityBody?: PortableTextBlock[], fb?: FallbackPost): string {
+function readingTime(
+  sanityBody?: PortableTextBlock[],
+  fb?: FallbackPost,
+  markdown?: string,
+): string {
   let words = 0;
-  if (sanityBody?.length) {
+  if (markdown) {
+    words = markdown.split(/\s+/).filter(Boolean).length;
+  } else if (sanityBody?.length) {
     for (const b of sanityBody as any[]) {
       if (b?._type === 'block' && Array.isArray(b.children)) {
         words += b.children.map((c: any) => c.text || '').join(' ').split(/\s+/).filter(Boolean).length;
@@ -98,7 +105,7 @@ export default async function PostPage({
   const heroUrl =
     urlForImage(sanityPost?.mainImage)?.width(1600).height(900).url() ||
     sanityPost?.heroImageUrl;
-  const rt = readingTime(sanityPost?.body, fb);
+  const rt = readingTime(sanityPost?.body, fb, sanityPost?.bodyMarkdown);
   const tags = sanityPost?.tags;
 
   // Related: Sanity-curated first, else other posts in the same cluster.
@@ -169,7 +176,9 @@ export default async function PostPage({
           )}
 
           <div className="mt-8 text-lg">
-            {sanityPost?.body?.length ? (
+            {sanityPost?.bodyMarkdown ? (
+              <MarkdownBody>{sanityPost.bodyMarkdown}</MarkdownBody>
+            ) : sanityPost?.body?.length ? (
               <PortableText value={sanityPost.body} />
             ) : fb ? (
               <FallbackArticle body={fb.body} />

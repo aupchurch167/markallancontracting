@@ -59,7 +59,22 @@ export const post = defineType({
       ],
     }),
     defineField({ name: 'excerpt', type: 'text', rows: 2, group: 'content' }),
-    defineField({ name: 'body', type: 'blockContent', group: 'content' }),
+    defineField({
+      name: 'bodyMarkdown',
+      title: 'Body (Markdown)',
+      type: 'text',
+      rows: 24,
+      group: 'content',
+      description:
+        'Markdown body, authored from the /admin console. When set, it renders instead of the rich-text Body below.',
+    }),
+    defineField({
+      name: 'body',
+      title: 'Body (rich text)',
+      type: 'blockContent',
+      group: 'content',
+      description: 'Used only when Body (Markdown) is empty.',
+    }),
     defineField({
       name: 'author',
       type: 'reference',

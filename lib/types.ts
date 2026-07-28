@@ -163,6 +163,8 @@ export interface PostCard {
 
 export interface Post extends PostCard {
   body?: PortableTextBlock[];
+  /** Markdown body authored from /admin; renders instead of `body` when set. */
+  bodyMarkdown?: string;
   tags?: string[];
   metaTitle?: string;
   metaDescription?: string;

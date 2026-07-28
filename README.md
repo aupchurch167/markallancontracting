@@ -125,10 +125,16 @@ gated until that content is real.
   generation needs `ANTHROPIC_API_KEY`; saving needs `SANITY_WRITE_TOKEN`. The
   console denies access and returns clear errors until each is set. `noindex`,
   disallowed in robots, and never invents figures not in the brief/attachments.
-  - **Inline photos** — attach photos and Claude (vision) places them where they
-    fit in the body as `image` blocks (`imageIndex` + caption). On publish they
-    resolve to R2 URLs as `externalImage` Portable Text blocks (rendered in
-    `components/PortableText`); a photo used inline is not reused as the hero.
+  - **Two-step flow + Markdown body** — creating a post is form → then a
+    full-width review/edit pane (not side-by-side). The blog body is a single
+    Markdown editor (`bodyMarkdown`) with a Write/Preview toggle, rendered on the
+    site with `react-markdown` (`components/MarkdownBody`). Posts prefer
+    `bodyMarkdown`; the Portable Text `body` still renders for Studio-authored
+    posts.
+  - **Inline photos** — attach photos and Claude (vision) places them in the
+    Markdown as `![caption](photo:N)`; on publish those resolve to the uploaded
+    R2 URLs (a photo used inline is not reused as the hero). The editor shows the
+    attached photos with their `photo:N` index and previews them in Preview mode.
   - **Refine** — after generating, a note ("make it punchier, add a permitting
     section") rewrites the whole draft in place via `POST /api/admin/refine`,
     grounded on the current draft (no new facts). Truncated (`max_tokens`)
