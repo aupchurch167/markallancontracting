@@ -14,6 +14,8 @@ interface Content {
   excerpt?: string;
   cluster?: string;
   tags?: string[];
+  primaryKeyword?: string;
+  secondaryKeywords?: string[];
   bodyMarkdown?: string;
   clientType?: string;
   scopeSummary?: string;
@@ -108,6 +110,12 @@ export function AdminConsole() {
   const [brief, setBrief] = useState('');
   const [context, setContext] = useState('');
   const [files, setFiles] = useState<File[]>([]);
+  // SEO / targeting inputs (posts). Blank = the model chooses editorially.
+  const [primaryKeyword, setPrimaryKeyword] = useState('');
+  const [secondaryKeywords, setSecondaryKeywords] = useState('');
+  const [reader, setReader] = useState('');
+  const [searchIntent, setSearchIntent] = useState('');
+  const [length, setLength] = useState('');
 
   const [generating, setGenerating] = useState(false);
   const [publishing, setPublishing] = useState(false);
@@ -152,6 +160,13 @@ export function AdminConsole() {
       fd.set('contentType', contentType);
       fd.set('brief', brief);
       fd.set('context', context);
+      if (contentType === 'post') {
+        fd.set('primaryKeyword', primaryKeyword);
+        fd.set('secondaryKeywords', secondaryKeywords);
+        fd.set('reader', reader);
+        fd.set('searchIntent', searchIntent);
+        fd.set('length', length);
+      }
       files.forEach((f) => fd.append('files', f));
       const res = await fetch('/api/admin/generate', { method: 'POST', body: fd });
       const data = await res.json();
@@ -318,11 +333,68 @@ export function AdminConsole() {
                 />
               </Field>
 
-              <Field label="Extra context (optional)">
+              {contentType === 'post' && (
+                <div className="space-y-4 rounded-lg border border-stone-200 bg-stone-50 p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-stone-500">
+                    SEO &amp; targeting <span className="font-normal normal-case">(optional — blank lets Claude choose)</span>
+                  </div>
+                  <Field label="Primary keyword">
+                    <input
+                      className={inputClass}
+                      placeholder="e.g. commercial build-out process"
+                      value={primaryKeyword}
+                      onChange={(e) => setPrimaryKeyword(e.target.value)}
+                    />
+                  </Field>
+                  <Field label="Secondary keywords (comma separated)">
+                    <input
+                      className={inputClass}
+                      placeholder="tenant improvement cost, office renovation timeline…"
+                      value={secondaryKeywords}
+                      onChange={(e) => setSecondaryKeywords(e.target.value)}
+                    />
+                  </Field>
+                  <Field label="Reader — who is this for?">
+                    <input
+                      className={inputClass}
+                      placeholder="e.g. a franchise owner opening a second location, worried about the schedule"
+                      value={reader}
+                      onChange={(e) => setReader(e.target.value)}
+                    />
+                  </Field>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Field label="Search intent">
+                      <select
+                        className={inputClass}
+                        value={searchIntent}
+                        onChange={(e) => setSearchIntent(e.target.value)}
+                      >
+                        <option value="">Auto</option>
+                        <option value="informational">Informational</option>
+                        <option value="commercial investigation">Commercial investigation</option>
+                        <option value="transactional">Transactional</option>
+                      </select>
+                    </Field>
+                    <Field label="Length">
+                      <select
+                        className={inputClass}
+                        value={length}
+                        onChange={(e) => setLength(e.target.value)}
+                      >
+                        <option value="">Auto</option>
+                        <option value="guide">Guide (1,200–1,600)</option>
+                        <option value="single">Single question (700–1,000)</option>
+                      </select>
+                    </Field>
+                  </div>
+                </div>
+              )}
+
+              <Field label="Facts supplied (optional)">
                 <textarea
                   rows={3}
                   className={inputClass}
-                  placeholder="Facts, quotes, constraints, anything Claude should ground the write-up in."
+                  placeholder="Real numbers, project names, jurisdictions, timelines — the only specifics Claude may state as fact. Anything missing becomes a [VERIFY:] note instead of a guess."
                   value={context}
                   onChange={(e) => setContext(e.target.value)}
                 />
@@ -630,6 +702,18 @@ export function AdminConsole() {
                   onChange={(e) => patch({ metaDescription: e.target.value })}
                 />
               </Field>
+
+              {(() => {
+                const n = (content.bodyMarkdown?.match(/\[VERIFY:/g) || []).length;
+                return n > 0 ? (
+                  <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+                    <span className="font-semibold">{n} [VERIFY:] item{n === 1 ? '' : 's'} still in the body.</span>{' '}
+                    Fill in or remove them before this goes live — search the body for
+                    <code className="mx-1 rounded bg-amber-100 px-1">[VERIFY:</code>. The draft
+                    saves either way.
+                  </div>
+                ) : null;
+              })()}
 
               <button
                 onClick={publish}

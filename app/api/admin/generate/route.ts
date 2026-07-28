@@ -54,6 +54,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Give a brief of at least a sentence.' }, { status: 400 });
   }
   const context = String(form.get('context') || '').trim();
+  const seo = {
+    primaryKeyword: String(form.get('primaryKeyword') || '').trim(),
+    secondaryKeywords: String(form.get('secondaryKeywords') || '').trim(),
+    reader: String(form.get('reader') || '').trim(),
+    searchIntent: String(form.get('searchIntent') || '').trim(),
+    length: String(form.get('length') || '').trim(),
+  };
 
   const uploads = form.getAll('files').filter((f): f is File => f instanceof File);
   if (uploads.length > MAX_FILES) {
@@ -79,7 +86,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const content = await generateContent({ contentType, brief, context, files });
+    const content = await generateContent({ contentType, brief, context, files, seo });
     return NextResponse.json({ content });
   } catch (err) {
     if (err instanceof Anthropic.APIError) {

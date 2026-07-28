@@ -108,6 +108,9 @@ export function linkifyParagraph(text: string, used: Set<string>): LinkedSpan[] 
  */
 export function linkifyMarkdown(md: string): string {
   const used = new Set<string>();
+  // Pre-seed with internal paths the author already linked, so we never add a
+  // second link to the same page.
+  for (const m of md.matchAll(/\]\((\/[^)\s]+)\)/g)) used.add(m[1]);
   let inFence = false;
   return md
     .split('\n')

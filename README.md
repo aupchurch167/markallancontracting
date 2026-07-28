@@ -136,6 +136,16 @@ gated until that content is real.
     Markdown as `![caption](photo:N)`; on publish those resolve to the uploaded
     R2 URLs (a photo used inline is not reused as the hero). The editor shows the
     attached photos with their `photo:N` index and previews them in Preview mode.
+  - **SEO/editorial contract** — the post prompt (`lib/anthropic.ts`) enforces a
+    keyword contract (primary in H1/first-100-words/an H2/meta, slug = keyword),
+    a locked structure (hook → "The short version" TL;DR → search-worded H2s → a
+    comparison table → a "Where this goes wrong" section → FAQ → CTA with the
+    real phone → a "Before publishing" list), a specificity quota per H2, MAC
+    service boundaries (no ground-up / self-perform / GMP claims), an 8th-grade
+    reading level, and one pull-quote. Missing specifics become inline
+    `[VERIFY: …]` placeholders — the editor gets an amber warning counting any
+    left before publish. Per-post targeting (primary/secondary keywords, reader,
+    search intent, length) are optional form inputs; blank lets Claude choose.
   - **Refine** — after generating, a note ("make it punchier, add a permitting
     section") rewrites the whole draft in place via `POST /api/admin/refine`,
     grounded on the current draft (no new facts). Truncated (`max_tokens`)
