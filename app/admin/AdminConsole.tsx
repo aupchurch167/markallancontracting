@@ -130,6 +130,8 @@ export function AdminConsole() {
 
   const [generating, setGenerating] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  const [refining, setRefining] = useState(false);
+  const [refineNotes, setRefineNotes] = useState('');
   const [content, setContent] = useState<Content | null>(null);
   const [error, setError] = useState('');
   const [result, setResult] = useState<{ studioUrl: string } | null>(null);
@@ -165,6 +167,27 @@ export function AdminConsole() {
       setError(e instanceof Error ? e.message : 'Generation failed.');
     } finally {
       setGenerating(false);
+    }
+  }
+
+  async function refine() {
+    if (!content) return;
+    setError('');
+    setRefining(true);
+    try {
+      const res = await fetch('/api/admin/refine', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contentType, content, notes: refineNotes }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Refine failed.');
+      setContent(data.content);
+      setRefineNotes('');
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Refine failed.');
+    } finally {
+      setRefining(false);
     }
   }
 
@@ -357,6 +380,27 @@ export function AdminConsole() {
               <div className="flex items-center justify-between">
                 <h2 className="font-bold text-navy">Review &amp; edit</h2>
                 <span className="text-xs text-stone-400">Edits save with the draft</span>
+              </div>
+
+              {/* Refine with Claude — rewrite the current draft from a note */}
+              <div className="rounded-lg border border-stone-200 bg-stone-50 p-3">
+                <div className="text-xs font-semibold uppercase tracking-wide text-stone-500">
+                  Refine with Claude
+                </div>
+                <textarea
+                  rows={2}
+                  className={inputClass}
+                  placeholder="How should it change? e.g. “Make it punchier, add a section on permitting, cut the intro.”"
+                  value={refineNotes}
+                  onChange={(e) => setRefineNotes(e.target.value)}
+                />
+                <button
+                  onClick={refine}
+                  disabled={refining}
+                  className="btn-ghost mt-2 text-sm disabled:opacity-60"
+                >
+                  {refining ? 'Rewriting…' : 'Rewrite draft'}
+                </button>
               </div>
 
               <Field label="Title">

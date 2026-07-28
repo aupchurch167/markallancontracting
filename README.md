@@ -125,6 +125,15 @@ gated until that content is real.
   generation needs `ANTHROPIC_API_KEY`; saving needs `SANITY_WRITE_TOKEN`. The
   console denies access and returns clear errors until each is set. `noindex`,
   disallowed in robots, and never invents figures not in the brief/attachments.
+  - **Refine** — after generating, a note ("make it punchier, add a permitting
+    section") rewrites the whole draft in place via `POST /api/admin/refine`,
+    grounded on the current draft (no new facts). Truncated (`max_tokens`)
+    replies are caught and surfaced instead of saving a cut-off draft.
+  - **Internal auto-linking** — on save, generated post/project bodies weave in
+    links to our own service, project-type, and market pages
+    (`lib/internal-links.ts`): first mention only, longest phrase first, capped
+    per paragraph, headings/lists left alone. Builds topical authority and
+    funnels readers toward the conversion pages.
 - **Media storage (Cloudflare R2)** — `/admin` uploads (images + PDFs) go to R2
   (S3-compatible), not Sanity's asset store. Images land on `heroImageUrl`
   (posts) / `imageUrls[]` (projects); every file is also linked under

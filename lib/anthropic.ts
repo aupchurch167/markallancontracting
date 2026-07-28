@@ -195,27 +195,76 @@ export async function generateContent(opts: {
       .join('\n'),
   });
 
+  return runStructured(client, schema, VOICE, content);
+}
+
+/**
+ * Shared structured call: forces JSON-schema output, guards against a truncated
+ * (max_tokens) reply, and parses. Accepts a plain string or content blocks.
+ */
+async function runStructured(
+  client: Anthropic,
+  schema: Record<string, unknown>,
+  system: string,
+  content: string | ContentBlockParam[],
+): Promise<GeneratedPost | GeneratedProject> {
   const message = await client.messages.create({
     model: MODEL,
     max_tokens: 8000,
     thinking: { type: 'adaptive' },
-    system: VOICE,
+    system,
     output_config: { format: { type: 'json_schema', schema } },
     messages: [{ role: 'user', content }],
   });
+
+  if (message.stop_reason === 'max_tokens') {
+    throw new Error('The draft got cut off before it finished. Shorten the brief and try again.');
+  }
 
   const text = message.content
     .filter((b): b is Anthropic.TextBlock => b.type === 'text')
     .map((b) => b.text)
     .join('');
 
-  if (!text) throw new Error('The model returned no content. Try again or adjust the brief.');
+  if (!text) throw new Error('The model returned no content. Try again or adjust the input.');
 
-  let parsed: GeneratedPost | GeneratedProject;
   try {
-    parsed = JSON.parse(text);
+    return JSON.parse(text);
   } catch {
     throw new Error('The model returned malformed content. Try again.');
   }
-  return parsed;
+}
+
+/**
+ * Refine an existing draft per editor instructions (tone + notes), returning the
+ * full revised object in the same shape so the editor can swap it in. Grounded
+ * on the current draft — it does not invent new facts.
+ */
+export async function refineContent(opts: {
+  contentType: ContentType;
+  current: GeneratedPost | GeneratedProject;
+  tone?: string;
+  notes?: string;
+}): Promise<GeneratedPost | GeneratedProject> {
+  const client = new Anthropic();
+  const { contentType, current, tone, notes } = opts;
+  const schema = contentType === 'post' ? POST_SCHEMA : PROJECT_SCHEMA;
+
+  const userText = [
+    `Revise the following ${contentType === 'post' ? 'blog post' : 'project case study'} for macont.com.`,
+    'Keep it accurate — do not introduce facts, figures, names, or dates that are not already present.',
+    tone?.trim() ? `Desired tone: ${tone.trim()}.` : '',
+    notes?.trim()
+      ? `Editor notes: ${notes.trim()}`
+      : 'Tighten and sharpen the writing while preserving the meaning and structure.',
+    '',
+    'CURRENT DRAFT (JSON):',
+    JSON.stringify(current),
+    '',
+    'Return the complete revised object.',
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  return runStructured(client, schema, VOICE, userText);
 }
