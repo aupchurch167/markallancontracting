@@ -35,8 +35,8 @@ export default async function HomePage() {
                 Your space, open on time.
               </h1>
               <p className="mt-6 max-w-2xl text-lg text-stone-100/90 sm:text-xl">
-                Commercial buildouts and renovations across Georgia, Tennessee,
-                Alabama, and South Carolina. Family-owned since 1999.
+                Commercial buildouts and renovations across Georgia.
+                Family-owned since 1999.
               </p>
               <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
                 <CallButton phone={phone} phoneRaw={phoneRaw} />
