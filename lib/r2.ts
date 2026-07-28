@@ -8,30 +8,47 @@ import { randomUUID } from 'crypto';
  * the draft document and rendered directly.
  *
  * Required env (server-side only):
- *   R2_ACCOUNT_ID         — Cloudflare account id (forms the S3 endpoint).
- *   R2_ACCESS_KEY_ID      — R2 S3 API token access key.
- *   R2_SECRET_ACCESS_KEY  — R2 S3 API token secret.
- *   R2_BUCKET             — bucket name.
- *   R2_PUBLIC_BASE_URL    — public base for reads, e.g. https://pub-xxx.r2.dev
+ *   S3_ENDPOINT           — R2 S3 endpoint. May include the bucket path
+ *                           (…/mac-website); only the origin is used.
+ *   S3_ACCESS_KEY_ID      — R2 S3 API token access key.
+ *   S3_SECRET_ACCESS_KEY  — R2 S3 API token secret.
+ *   S3_BUCKET             — bucket name.
+ *   S3_PUBLIC_URL         — public base for reads, e.g. https://pub-xxx.r2.dev
  *                           or a custom domain. No trailing slash.
+ *   S3_REGION             — optional; defaults to "auto".
  */
 
-const accountId = process.env.R2_ACCOUNT_ID || '';
-const accessKeyId = process.env.R2_ACCESS_KEY_ID || '';
-const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY || '';
-const bucket = process.env.R2_BUCKET || '';
-const publicBase = (process.env.R2_PUBLIC_BASE_URL || '').replace(/\/+$/, '');
+const endpointRaw = process.env.S3_ENDPOINT || '';
+const region = process.env.S3_REGION || 'auto';
+const accessKeyId = process.env.S3_ACCESS_KEY_ID || '';
+const secretAccessKey = process.env.S3_SECRET_ACCESS_KEY || '';
+const bucket = process.env.S3_BUCKET || '';
+const publicBase = (process.env.S3_PUBLIC_URL || '').replace(/\/+$/, '');
+
+// The endpoint may be given with a bucket path appended; the S3 client wants
+// only the host origin (the bucket is addressed via forcePathStyle below).
+function endpointOrigin(): string {
+  try {
+    return new URL(endpointRaw).origin;
+  } catch {
+    return '';
+  }
+}
+const endpoint = endpointOrigin();
 
 export const isR2Configured =
-  !!accountId && !!accessKeyId && !!secretAccessKey && !!bucket && !!publicBase;
+  !!endpoint && !!accessKeyId && !!secretAccessKey && !!bucket && !!publicBase;
 
 let cached: S3Client | null = null;
 function s3(): S3Client {
   if (!cached) {
     cached = new S3Client({
-      region: 'auto',
-      endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+      region,
+      endpoint,
       credentials: { accessKeyId, secretAccessKey },
+      // R2's wildcard cert doesn't cover <bucket>.<account>.r2.cloudflarestorage.com,
+      // so address the bucket in the path instead of the host.
+      forcePathStyle: true,
     });
   }
   return cached;

@@ -130,9 +130,10 @@ gated until that content is real.
   (posts) / `imageUrls[]` (projects); every file is also linked under
   `attachments[]`, and PDFs render as a Documents list on the project page.
   Rendering prefers a Sanity-uploaded image, then the R2 URL, then the built-in
-  fallback, so hand-uploaded Studio images still win. Needs `R2_ACCOUNT_ID`,
-  `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL`;
-  the public host is registered for `next/image` in `next.config.mjs`.
+  fallback, so hand-uploaded Studio images still win. Needs `S3_ENDPOINT`,
+  `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_BUCKET`, `S3_PUBLIC_URL`
+  (Cloudflare R2, S3-compatible); the public host is registered for `next/image`
+  in `next.config.mjs`.
 - **Home-page photos (`/admin` → "Home page photos")** — replace the hero and
   about photos and add/remove/reorder the "On the job" gallery, each with alt
   text. Uploads go to R2; the slot config is saved to a `homepage` Sanity

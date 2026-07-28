@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         error:
-          'File storage is not configured. Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET, and R2_PUBLIC_BASE_URL.',
+          'File storage is not configured. Set S3_ENDPOINT, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, S3_BUCKET, and S3_PUBLIC_URL.',
       },
       { status: 503 },
     );
