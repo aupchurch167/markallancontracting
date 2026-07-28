@@ -125,12 +125,13 @@ gated until that content is real.
   generation needs `ANTHROPIC_API_KEY`; saving needs `SANITY_WRITE_TOKEN`. The
   console denies access and returns clear errors until each is set. `noindex`,
   disallowed in robots, and never invents figures not in the brief/attachments.
-  - **Two-step flow + Markdown body** — creating a post is form → then a
-    full-width review/edit pane (not side-by-side). The blog body is a single
-    Markdown editor (`bodyMarkdown`) with a Write/Preview toggle, rendered on the
-    site with `react-markdown` (`components/MarkdownBody`). Posts prefer
-    `bodyMarkdown`; the Portable Text `body` still renders for Studio-authored
-    posts.
+  - **Two-step flow + Markdown body** — creating content is form → then a
+    full-width review/edit pane (not side-by-side). Both blog posts and projects
+    use a single Markdown editor (`bodyMarkdown`) with a Write/Preview toggle,
+    rendered on the site with `react-markdown` (`components/MarkdownBody`). Posts
+    prefer `bodyMarkdown` over the Portable Text `body`; projects prefer it over
+    the rich-text `challenge`/`solution` — both fall back to the Studio/editorial
+    content when Markdown is empty.
   - **Inline photos** — attach photos and Claude (vision) places them in the
     Markdown as `![caption](photo:N)`; on publish those resolve to the uploaded
     R2 URLs (a photo used inline is not reused as the hero). The editor shows the

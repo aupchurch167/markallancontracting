@@ -9,6 +9,7 @@ import { CallCTA } from '@/components/CallCTA';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Section, Eyebrow } from '@/components/Section';
 import { PortableText } from '@/components/PortableText';
+import { MarkdownBody } from '@/components/MarkdownBody';
 import { pageMetadata } from '@/lib/seo';
 
 export async function generateStaticParams() {
@@ -134,34 +135,42 @@ export default async function ProjectPage({
       <Section>
         <div className="grid gap-10 lg:grid-cols-[2fr,1fr]">
           <div className="space-y-8">
-            {project?.challenge?.length || fb?.challenge?.length ? (
-              <div>
-                <Eyebrow>The challenge</Eyebrow>
-                <div className="mt-3 text-lg">
-                  {project?.challenge?.length ? (
-                    <PortableText value={project.challenge} />
-                  ) : (
-                    fb?.challenge.map((p, i) => (
-                      <p key={i} className="mb-4 leading-relaxed text-stone-600">{p}</p>
-                    ))
-                  )}
-                </div>
+            {project?.bodyMarkdown ? (
+              <div className="text-lg">
+                <MarkdownBody>{project.bodyMarkdown}</MarkdownBody>
               </div>
-            ) : null}
-            {project?.solution?.length || fb?.solution?.length ? (
-              <div>
-                <Eyebrow>What we did</Eyebrow>
-                <div className="mt-3 text-lg">
-                  {project?.solution?.length ? (
-                    <PortableText value={project.solution} />
-                  ) : (
-                    fb?.solution.map((p, i) => (
-                      <p key={i} className="mb-4 leading-relaxed text-stone-600">{p}</p>
-                    ))
-                  )}
-                </div>
-              </div>
-            ) : null}
+            ) : (
+              <>
+                {project?.challenge?.length || fb?.challenge?.length ? (
+                  <div>
+                    <Eyebrow>The challenge</Eyebrow>
+                    <div className="mt-3 text-lg">
+                      {project?.challenge?.length ? (
+                        <PortableText value={project.challenge} />
+                      ) : (
+                        fb?.challenge.map((p, i) => (
+                          <p key={i} className="mb-4 leading-relaxed text-stone-600">{p}</p>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                ) : null}
+                {project?.solution?.length || fb?.solution?.length ? (
+                  <div>
+                    <Eyebrow>What we did</Eyebrow>
+                    <div className="mt-3 text-lg">
+                      {project?.solution?.length ? (
+                        <PortableText value={project.solution} />
+                      ) : (
+                        fb?.solution.map((p, i) => (
+                          <p key={i} className="mb-4 leading-relaxed text-stone-600">{p}</p>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                ) : null}
+              </>
+            )}
           </div>
           <aside className="space-y-4 rounded-lg border border-stone-200 bg-stone-50 p-6">
             {scopeSummary && (

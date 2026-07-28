@@ -7,14 +7,6 @@ import { MarkdownBody } from '@/components/MarkdownBody';
 
 type ContentType = 'post' | 'project';
 
-type GenBlock =
-  | { type: 'heading'; text: string }
-  | { type: 'subheading'; text: string }
-  | { type: 'paragraph'; text: string }
-  | { type: 'quote'; text: string }
-  | { type: 'bullets'; items: string[] }
-  | { type: 'numbers'; items: string[] }
-  | { type: 'image'; imageIndex: number; alt?: string; caption?: string };
 
 interface Content {
   title: string;
@@ -25,8 +17,6 @@ interface Content {
   bodyMarkdown?: string;
   clientType?: string;
   scopeSummary?: string;
-  challenge?: GenBlock[];
-  solution?: GenBlock[];
   timeline?: string;
   squareFootage?: string;
   metaTitle: string;
@@ -40,16 +30,6 @@ const CLUSTERS = [
   { label: 'Broker & PM Resources', value: 'broker-pm' },
   { label: 'Ground-up Authority', value: 'ground-up' },
 ];
-
-const BLOCK_LABELS: Record<GenBlock['type'], string> = {
-  heading: 'Heading',
-  subheading: 'Subheading',
-  paragraph: 'Paragraph',
-  quote: 'Quote',
-  bullets: 'Bullet list',
-  numbers: 'Numbered list',
-  image: 'Photo',
-};
 
 const inputClass =
   'mt-1 w-full rounded-md border border-stone-200 px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent';
@@ -115,92 +95,6 @@ function MarkdownField({
           className="min-h-[400px] w-full rounded-md border border-stone-200 px-3 py-2 font-mono text-sm leading-relaxed text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
         />
       )}
-    </div>
-  );
-}
-
-/** Editable list of body/challenge/solution blocks. */
-function BlockEditor({
-  blocks,
-  onChange,
-  imagePreviews = [],
-}: {
-  blocks: GenBlock[];
-  onChange: (next: GenBlock[]) => void;
-  /** Object URLs for attached photos, indexed by imageIndex, for previews. */
-  imagePreviews?: string[];
-}) {
-  function update(i: number, patch: Partial<GenBlock>) {
-    const next = blocks.slice();
-    next[i] = { ...next[i], ...patch } as GenBlock;
-    onChange(next);
-  }
-  function remove(i: number) {
-    onChange(blocks.filter((_, idx) => idx !== i));
-  }
-  return (
-    <div className="space-y-3">
-      {blocks.map((b, i) => {
-        const isList = b.type === 'bullets' || b.type === 'numbers';
-        const isImage = b.type === 'image';
-        return (
-          <div key={i} className="rounded-md border border-stone-200 bg-stone-50 p-3">
-            <div className="mb-1 flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wide text-stone-500">
-                {BLOCK_LABELS[b.type]}
-              </span>
-              <button
-                type="button"
-                onClick={() => remove(i)}
-                className="text-xs text-red-600 hover:underline"
-              >
-                Remove
-              </button>
-            </div>
-            {isImage ? (
-              <div>
-                {imagePreviews[(b as { imageIndex: number }).imageIndex] ? (
-                  <div className="relative aspect-[16/9] overflow-hidden rounded bg-stone-100">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={imagePreviews[(b as { imageIndex: number }).imageIndex]}
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="rounded bg-stone-100 px-3 py-2 text-xs text-stone-400">
-                    Photo #{(b as { imageIndex: number }).imageIndex + 1}
-                  </div>
-                )}
-                <input
-                  className={inputClass}
-                  placeholder="Caption"
-                  value={(b as { caption?: string }).caption || ''}
-                  onChange={(e) => update(i, { caption: e.target.value } as Partial<GenBlock>)}
-                />
-              </div>
-            ) : isList ? (
-              <textarea
-                rows={Math.max(2, (b as { items: string[] }).items.length)}
-                className={inputClass}
-                value={(b as { items: string[] }).items.join('\n')}
-                onChange={(e) =>
-                  update(i, { items: e.target.value.split('\n').filter((x) => x.trim() !== '') } as Partial<GenBlock>)
-                }
-              />
-            ) : (
-              <textarea
-                rows={b.type === 'heading' || b.type === 'subheading' ? 1 : 3}
-                className={inputClass}
-                value={(b as { text: string }).text}
-                onChange={(e) => update(i, { text: e.target.value } as Partial<GenBlock>)}
-              />
-            )}
-          </div>
-        );
-      })}
-      {blocks.length === 0 ? <p className="text-sm text-stone-400">No blocks.</p> : null}
     </div>
   );
 }
@@ -692,24 +586,32 @@ export function AdminConsole() {
                       />
                     </Field>
                   </div>
-                  <div>
-                    <span className="text-sm font-medium text-navy">Challenge</span>
-                    <div className="mt-2">
-                      <BlockEditor
-                        blocks={content.challenge || []}
-                        onChange={(challenge) => patch({ challenge })}
-                      />
+                  {imagePreviews.length > 0 && (
+                    <div>
+                      <span className="text-sm font-medium text-navy">
+                        Attached photos — reference in the body as{' '}
+                        <code className="rounded bg-stone-100 px-1 text-xs">![caption](photo:0)</code>
+                      </span>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {imagePreviews.map((src, i) => (
+                          <div key={i} className="w-24">
+                            <div className="relative aspect-[4/3] overflow-hidden rounded bg-stone-100">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={src} alt="" className="h-full w-full object-cover" />
+                            </div>
+                            <div className="mt-0.5 text-center text-[10px] text-stone-500">
+                              photo:{i}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <span className="text-sm font-medium text-navy">Solution</span>
-                    <div className="mt-2">
-                      <BlockEditor
-                        blocks={content.solution || []}
-                        onChange={(solution) => patch({ solution })}
-                      />
-                    </div>
-                  </div>
+                  )}
+                  <MarkdownField
+                    value={content.bodyMarkdown || ''}
+                    onChange={(bodyMarkdown) => patch({ bodyMarkdown })}
+                    imagePreviews={imagePreviews}
+                  />
                 </>
               )}
 

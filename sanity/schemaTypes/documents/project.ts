@@ -67,8 +67,29 @@ export const project = defineType({
       ],
     }),
     defineField({ name: 'scopeSummary', type: 'text', rows: 2, group: 'content' }),
-    defineField({ name: 'challenge', type: 'blockContent', group: 'content' }),
-    defineField({ name: 'solution', type: 'blockContent', group: 'content' }),
+    defineField({
+      name: 'bodyMarkdown',
+      title: 'Body (Markdown)',
+      type: 'text',
+      rows: 20,
+      group: 'content',
+      description:
+        'Markdown write-up (challenge + how we solved it), authored from /admin. When set, it renders instead of the rich-text Challenge/Solution below.',
+    }),
+    defineField({
+      name: 'challenge',
+      title: 'Challenge (rich text)',
+      type: 'blockContent',
+      group: 'content',
+      description: 'Used only when Body (Markdown) is empty.',
+    }),
+    defineField({
+      name: 'solution',
+      title: 'Solution (rich text)',
+      type: 'blockContent',
+      group: 'content',
+      description: 'Used only when Body (Markdown) is empty.',
+    }),
     defineField({ name: 'testimonial', type: 'testimonial', group: 'content' }),
 
     defineField({ name: 'clientType', type: 'string', group: 'details' }),

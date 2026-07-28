@@ -194,7 +194,7 @@ export async function getProject(slug: string): Promise<Project | null> {
   return client.fetch<Project | null>(
     `*[_type == "project" && slug.current == $slug && status == "delivered"][0]{
       ${projectCardProjection},
-      timeline, challenge, solution, images, imageUrls, attachments, status,
+      timeline, bodyMarkdown, challenge, solution, images, imageUrls, attachments, status,
       testimonial, highlights, completedDate, squareFootage
     }`,
     { slug },

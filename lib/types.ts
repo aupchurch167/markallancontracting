@@ -86,6 +86,8 @@ export interface Attachment {
 
 export interface Project extends ProjectCard {
   timeline?: string;
+  /** Markdown body authored from /admin; renders instead of challenge/solution. */
+  bodyMarkdown?: string;
   challenge?: PortableTextBlock[];
   solution?: PortableTextBlock[];
   images?: SanityImage[];

@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
 import { writeClient, isWriteConfigured } from '@/sanity/lib/writeClient';
 import { uploadToR2, isR2Configured, type R2Object } from '@/lib/r2';
-import { blocksToPortableText } from '@/lib/portable-text';
 import { linkifyMarkdown } from '@/lib/internal-links';
 import type { GeneratedPost, GeneratedProject } from '@/lib/anthropic';
 import { requireAdmin } from '@/lib/admin-guard';
@@ -151,6 +150,18 @@ export async function POST(req: Request) {
     };
   } else {
     const c = content as GeneratedProject;
+    const imageUrls = images.map((im) => im.url);
+    const { md, usedIndices } = resolvePhotoPlaceholders(c.bodyMarkdown || '', imageUrls);
+    const bodyMarkdown = linkifyMarkdown(md);
+    // Photos not placed inline in the body become the gallery.
+    const galleryImages = images
+      .map((im, i) => ({ im, i }))
+      .filter(({ i }) => !usedIndices.has(i))
+      .map(({ im }) => ({
+        _key: randomUUID().replace(/-/g, '').slice(0, 12),
+        url: im.url,
+        alt: c.title,
+      }));
     doc = {
       _id: draftId,
       _type: 'project',
@@ -158,23 +169,14 @@ export async function POST(req: Request) {
       slug,
       clientType: c.clientType || '',
       scopeSummary: c.scopeSummary || '',
-      challenge: blocksToPortableText(c.challenge),
-      solution: blocksToPortableText(c.solution),
+      bodyMarkdown,
       timeline: c.timeline || '',
       squareFootage: c.squareFootage || '',
       status: 'delivered',
       featured: false,
       metaTitle: c.metaTitle || '',
       metaDescription: c.metaDescription || '',
-      ...(images.length
-        ? {
-            imageUrls: images.map((im) => ({
-              _key: randomUUID().replace(/-/g, '').slice(0, 12),
-              url: im.url,
-              alt: c.title,
-            })),
-          }
-        : {}),
+      ...(galleryImages.length ? { imageUrls: galleryImages } : {}),
       ...(attachments.length ? { attachments } : {}),
     };
   }

@@ -12,18 +12,6 @@ export const isAnthropicConfigured = (process.env.ANTHROPIC_API_KEY || '').lengt
 
 const MODEL = 'claude-opus-5';
 
-/** A single rich-text block in the generated body. Maps 1:1 to Portable Text. */
-export type GenBlock =
-  | { type: 'heading'; text: string }
-  | { type: 'subheading'; text: string }
-  | { type: 'paragraph'; text: string }
-  | { type: 'quote'; text: string }
-  | { type: 'bullets'; items: string[] }
-  | { type: 'numbers'; items: string[] }
-  // Places one attached photo inline in the body. imageIndex refers to the
-  // attached photos in order (Photo 0, Photo 1, …). Resolved to the R2 URL on
-  // publish (lib/portable-text).
-  | { type: 'image'; imageIndex: number; alt?: string; caption?: string };
 
 export interface GeneratedPost {
   title: string;
@@ -44,8 +32,8 @@ export interface GeneratedProject {
   slug: string;
   clientType: string;
   scopeSummary: string;
-  challenge: GenBlock[];
-  solution: GenBlock[];
+  /** Markdown body. Photos are referenced as ![caption](photo:INDEX). */
+  bodyMarkdown: string;
   timeline: string;
   squareFootage: string;
   metaTitle: string;
@@ -68,34 +56,6 @@ Voice:
   write around it rather than fabricating it.
 - No hype adjectives ("world-class", "cutting-edge"), no exclamation points.
 - Short paragraphs. Use headings to structure. Prefer specifics over generalities.`;
-
-const BLOCK_SCHEMA = {
-  type: 'array',
-  description: 'Ordered rich-text blocks.',
-  items: {
-    type: 'object',
-    additionalProperties: false,
-    properties: {
-      type: {
-        type: 'string',
-        enum: ['heading', 'subheading', 'paragraph', 'quote', 'bullets', 'numbers', 'image'],
-      },
-      text: { type: 'string', description: 'Used for heading/subheading/paragraph/quote.' },
-      items: {
-        type: 'array',
-        items: { type: 'string' },
-        description: 'Used for bullets/numbers.',
-      },
-      imageIndex: {
-        type: 'integer',
-        description: 'For type "image": which attached photo (0-based, in order).',
-      },
-      caption: { type: 'string', description: 'For type "image": a short caption.' },
-      alt: { type: 'string', description: 'For type "image": alt text describing the photo.' },
-    },
-    required: ['type'],
-  },
-} as const;
 
 const POST_SCHEMA = {
   type: 'object',
@@ -128,15 +88,18 @@ const PROJECT_SCHEMA = {
     slug: { type: 'string', description: 'Lowercase, hyphenated.' },
     clientType: { type: 'string', description: 'e.g. "Pilates studio", "Facility manager".' },
     scopeSummary: { type: 'string', description: 'One or two sentences describing the work.' },
-    challenge: BLOCK_SCHEMA,
-    solution: BLOCK_SCHEMA,
+    bodyMarkdown: {
+      type: 'string',
+      description:
+        'The case study body in Markdown: use ## headings (e.g. "## The challenge", "## What we did"), paragraphs, and lists. Reference attached photos as ![caption](photo:INDEX).',
+    },
     timeline: { type: 'string', description: 'Only if supplied in the brief; else empty string.' },
     squareFootage: { type: 'string', description: 'Only if supplied; else empty string.' },
     metaTitle: { type: 'string' },
     metaDescription: { type: 'string' },
   },
   required: [
-    'title', 'slug', 'clientType', 'scopeSummary', 'challenge', 'solution',
+    'title', 'slug', 'clientType', 'scopeSummary', 'bodyMarkdown',
     'timeline', 'squareFootage', 'metaTitle', 'metaDescription',
   ],
 } as const;
@@ -189,7 +152,7 @@ export async function generateContent(opts: {
 
   const instruction = isPost
     ? `Write a complete insight/blog post for macont.com from the brief below. Pick the single best cluster. Write the body as Markdown (bodyMarkdown): use ## and ### headings, short paragraphs, - bullet and 1. numbered lists, > blockquotes, and **bold** where it helps. Aim for 500-900 words.`
-    : `Write a project case study for macont.com from the brief below. Describe the client type, scope, the challenge, and how Mark Allan Contracting solved it. Ground every detail in the brief and attachments — do not invent specifics. Keep challenge and solution to a few blocks each.`;
+    : `Write a project case study for macont.com from the brief below. Describe the client type and scope, then write the body (bodyMarkdown) as Markdown with ## headings (e.g. "## The challenge" and "## What we did"), short paragraphs, and lists. Ground every detail in the brief and attachments — do not invent specifics.`;
 
   // Attachments first (per Claude vision/PDF guidance). Label each photo with
   // its index so the model can place it inline via image blocks.
@@ -206,7 +169,7 @@ export async function generateContent(opts: {
   }
 
   const photoInstruction =
-    isPost && photoCount > 0
+    photoCount > 0
       ? `\n${photoCount} photo(s) are attached, labeled Photo 0 to Photo ${photoCount - 1} in order. ` +
         `Analyze each photo and place it in the Markdown body where it best supports the text, using ` +
         `image syntax: ![caption](photo:INDEX) — e.g. ![Open-plan office buildout](photo:0). ` +
