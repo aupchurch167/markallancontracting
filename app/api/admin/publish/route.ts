@@ -4,6 +4,7 @@ import { writeClient, isWriteConfigured } from '@/sanity/lib/writeClient';
 import { uploadToR2, isR2Configured, type R2Object } from '@/lib/r2';
 import { blocksToPortableText } from '@/lib/portable-text';
 import type { GeneratedPost, GeneratedProject } from '@/lib/anthropic';
+import { requireAdmin } from '@/lib/admin-guard';
 
 export const runtime = 'nodejs';
 export const maxDuration = 120;
@@ -21,6 +22,9 @@ function slugify(input: string): string {
 }
 
 export async function POST(req: Request) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   if (!isWriteConfigured || !writeClient) {
     return NextResponse.json(
       {

@@ -6,6 +6,7 @@ import {
   type AttachedFile,
   type ContentType,
 } from '@/lib/anthropic';
+import { requireAdmin } from '@/lib/admin-guard';
 
 export const runtime = 'nodejs';
 export const maxDuration = 120;
@@ -16,6 +17,9 @@ const MAX_FILE_BYTES = 12 * 1024 * 1024; // 12MB each
 const ACCEPTED = /^(image\/(jpeg|png|gif|webp)|application\/pdf)$/;
 
 export async function POST(req: Request) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   if (!isAnthropicConfigured) {
     return NextResponse.json(
       { error: 'Generation is not configured. Set ANTHROPIC_API_KEY in the environment.' },

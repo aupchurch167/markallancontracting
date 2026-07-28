@@ -4,6 +4,7 @@ import { revalidatePath, revalidateTag } from 'next/cache';
 import { writeClient, isWriteConfigured } from '@/sanity/lib/writeClient';
 import { uploadToR2, isR2Configured } from '@/lib/r2';
 import { getHomepageMedia, HOMEPAGE_FALLBACK, type MediaSlot } from '@/lib/homepage-media';
+import { requireAdmin } from '@/lib/admin-guard';
 
 export const runtime = 'nodejs';
 export const maxDuration = 120;
@@ -13,6 +14,9 @@ const ACCEPTED = /^image\/(jpeg|png|gif|webp)$/;
 
 /** Current home-page media (Sanity singleton merged with the shipped fallback). */
 export async function GET() {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   const media = await getHomepageMedia();
   return NextResponse.json({ media });
 }
@@ -41,6 +45,9 @@ async function uploadImage(file: File): Promise<string> {
 }
 
 export async function POST(req: Request) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   if (!isWriteConfigured || !writeClient) {
     return NextResponse.json(
       { error: 'Publishing is not configured. Set NEXT_PUBLIC_SANITY_PROJECT_ID and SANITY_WRITE_TOKEN.' },

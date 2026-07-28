@@ -7,11 +7,15 @@ import {
   type GeneratedPost,
   type GeneratedProject,
 } from '@/lib/anthropic';
+import { requireAdmin } from '@/lib/admin-guard';
 
 export const runtime = 'nodejs';
 export const maxDuration = 120;
 
 export async function POST(req: Request) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   if (!isAnthropicConfigured) {
     return NextResponse.json(
       { error: 'Refine is not configured. Set ANTHROPIC_API_KEY in the environment.' },

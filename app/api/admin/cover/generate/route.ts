@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { generateCoverImage, isGeminiConfigured } from '@/lib/gemini';
 import { uploadToR2, isR2Configured } from '@/lib/r2';
+import { requireAdmin } from '@/lib/admin-guard';
 
 export const runtime = 'nodejs';
 export const maxDuration = 120;
@@ -12,6 +13,9 @@ const EXT: Record<string, string> = {
 };
 
 export async function POST(req: Request) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   if (!isGeminiConfigured) {
     return NextResponse.json(
       { error: 'Cover generation is not configured. Set GEMINI_API_KEY in the environment.' },
