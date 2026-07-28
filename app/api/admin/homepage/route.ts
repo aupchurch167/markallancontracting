@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { writeClient, isWriteConfigured } from '@/sanity/lib/writeClient';
 import { uploadToR2, isR2Configured } from '@/lib/r2';
 import { getHomepageMedia, HOMEPAGE_FALLBACK, type MediaSlot } from '@/lib/homepage-media';
@@ -117,7 +117,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: `Could not save: ${message}` }, { status: 502 });
   }
 
-  // Push the change live immediately — no redeploy.
+  // Push the change live immediately — no redeploy. revalidateTag drops the
+  // cached homepage fetch; revalidatePath re-renders the home route.
+  revalidateTag('homepage');
   revalidatePath('/');
 
   // Build the fresh state from what we just wrote (avoids a CDN read race),

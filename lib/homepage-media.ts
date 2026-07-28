@@ -60,11 +60,18 @@ function slot(v: { url?: string; alt?: string } | undefined, fallback: MediaSlot
  */
 export async function getHomepageMedia(): Promise<HomepageMedia> {
   if (!client) return HOMEPAGE_FALLBACK;
-  const doc = await client.fetch<{
+  // Read from the API (not the CDN) so a just-saved change is reflected the
+  // moment the page re-renders — the CDN lags a write by up to ~60s. Tag the
+  // fetch so /api/admin/homepage can invalidate it on demand (revalidateTag).
+  const doc = await client.withConfig({ useCdn: false }).fetch<{
     heroImage?: { url?: string; alt?: string };
     aboutImage?: { url?: string; alt?: string };
     galleryImages?: { url?: string; alt?: string }[];
-  } | null>(`*[_type == "homepage"][0]{ heroImage, aboutImage, galleryImages }`);
+  } | null>(
+    `*[_type == "homepage"][0]{ heroImage, aboutImage, galleryImages }`,
+    {},
+    { next: { tags: ['homepage'] } },
+  );
 
   if (!doc) return HOMEPAGE_FALLBACK;
 
