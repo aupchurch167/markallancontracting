@@ -48,6 +48,33 @@ export async function queryOne<T = Record<string, unknown>>(
   return rows[0] ?? null;
 }
 
+/**
+ * Read-only query that never throws — on any error (notably: the DB is
+ * unreachable at BUILD time, when Railway's private host isn't resolvable) it
+ * logs and returns []. Public content reads use this so the build and render
+ * fall back to shipped content instead of crashing. Writes use the strict
+ * query()/queryOne() so failures surface to the admin.
+ */
+export async function safeQuery<T = Record<string, unknown>>(
+  text: string,
+  params: unknown[] = [],
+): Promise<T[]> {
+  try {
+    return await query<T>(text, params);
+  } catch (err) {
+    console.warn('[db] read failed, using fallback:', (err as Error).message);
+    return [];
+  }
+}
+
+export async function safeQueryOne<T = Record<string, unknown>>(
+  text: string,
+  params: unknown[] = [],
+): Promise<T | null> {
+  const rows = await safeQuery<T>(text, params);
+  return rows[0] ?? null;
+}
+
 const DDL = `
 CREATE TABLE IF NOT EXISTS posts (
   id                 TEXT PRIMARY KEY,

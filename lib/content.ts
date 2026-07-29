@@ -1,6 +1,6 @@
 import 'server-only';
 import { randomUUID } from 'crypto';
-import { query, queryOne, ensureSchema, isDbConfigured } from './db';
+import { query, queryOne, safeQuery, safeQueryOne, ensureSchema, isDbConfigured } from './db';
 import type { Attachment, Post, PostCard, Project, ProjectCard } from './types';
 import type { HomepageMedia } from './homepage-media';
 
@@ -105,20 +105,20 @@ const PROJECT_COLS = `id, slug, title, client_type, city_name, city_state, servi
 
 // ---------- public reads ----------
 export async function getPublishedPostCards(): Promise<PostCard[]> {
-  const rows = await query<PostRow>(
+  const rows = await safeQuery<PostRow>(
     `SELECT ${POST_COLS} FROM posts WHERE status = 'published' ORDER BY published_at DESC NULLS LAST`,
   );
   return rows.map(toPost);
 }
 
 export async function getPublishedPost(slug: string): Promise<Post | null> {
-  const row = await queryOne<PostRow>(
+  const row = await safeQueryOne<PostRow>(
     `SELECT ${POST_COLS} FROM posts WHERE slug = $1 AND status = 'published'`,
     [slug],
   );
   if (!row) return null;
   const post = toPost(row);
-  const related = await query<PostRow>(
+  const related = await safeQuery<PostRow>(
     `SELECT ${POST_COLS} FROM posts WHERE status = 'published' AND slug <> $1
        AND cluster IS NOT DISTINCT FROM $2 ORDER BY published_at DESC NULLS LAST LIMIT 2`,
     [slug, row.cluster],
@@ -128,21 +128,21 @@ export async function getPublishedPost(slug: string): Promise<Post | null> {
 }
 
 export async function getPublishedPostSlugs(): Promise<string[]> {
-  const rows = await query<{ slug: string }>(
+  const rows = await safeQuery<{ slug: string }>(
     `SELECT slug FROM posts WHERE status = 'published'`,
   );
   return rows.map((r) => r.slug);
 }
 
 export async function getPublishedProjectCards(): Promise<ProjectCard[]> {
-  const rows = await query<ProjectRow>(
+  const rows = await safeQuery<ProjectRow>(
     `SELECT ${PROJECT_COLS} FROM projects WHERE status = 'published' ORDER BY published_at DESC NULLS LAST`,
   );
   return rows.map(toProject);
 }
 
 export async function getFeaturedProjectCards(): Promise<ProjectCard[]> {
-  const rows = await query<ProjectRow>(
+  const rows = await safeQuery<ProjectRow>(
     `SELECT ${PROJECT_COLS} FROM projects WHERE status = 'published' AND featured = true
        ORDER BY published_at DESC NULLS LAST LIMIT 3`,
   );
@@ -150,7 +150,7 @@ export async function getFeaturedProjectCards(): Promise<ProjectCard[]> {
 }
 
 export async function getPublishedProject(slug: string): Promise<Project | null> {
-  const row = await queryOne<ProjectRow>(
+  const row = await safeQueryOne<ProjectRow>(
     `SELECT ${PROJECT_COLS} FROM projects WHERE slug = $1 AND status = 'published'`,
     [slug],
   );
@@ -158,14 +158,14 @@ export async function getPublishedProject(slug: string): Promise<Project | null>
 }
 
 export async function getPublishedProjectSlugs(): Promise<string[]> {
-  const rows = await query<{ slug: string }>(
+  const rows = await safeQuery<{ slug: string }>(
     `SELECT slug FROM projects WHERE status = 'published'`,
   );
   return rows.map((r) => r.slug);
 }
 
 export async function getHomepageValue(): Promise<HomepageMedia | null> {
-  const row = await queryOne<{ value: HomepageMedia }>(
+  const row = await safeQueryOne<{ value: HomepageMedia }>(
     `SELECT value FROM singletons WHERE key = 'homepage'`,
   );
   return row?.value ?? null;
@@ -398,33 +398,49 @@ export async function getEditorContent(
   };
 }
 
-/** Update a post's editable fields by id, preserving hero/attachments/status. */
-export async function updatePostById(fields: EditorPost): Promise<void> {
+/**
+ * Update a post's editable fields by id. Hero/status are preserved; newly
+ * uploaded attachments (from editing) are appended to the existing list.
+ */
+export async function updatePostById(
+  fields: EditorPost,
+  appendAttachments: Attachment[] = [],
+): Promise<void> {
   await query(
     `UPDATE posts SET title=$2, slug=$3, excerpt=$4, cluster=$5, tags=$6::jsonb,
         primary_keyword=$7, secondary_keywords=$8::jsonb, body_markdown=$9, meta_title=$10,
         meta_description=$11, hero_image_url=COALESCE(NULLIF($12,''), hero_image_url),
-        updated_at=now()
+        attachments=COALESCE(attachments,'[]'::jsonb) || $13::jsonb, updated_at=now()
      WHERE id=$1`,
     [
       fields.id, fields.title, fields.slug, fields.excerpt || null, fields.cluster || null,
       j(fields.tags || []), fields.primaryKeyword || null, j(fields.secondaryKeywords || []),
       fields.bodyMarkdown || null, fields.metaTitle || null, fields.metaDescription || null,
-      fields.coverImageUrl || '',
+      fields.coverImageUrl || '', j(appendAttachments),
     ],
   );
 }
 
-/** Update a project's editable fields by id, preserving gallery/attachments/status. */
-export async function updateProjectById(fields: EditorProject): Promise<void> {
+/**
+ * Update a project's editable fields by id. Status is preserved; newly uploaded
+ * gallery photos and attachments are appended to the existing lists.
+ */
+export async function updateProjectById(
+  fields: EditorProject,
+  appendImageUrls: { url: string; alt?: string }[] = [],
+  appendAttachments: Attachment[] = [],
+): Promise<void> {
   await query(
     `UPDATE projects SET title=$2, slug=$3, client_type=$4, scope_summary=$5, body_markdown=$6,
-        timeline=$7, square_footage=$8, meta_title=$9, meta_description=$10, updated_at=now()
+        timeline=$7, square_footage=$8, meta_title=$9, meta_description=$10,
+        image_urls=COALESCE(image_urls,'[]'::jsonb) || $11::jsonb,
+        attachments=COALESCE(attachments,'[]'::jsonb) || $12::jsonb, updated_at=now()
      WHERE id=$1`,
     [
       fields.id, fields.title, fields.slug, fields.clientType || null, fields.scopeSummary || null,
       fields.bodyMarkdown || null, fields.timeline || null, fields.squareFootage || null,
       fields.metaTitle || null, fields.metaDescription || null,
+      j(appendImageUrls), j(appendAttachments),
     ],
   );
 }

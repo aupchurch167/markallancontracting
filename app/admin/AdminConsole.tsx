@@ -266,16 +266,20 @@ export function AdminConsole() {
     setError('');
     setPublishing(true);
     try {
-      // Editing an existing item → update (preserves images/attachments).
+      // Editing an existing item → update. Any newly attached photos upload and
+      // resolve ![](photo:N); existing images/attachments are preserved.
       if (editingId) {
+        const fd = new FormData();
+        fd.set('content', JSON.stringify(content));
+        files.forEach((f) => fd.append('files', f));
         const res = await fetch(`/api/admin/content/${contentType}/${editingId}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(content),
+          body: fd,
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Save failed.');
         setResult({ url: data.url });
+        setFiles([]);
         return;
       }
       const fd = new FormData();
@@ -678,12 +682,24 @@ export function AdminConsole() {
                       }
                     />
                   </Field>
-                  {imagePreviews.length > 0 && (
-                    <div>
+                  <div>
+                    <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-navy">
-                        Attached photos — reference in the body as{' '}
+                        Body photos — reference as{' '}
                         <code className="rounded bg-stone-100 px-1 text-xs">![caption](photo:0)</code>
                       </span>
+                      <label className="cursor-pointer text-sm font-semibold text-accent hover:text-accent-700">
+                        + Add photos
+                        <input
+                          type="file"
+                          multiple
+                          accept="image/jpeg,image/png,image/gif,image/webp"
+                          className="hidden"
+                          onChange={(e) => addFiles(e.target.files)}
+                        />
+                      </label>
+                    </div>
+                    {imagePreviews.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-2">
                         {imagePreviews.map((src, i) => (
                           <div key={i} className="w-24">
@@ -697,8 +713,8 @@ export function AdminConsole() {
                           </div>
                         ))}
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                   <MarkdownField
                     value={content.bodyMarkdown || ''}
                     onChange={(bodyMarkdown) => patch({ bodyMarkdown })}
@@ -738,12 +754,24 @@ export function AdminConsole() {
                       />
                     </Field>
                   </div>
-                  {imagePreviews.length > 0 && (
-                    <div>
+                  <div>
+                    <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-navy">
-                        Attached photos — reference in the body as{' '}
+                        Body photos — reference as{' '}
                         <code className="rounded bg-stone-100 px-1 text-xs">![caption](photo:0)</code>
                       </span>
+                      <label className="cursor-pointer text-sm font-semibold text-accent hover:text-accent-700">
+                        + Add photos
+                        <input
+                          type="file"
+                          multiple
+                          accept="image/jpeg,image/png,image/gif,image/webp"
+                          className="hidden"
+                          onChange={(e) => addFiles(e.target.files)}
+                        />
+                      </label>
+                    </div>
+                    {imagePreviews.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-2">
                         {imagePreviews.map((src, i) => (
                           <div key={i} className="w-24">
@@ -757,8 +785,8 @@ export function AdminConsole() {
                           </div>
                         ))}
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                   <MarkdownField
                     value={content.bodyMarkdown || ''}
                     onChange={(bodyMarkdown) => patch({ bodyMarkdown })}
