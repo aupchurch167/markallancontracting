@@ -227,6 +227,8 @@ export interface PostInput {
   metaDescription?: string;
   attachments?: Attachment[];
   featured?: boolean;
+  /** Preserve an original publish date (used when importing existing posts). */
+  publishedAt?: string;
   status: 'draft' | 'published';
 }
 
@@ -235,6 +237,9 @@ export interface ProjectInput {
   slug: string;
   title: string;
   clientType?: string;
+  cityName?: string;
+  cityState?: string;
+  serviceSlug?: string;
   scopeSummary?: string;
   bodyMarkdown?: string;
   timeline?: string;
@@ -254,7 +259,8 @@ const j = (v: unknown) => JSON.stringify(v ?? null);
 export async function savePost(input: PostInput): Promise<string> {
   await ensureSchema();
   const id = input.id || randomUUID();
-  const publishedAt = input.status === 'published' ? new Date().toISOString() : null;
+  const publishedAt =
+    input.status === 'published' ? input.publishedAt || new Date().toISOString() : null;
   const row = await queryOne<{ id: string }>(
     `INSERT INTO posts (id, slug, title, excerpt, cluster, tags, primary_keyword,
         secondary_keywords, body_markdown, hero_image_url, meta_title, meta_description,
@@ -283,23 +289,28 @@ export async function saveProject(input: ProjectInput): Promise<string> {
   const id = input.id || randomUUID();
   const publishedAt = input.status === 'published' ? new Date().toISOString() : null;
   const row = await queryOne<{ id: string }>(
-    `INSERT INTO projects (id, slug, title, client_type, scope_summary, body_markdown,
-        timeline, square_footage, hero_image_url, image_urls, attachments, meta_title,
-        meta_description, featured, status, published_at, updated_at)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10::jsonb,$11::jsonb,$12,$13,$14,$15,$16, now())
+    `INSERT INTO projects (id, slug, title, client_type, city_name, city_state, service_slug,
+        scope_summary, body_markdown, timeline, square_footage, hero_image_url, image_urls,
+        attachments, meta_title, meta_description, featured, status, published_at, updated_at)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13::jsonb,$14::jsonb,$15,$16,$17,$18,$19, now())
      ON CONFLICT (slug) DO UPDATE SET
-        title=$3, client_type=$4, scope_summary=$5, body_markdown=$6, timeline=$7,
-        square_footage=$8, hero_image_url=COALESCE(NULLIF($9,''), projects.hero_image_url),
-        image_urls=$10::jsonb, attachments=$11::jsonb, meta_title=$12,
-        meta_description=$13, featured=$14, status=$15,
-        published_at=COALESCE(projects.published_at, $16), updated_at=now()
+        title=$3, client_type=$4,
+        city_name=COALESCE($5, projects.city_name),
+        city_state=COALESCE($6, projects.city_state),
+        service_slug=COALESCE($7, projects.service_slug),
+        scope_summary=$8, body_markdown=$9, timeline=$10,
+        square_footage=$11, hero_image_url=COALESCE(NULLIF($12,''), projects.hero_image_url),
+        image_urls=$13::jsonb, attachments=$14::jsonb, meta_title=$15,
+        meta_description=$16, featured=$17, status=$18,
+        published_at=COALESCE(projects.published_at, $19), updated_at=now()
      RETURNING id`,
     [
-      id, input.slug, input.title, input.clientType || null, input.scopeSummary || null,
-      input.bodyMarkdown || null, input.timeline || null, input.squareFootage || null,
-      input.heroImageUrl || '', j(input.imageUrls || []), j(input.attachments || []),
-      input.metaTitle || null, input.metaDescription || null, input.featured || false,
-      input.status, publishedAt,
+      id, input.slug, input.title, input.clientType || null,
+      input.cityName || null, input.cityState || null, input.serviceSlug || null,
+      input.scopeSummary || null, input.bodyMarkdown || null, input.timeline || null,
+      input.squareFootage || null, input.heroImageUrl || '', j(input.imageUrls || []),
+      j(input.attachments || []), input.metaTitle || null, input.metaDescription || null,
+      input.featured || false, input.status, publishedAt,
     ],
   );
   return row?.id || id;
@@ -341,6 +352,19 @@ export async function listAllContent(): Promise<ContentListItem[]> {
     status: r.status,
     updatedAt: r.updated_at,
   }));
+}
+
+/** Slugs already stored in the CMS, by type — used to skip on import. */
+export async function getExistingSlugs(): Promise<{ posts: Set<string>; projects: Set<string> }> {
+  await ensureSchema();
+  const [posts, projects] = await Promise.all([
+    query<{ slug: string }>(`SELECT slug FROM posts`),
+    query<{ slug: string }>(`SELECT slug FROM projects`),
+  ]);
+  return {
+    posts: new Set(posts.map((r) => r.slug)),
+    projects: new Set(projects.map((r) => r.slug)),
+  };
 }
 
 export async function getPostForEdit(id: string): Promise<Post | null> {

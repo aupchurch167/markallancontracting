@@ -25,6 +25,8 @@ export function ContentManager({
   const [error, setError] = useState('');
   const [configured, setConfigured] = useState(true);
   const [busyId, setBusyId] = useState('');
+  const [importing, setImporting] = useState(false);
+  const [importMsg, setImportMsg] = useState('');
 
   const load = useCallback(async () => {
     setError('');
@@ -81,6 +83,37 @@ export function ContentManager({
     }
   }
 
+  async function importExisting() {
+    setImporting(true);
+    setError('');
+    setImportMsg('');
+    try {
+      const res = await fetch('/api/admin/import', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Import failed.');
+      const r = data.result as {
+        posts: { imported: string[]; skipped: string[] };
+        projects: { imported: string[]; skipped: string[] };
+      };
+      const added = r.posts.imported.length + r.projects.imported.length;
+      const skipped = r.posts.skipped.length + r.projects.skipped.length;
+      setImportMsg(
+        added === 0
+          ? `Nothing new to import — all ${skipped} existing items are already in the CMS.`
+          : `Imported ${added} item${added === 1 ? '' : 's'} (${r.posts.imported.length} post${
+              r.posts.imported.length === 1 ? '' : 's'
+            }, ${r.projects.imported.length} project${
+              r.projects.imported.length === 1 ? '' : 's'
+            })${skipped ? `; skipped ${skipped} already in the CMS` : ''}.`,
+      );
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Import failed.');
+    } finally {
+      setImporting(false);
+    }
+  }
+
   if (loading) return <p className="text-sm text-stone-400">Loading…</p>;
 
   if (!configured) {
@@ -96,6 +129,27 @@ export function ContentManager({
     <div className="space-y-4">
       {error ? (
         <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>
+      ) : null}
+
+      {/* One-time import of the original site's projects and blog posts */}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-stone-200 bg-stone-50 p-3">
+        <div className="text-sm text-stone-600">
+          <span className="font-medium text-navy">Import existing site content.</span>{' '}
+          Pull the original projects and blog posts into the CMS so you can edit them here. Items
+          already in the CMS are skipped.
+        </div>
+        <button
+          onClick={importExisting}
+          disabled={importing}
+          className="btn-ghost whitespace-nowrap text-sm disabled:opacity-60"
+        >
+          {importing ? 'Importing…' : 'Import existing content'}
+        </button>
+      </div>
+      {importMsg ? (
+        <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+          {importMsg}
+        </div>
       ) : null}
 
       {items.length === 0 ? (
