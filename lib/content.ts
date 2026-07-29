@@ -490,17 +490,20 @@ export async function updatePostById(
   fields: EditorPost,
   appendAttachments: Attachment[] = [],
 ): Promise<void> {
+  // The editor always sends the authoritative cover (empty = intentionally
+  // cleared), so set it directly rather than COALESCE — otherwise a replaced or
+  // removed cover silently keeps the old value.
   await query(
     `UPDATE posts SET title=$2, slug=$3, excerpt=$4, cluster=$5, tags=$6::jsonb,
         primary_keyword=$7, secondary_keywords=$8::jsonb, body_markdown=$9, meta_title=$10,
-        meta_description=$11, hero_image_url=COALESCE(NULLIF($12,''), hero_image_url),
+        meta_description=$11, hero_image_url=$12,
         attachments=COALESCE(attachments,'[]'::jsonb) || $13::jsonb, updated_at=now()
      WHERE id=$1`,
     [
       fields.id, fields.title, fields.slug, fields.excerpt || null, fields.cluster || null,
       j(fields.tags || []), fields.primaryKeyword || null, j(fields.secondaryKeywords || []),
       fields.bodyMarkdown || null, fields.metaTitle || null, fields.metaDescription || null,
-      fields.coverImageUrl || '', j(appendAttachments),
+      fields.coverImageUrl || null, j(appendAttachments),
     ],
   );
 }
@@ -514,10 +517,11 @@ export async function updateProjectById(
   appendImageUrls: { url: string; alt?: string }[] = [],
   appendAttachments: Attachment[] = [],
 ): Promise<void> {
+  // Cover set directly (editor sends the authoritative value; empty = cleared).
   await query(
     `UPDATE projects SET title=$2, slug=$3, client_type=$4, scope_summary=$5, body_markdown=$6,
         timeline=$7, square_footage=$8, meta_title=$9, meta_description=$10,
-        hero_image_url=COALESCE(NULLIF($13,''), hero_image_url),
+        hero_image_url=$13,
         image_urls=COALESCE(image_urls,'[]'::jsonb) || $11::jsonb,
         attachments=COALESCE(attachments,'[]'::jsonb) || $12::jsonb, updated_at=now()
      WHERE id=$1`,
@@ -525,7 +529,7 @@ export async function updateProjectById(
       fields.id, fields.title, fields.slug, fields.clientType || null, fields.scopeSummary || null,
       fields.bodyMarkdown || null, fields.timeline || null, fields.squareFootage || null,
       fields.metaTitle || null, fields.metaDescription || null,
-      j(appendImageUrls), j(appendAttachments), fields.coverImageUrl || '',
+      j(appendImageUrls), j(appendAttachments), fields.coverImageUrl || null,
     ],
   );
 }

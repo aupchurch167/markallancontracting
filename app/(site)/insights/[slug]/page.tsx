@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 // ISR: refetch CMS content at runtime (the DB is unreachable at build).
-export const revalidate = 300;
+export const revalidate = 30;
 import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';

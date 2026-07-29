@@ -20,7 +20,10 @@ type StatusFilter = 'all' | 'published' | 'draft';
 type SortKey = 'updated' | 'title';
 
 function liveUrl(item: AdminItem) {
-  return item.type === 'post' ? `/insights/${item.slug}` : `/projects/${item.slug}`;
+  const path = item.type === 'post' ? `/insights/${item.slug}` : `/projects/${item.slug}`;
+  // Cache-bust with the item's updated time so clicking "View" right after an
+  // edit bypasses the CDN edge cache and shows the fresh page immediately.
+  return `${path}?v=${encodeURIComponent(item.updatedAt || '')}`;
 }
 
 export function ContentList({
