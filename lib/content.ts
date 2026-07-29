@@ -333,15 +333,25 @@ export interface ContentListItem {
   slug: string;
   status: string;
   updatedAt: string;
+  /** Cover/header image, for the Manage list and dashboard thumbnails. */
+  heroImageUrl?: string;
 }
 
 export async function listAllContent(): Promise<ContentListItem[]> {
   if (!isDbConfigured) return [];
   await ensureSchema();
-  const rows = await query<ContentListItem & { updated_at: string }>(
-    `SELECT id, 'post' AS type, title, slug, status, updated_at FROM posts
+  const rows = await query<{
+    id: string;
+    type: 'post' | 'project';
+    title: string;
+    slug: string;
+    status: string;
+    updated_at: string;
+    hero_image_url: string | null;
+  }>(
+    `SELECT id, 'post' AS type, title, slug, status, updated_at, hero_image_url FROM posts
      UNION ALL
-     SELECT id, 'project' AS type, title, slug, status, updated_at FROM projects
+     SELECT id, 'project' AS type, title, slug, status, updated_at, hero_image_url FROM projects
      ORDER BY updated_at DESC`,
   );
   return rows.map((r) => ({
@@ -351,6 +361,7 @@ export async function listAllContent(): Promise<ContentListItem[]> {
     slug: r.slug,
     status: r.status,
     updatedAt: r.updated_at,
+    heroImageUrl: cleanUrl(r.hero_image_url),
   }));
 }
 
@@ -410,6 +421,7 @@ export interface EditorPost {
   metaTitle: string;
   metaDescription: string;
   coverImageUrl: string;
+  status: string;
 }
 export interface EditorProject {
   id: string;
@@ -424,6 +436,7 @@ export interface EditorProject {
   metaTitle: string;
   metaDescription: string;
   coverImageUrl: string;
+  status: string;
 }
 
 export async function getEditorContent(
@@ -447,6 +460,7 @@ export async function getEditorContent(
       metaTitle: r.meta_title || '',
       metaDescription: r.meta_description || '',
       coverImageUrl: cleanUrl(r.hero_image_url) || '',
+      status: r.status,
     };
   }
   const r = await queryOne<ProjectRow>(`SELECT ${PROJECT_COLS} FROM projects WHERE id = $1`, [id]);
@@ -464,6 +478,7 @@ export async function getEditorContent(
     metaTitle: r.meta_title || '',
     metaDescription: r.meta_description || '',
     coverImageUrl: cleanUrl(r.hero_image_url) || '',
+    status: r.status,
   };
 }
 

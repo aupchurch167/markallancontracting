@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { AdminConsole } from './AdminConsole';
+import { AdminShell } from './AdminShell';
 
 export const metadata: Metadata = {
   title: 'Content console',
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminPage() {
-  return <AdminConsole />;
+  return <AdminShell />;
 }

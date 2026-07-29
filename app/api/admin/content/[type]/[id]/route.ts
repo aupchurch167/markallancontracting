@@ -4,6 +4,7 @@ import {
   getEditorContent,
   updatePostById,
   updateProjectById,
+  setStatus,
   deleteItem,
   type EditorPost,
   type EditorProject,
@@ -126,15 +127,21 @@ export async function PUT(
     contentType: s.contentType,
   }));
 
+  // Optional status change from the editor's Save-draft / Publish / Unpublish.
+  const rawStatus = String(form.get('status') || '');
+  const nextStatus = rawStatus === 'draft' || rawStatus === 'published' ? rawStatus : null;
+
   try {
     if (t === 'post') {
       const c = content as EditorPost;
       const { md } = resolvePhotoPlaceholders(c.bodyMarkdown || '', imageUrls);
       const bodyMarkdown = linkifyMarkdown(md);
       await updatePostById({ ...c, id, bodyMarkdown }, newAttachments);
+      if (nextStatus) await setStatus('post', id, nextStatus);
       revalidatePath('/insights');
       revalidatePath(`/insights/${c.slug}`);
-      return NextResponse.json({ ok: true, url: `/insights/${c.slug}` });
+      revalidatePath('/feed.xml');
+      return NextResponse.json({ ok: true, url: `/insights/${c.slug}`, status: nextStatus });
     }
 
     const c = content as EditorProject;
@@ -145,10 +152,11 @@ export async function PUT(
       .filter(({ i }) => !usedIndices.has(i))
       .map(({ im }) => ({ url: im.url, alt: c.title }));
     await updateProjectById({ ...c, id, bodyMarkdown }, newGallery, newAttachments);
+    if (nextStatus) await setStatus('project', id, nextStatus);
     revalidatePath('/projects');
     revalidatePath(`/projects/${c.slug}`);
     revalidatePath('/');
-    return NextResponse.json({ ok: true, url: `/projects/${c.slug}` });
+    return NextResponse.json({ ok: true, url: `/projects/${c.slug}`, status: nextStatus });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Update failed.';
     return NextResponse.json({ error: message }, { status: 502 });
