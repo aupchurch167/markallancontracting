@@ -35,7 +35,20 @@ const region = env('S3_REGION') || 'auto';
 const accessKeyId = env('S3_ACCESS_KEY_ID');
 const secretAccessKey = env('S3_SECRET_ACCESS_KEY');
 const bucket = env('S3_BUCKET');
-const publicBase = env('S3_PUBLIC_URL').replace(/\/+$/, '');
+
+// Public read base. R2's pub-*.r2.dev domains serve the bucket at the ROOT with
+// no path prefix, so a pasted URL with a trailing path (…/something) would build
+// 404ing links — strip the path for r2.dev. Custom domains keep their path.
+function normalizePublicBase(): string {
+  const raw = env('S3_PUBLIC_URL').replace(/\/+$/, '');
+  try {
+    const u = new URL(raw);
+    return u.hostname.endsWith('.r2.dev') ? u.origin : raw;
+  } catch {
+    return raw;
+  }
+}
+const publicBase = normalizePublicBase();
 
 // The endpoint may be given with a bucket path appended; the S3 client wants
 // only the host origin (the bucket is addressed via forcePathStyle below).

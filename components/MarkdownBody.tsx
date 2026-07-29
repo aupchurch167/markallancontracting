@@ -31,7 +31,18 @@ const components: Components = {
   h2: ({ children }) => <h2 className="mt-10 text-2xl font-bold text-navy">{children}</h2>,
   h3: ({ children }) => <h3 className="mt-8 text-xl font-bold text-navy">{children}</h3>,
   h4: ({ children }) => <h4 className="mt-6 text-lg font-bold text-navy">{children}</h4>,
-  p: ({ children }) => <p className="mb-4 leading-relaxed text-stone-600">{children}</p>,
+  p: ({ children, node }) => {
+    // A standalone image becomes <p><img></p>; since our img renders a block
+    // <figure>, that's invalid nesting and causes a hydration mismatch (#418).
+    // Render such paragraphs without the <p> wrapper.
+    const kids = (node?.children ?? []).filter(
+      (c) => !(c.type === 'text' && !c.value.trim()),
+    );
+    if (kids.length === 1 && kids[0].type === 'element' && kids[0].tagName === 'img') {
+      return <>{children}</>;
+    }
+    return <p className="mb-4 leading-relaxed text-stone-600">{children}</p>;
+  },
   a: ({ href, children }) => {
     const url = href || '#';
     if (url.startsWith('/')) {

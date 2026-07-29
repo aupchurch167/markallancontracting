@@ -58,17 +58,33 @@ interface ProjectRow {
 
 // ---------- mappers ----------
 /**
- * Repair URLs saved while S3_PUBLIC_URL was misconfigured with a "NAME=" prefix
- * (e.g. "S3_PUBLIC_URL=https://…"). Strips a leading WORD= before http so old
- * content renders correctly without re-uploading. No-op for valid URLs.
+ * Repair URLs saved while S3_PUBLIC_URL was misconfigured — a "NAME=" prefix
+ * (from pasting a whole .env line) and/or a stray path segment on an r2.dev URL
+ * (e.g. …r2.dev/the-joy/covers/… when the object is really at …r2.dev/covers/…).
+ * Objects always live under one of these key prefixes, so anything before the
+ * first known prefix on an r2.dev host is dropped. No-op for valid URLs.
  */
+const R2_KEY_PREFIXES = ['covers', 'insights', 'projects', 'home', 'admin'];
 function cleanUrl(u?: string | null): string | undefined {
   if (!u) return undefined;
-  return u.replace(/^[A-Za-z0-9_]+=(?=https?:\/\/)/, '');
+  let s = u.replace(/^[A-Za-z0-9_]+=(?=https?:\/\/)/, ''); // strip a "NAME=" prefix
+  try {
+    const url = new URL(s);
+    if (url.hostname.endsWith('.r2.dev')) {
+      const parts = url.pathname.split('/').filter(Boolean);
+      const idx = parts.findIndex((p) => R2_KEY_PREFIXES.includes(p));
+      if (idx > 0) s = `${url.origin}/${parts.slice(idx).join('/')}`;
+    }
+  } catch {
+    /* not a URL — leave as-is */
+  }
+  return s;
 }
 function cleanMd(md?: string | null): string | undefined {
   if (!md) return undefined;
-  return md.replace(/\]\([A-Za-z0-9_]+=(https?:\/\/)/g, ']($1');
+  return md
+    .replace(/\]\([A-Za-z0-9_]+=(https?:\/\/)/g, ']($1')
+    .replace(/\]\((https?:\/\/[^)\s]+)\)/g, (_m, url) => `](${cleanUrl(url) || url})`);
 }
 
 function toPost(r: PostRow): Post {
