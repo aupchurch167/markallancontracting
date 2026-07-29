@@ -57,6 +57,20 @@ interface ProjectRow {
 }
 
 // ---------- mappers ----------
+/**
+ * Repair URLs saved while S3_PUBLIC_URL was misconfigured with a "NAME=" prefix
+ * (e.g. "S3_PUBLIC_URL=https://…"). Strips a leading WORD= before http so old
+ * content renders correctly without re-uploading. No-op for valid URLs.
+ */
+function cleanUrl(u?: string | null): string | undefined {
+  if (!u) return undefined;
+  return u.replace(/^[A-Za-z0-9_]+=(?=https?:\/\/)/, '');
+}
+function cleanMd(md?: string | null): string | undefined {
+  if (!md) return undefined;
+  return md.replace(/\]\([A-Za-z0-9_]+=(https?:\/\/)/g, ']($1');
+}
+
 function toPost(r: PostRow): Post {
   return {
     _id: r.id,
@@ -66,9 +80,9 @@ function toPost(r: PostRow): Post {
     cluster: r.cluster || undefined,
     publishedAt: r.published_at || undefined,
     featured: r.featured,
-    heroImageUrl: r.hero_image_url || undefined,
+    heroImageUrl: cleanUrl(r.hero_image_url),
     tags: r.tags || [],
-    bodyMarkdown: r.body_markdown || undefined,
+    bodyMarkdown: cleanMd(r.body_markdown),
     metaTitle: r.meta_title || undefined,
     metaDescription: r.meta_description || undefined,
     attachments: r.attachments || [],
@@ -85,10 +99,12 @@ function toProject(r: ProjectRow): Project {
     cityState: r.city_state || undefined,
     serviceSlug: r.service_slug || undefined,
     scopeSummary: r.scope_summary || undefined,
-    bodyMarkdown: r.body_markdown || undefined,
+    bodyMarkdown: cleanMd(r.body_markdown),
     timeline: r.timeline || undefined,
     squareFootage: r.square_footage || undefined,
-    imageUrls: r.image_urls || undefined,
+    imageUrls: r.image_urls
+      ? r.image_urls.map((im) => ({ url: cleanUrl(im.url) || im.url, alt: im.alt }))
+      : undefined,
     attachments: r.attachments || undefined,
     testimonial: r.testimonial || undefined,
     highlights: r.highlights || undefined,
@@ -168,7 +184,14 @@ export async function getHomepageValue(): Promise<HomepageMedia | null> {
   const row = await safeQueryOne<{ value: HomepageMedia }>(
     `SELECT value FROM singletons WHERE key = 'homepage'`,
   );
-  return row?.value ?? null;
+  const v = row?.value;
+  if (!v) return null;
+  const slot = (s: { url: string; alt: string }) => ({ url: cleanUrl(s.url) || s.url, alt: s.alt });
+  return {
+    hero: slot(v.hero),
+    about: slot(v.about),
+    gallery: (v.gallery || []).map(slot),
+  };
 }
 
 // ---------- admin writes ----------

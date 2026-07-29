@@ -18,12 +18,24 @@ import { randomUUID } from 'crypto';
  *   S3_REGION             — optional; defaults to "auto".
  */
 
-const endpointRaw = process.env.S3_ENDPOINT || '';
-const region = process.env.S3_REGION || 'auto';
-const accessKeyId = process.env.S3_ACCESS_KEY_ID || '';
-const secretAccessKey = process.env.S3_SECRET_ACCESS_KEY || '';
-const bucket = process.env.S3_BUCKET || '';
-const publicBase = (process.env.S3_PUBLIC_URL || '').replace(/\/+$/, '');
+/**
+ * Read an env var, tolerating two common paste mistakes: a value that still
+ * includes its own `NAME=` prefix (from pasting a whole .env line into the
+ * value field), and surrounding quotes/whitespace.
+ */
+function env(name: string): string {
+  let v = (process.env[name] || '').trim();
+  const prefix = `${name}=`;
+  if (v.toLowerCase().startsWith(prefix.toLowerCase())) v = v.slice(prefix.length).trim();
+  return v.replace(/^['"]|['"]$/g, '').trim();
+}
+
+const endpointRaw = env('S3_ENDPOINT');
+const region = env('S3_REGION') || 'auto';
+const accessKeyId = env('S3_ACCESS_KEY_ID');
+const secretAccessKey = env('S3_SECRET_ACCESS_KEY');
+const bucket = env('S3_BUCKET');
+const publicBase = env('S3_PUBLIC_URL').replace(/\/+$/, '');
 
 // The endpoint may be given with a bucket path appended; the S3 client wants
 // only the host origin (the bucket is addressed via forcePathStyle below).
