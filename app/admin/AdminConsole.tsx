@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { HomepagePhotos } from './HomepagePhotos';
+import { ContentManager } from './ContentManager';
 import { MarkdownBody } from '@/components/MarkdownBody';
 
 type ContentType = 'post' | 'project';
@@ -105,7 +106,8 @@ export function AdminConsole() {
   const router = useRouter();
   const fileInput = useRef<HTMLInputElement>(null);
 
-  const [view, setView] = useState<'content' | 'homepage'>('content');
+  const [view, setView] = useState<'content' | 'homepage' | 'manage'>('content');
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [contentType, setContentType] = useState<ContentType>('post');
   const [brief, setBrief] = useState('');
   const [context, setContext] = useState('');
@@ -125,7 +127,7 @@ export function AdminConsole() {
   const [coverBusy, setCoverBusy] = useState(false);
   const [content, setContent] = useState<Content | null>(null);
   const [error, setError] = useState('');
-  const [result, setResult] = useState<{ studioUrl: string } | null>(null);
+  const [result, setResult] = useState<{ url: string } | null>(null);
 
   function patch(p: Partial<Content>) {
     setContent((c) => (c ? { ...c, ...p } : c));
@@ -242,11 +244,40 @@ export function AdminConsole() {
     }
   }
 
+  async function loadForEdit(type: ContentType, id: string) {
+    setError('');
+    setResult(null);
+    try {
+      const res = await fetch(`/api/admin/content/${type}/${id}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to load.');
+      setContentType(type);
+      setContent(data.content);
+      setEditingId(id);
+      setFiles([]);
+      setView('content');
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to load.');
+    }
+  }
+
   async function publish() {
     if (!content) return;
     setError('');
     setPublishing(true);
     try {
+      // Editing an existing item → update (preserves images/attachments).
+      if (editingId) {
+        const res = await fetch(`/api/admin/content/${contentType}/${editingId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(content),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Save failed.');
+        setResult({ url: data.url });
+        return;
+      }
       const fd = new FormData();
       fd.set('contentType', contentType);
       fd.set('content', JSON.stringify(content));
@@ -254,7 +285,7 @@ export function AdminConsole() {
       const res = await fetch('/api/admin/publish', { method: 'POST', body: fd });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Save failed.');
-      setResult({ studioUrl: data.studioUrl });
+      setResult({ url: data.url });
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Save failed.');
     } finally {
@@ -283,11 +314,19 @@ export function AdminConsole() {
         <div className="mx-auto flex max-w-5xl gap-1 px-6">
           {([
             { id: 'content', label: 'Create content' },
+            { id: 'manage', label: 'Manage' },
             { id: 'homepage', label: 'Home page photos' },
           ] as const).map((t) => (
             <button
               key={t.id}
-              onClick={() => setView(t.id)}
+              onClick={() => {
+                if (t.id === 'content' && view !== 'content') {
+                  setContent(null);
+                  setEditingId(null);
+                  setResult(null);
+                }
+                setView(t.id);
+              }}
               className={`-mb-px border-b-2 px-4 py-2 text-sm font-medium ${
                 view === t.id
                   ? 'border-white text-white'
@@ -303,6 +342,12 @@ export function AdminConsole() {
       {view === 'homepage' && (
         <div className="mx-auto max-w-5xl px-6 py-8">
           <HomepagePhotos />
+        </div>
+      )}
+
+      {view === 'manage' && (
+        <div className="mx-auto max-w-5xl px-6 py-8">
+          <ContentManager onEdit={loadForEdit} />
         </div>
       )}
 
@@ -325,6 +370,7 @@ export function AdminConsole() {
                   onClick={() => {
                     setContentType(t);
                     setContent(null);
+                    setEditingId(null);
                     setResult(null);
                   }}
                   className={`rounded-full px-4 py-1.5 text-sm font-medium ${
@@ -472,27 +518,28 @@ export function AdminConsole() {
           <button
             type="button"
             onClick={() => {
+              const wasEditing = editingId;
               setResult(null);
               setContent(null);
+              setEditingId(null);
+              if (wasEditing) setView('manage');
             }}
             className="text-sm font-medium text-stone-500 hover:text-navy"
           >
-            ← Back to the form
+            {editingId ? '← Back to Manage' : '← Back to the form'}
           </button>
 
           {result ? (
             <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800">
-              <p className="font-semibold">Saved as a draft in Sanity.</p>
-              <p className="mt-1">
-                Review, add finishing touches, and publish it in the Studio:
-              </p>
+              <p className="font-semibold">Published.</p>
+              <p className="mt-1">It&apos;s live on the site:</p>
               <a
-                href={result.studioUrl}
+                href={result.url}
                 target="_blank"
                 rel="noreferrer"
                 className="mt-2 inline-block font-semibold text-navy underline"
               >
-                Open draft in Studio →
+                View it live →
               </a>
             </div>
           ) : null}
@@ -753,7 +800,7 @@ export function AdminConsole() {
                 disabled={publishing}
                 className="btn-call w-full justify-center disabled:opacity-60"
               >
-                {publishing ? 'Saving…' : 'Save as draft to Sanity'}
+                {publishing ? 'Saving…' : editingId ? 'Save changes' : 'Publish'}
               </button>
             </div>
         </section>

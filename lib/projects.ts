@@ -3,7 +3,7 @@ import {
   getFeaturedProjects,
   getProjectSlugs,
 } from './queries';
-import { urlForImage } from '@/sanity/lib/image';
+import { urlForImage } from '@/lib/image';
 import { FALLBACK_PROJECTS, FALLBACK_PROJECTS_BY_SLUG } from './fallback-projects';
 import type { ProjectCard as SanityCard } from './types';
 

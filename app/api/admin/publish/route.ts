@@ -1,10 +1,17 @@
 import { NextResponse } from 'next/server';
-import { randomUUID } from 'crypto';
-import { writeClient, isWriteConfigured } from '@/sanity/lib/writeClient';
+import { revalidatePath } from 'next/cache';
 import { uploadToR2, isR2Configured, type R2Object } from '@/lib/r2';
 import { linkifyMarkdown } from '@/lib/internal-links';
+import { savePost, saveProject } from '@/lib/content';
+import { isDbConfigured } from '@/lib/db';
 import type { GeneratedPost, GeneratedProject } from '@/lib/anthropic';
 import { requireAdmin } from '@/lib/admin-guard';
+
+export const runtime = 'nodejs';
+export const maxDuration = 120;
+
+const MAX_FILES = 12;
+const MAX_FILE_BYTES = 20 * 1024 * 1024;
 
 /**
  * Replace ![caption](photo:N) placeholders in a Markdown body with the uploaded
@@ -23,12 +30,6 @@ function resolvePhotoPlaceholders(md: string, urls: string[]) {
   return { md: out, usedIndices: used };
 }
 
-export const runtime = 'nodejs';
-export const maxDuration = 120;
-
-const MAX_FILES = 12;
-const MAX_FILE_BYTES = 20 * 1024 * 1024;
-
 function slugify(input: string): string {
   return input
     .toLowerCase()
@@ -42,12 +43,9 @@ export async function POST(req: Request) {
   const denied = await requireAdmin();
   if (denied) return denied;
 
-  if (!isWriteConfigured || !writeClient) {
+  if (!isDbConfigured) {
     return NextResponse.json(
-      {
-        error:
-          'Publishing is not configured. Set NEXT_PUBLIC_SANITY_PROJECT_ID and SANITY_WRITE_TOKEN.',
-      },
+      { error: 'The CMS database is not configured. Set DATABASE_URL (attach Railway Postgres).' },
       { status: 503 },
     );
   }
@@ -72,6 +70,7 @@ export async function POST(req: Request) {
   if (contentType !== 'post' && contentType !== 'project') {
     return NextResponse.json({ error: 'Invalid content type.' }, { status: 400 });
   }
+  const status = String(form.get('status') || 'published') === 'draft' ? 'draft' : 'published';
 
   let content: GeneratedPost | GeneratedProject;
   try {
@@ -111,84 +110,69 @@ export async function POST(req: Request) {
   }
 
   const images = stored.filter((s) => s.contentType.startsWith('image/'));
+  const imageUrls = images.map((im) => im.url);
   const attachments = stored.map((s) => ({
-    _key: randomUUID().replace(/-/g, '').slice(0, 12),
     label: s.filename,
     url: s.url,
     contentType: s.contentType,
   }));
+  const slug = slugify(content.slug || content.title);
 
-  const baseId = randomUUID();
-  const draftId = `drafts.${baseId}`;
-  const slug = { _type: 'slug', current: slugify(content.slug || content.title) };
+  try {
+    if (contentType === 'post') {
+      const c = content as GeneratedPost;
+      const { md, usedIndices } = resolvePhotoPlaceholders(c.bodyMarkdown || '', imageUrls);
+      const bodyMarkdown = linkifyMarkdown(md);
+      const heroFromUpload = images.find((_, i) => !usedIndices.has(i))?.url;
+      const heroImageUrl = c.coverImageUrl || heroFromUpload;
+      await savePost({
+        slug,
+        title: c.title,
+        excerpt: c.excerpt || '',
+        cluster: c.cluster,
+        tags: Array.isArray(c.tags) ? c.tags : [],
+        primaryKeyword: c.primaryKeyword,
+        secondaryKeywords: c.secondaryKeywords,
+        bodyMarkdown,
+        heroImageUrl,
+        metaTitle: c.metaTitle || '',
+        metaDescription: c.metaDescription || '',
+        attachments,
+        status,
+      });
+      revalidatePath('/insights');
+      revalidatePath(`/insights/${slug}`);
+      revalidatePath('/feed.xml');
+      return NextResponse.json({ ok: true, slug, url: `/insights/${slug}`, status });
+    }
 
-  let doc: Record<string, unknown>;
-  if (contentType === 'post') {
-    const c = content as GeneratedPost;
-    const imageUrls = images.map((im) => im.url);
-    // Resolve photo placeholders to R2 URLs, then weave in internal links.
-    const { md, usedIndices } = resolvePhotoPlaceholders(c.bodyMarkdown || '', imageUrls);
-    const bodyMarkdown = linkifyMarkdown(md);
-    // A photo placed inline isn't reused as the hero; cover wins over uploads.
-    const heroFromUpload = images.find((_, i) => !usedIndices.has(i))?.url;
-    const heroImageUrl = c.coverImageUrl || heroFromUpload;
-    doc = {
-      _id: draftId,
-      _type: 'post',
-      title: c.title,
-      slug,
-      excerpt: c.excerpt || '',
-      cluster: c.cluster,
-      tags: Array.isArray(c.tags) ? c.tags : [],
-      bodyMarkdown,
-      publishedAt: new Date().toISOString(),
-      featured: false,
-      metaTitle: c.metaTitle || '',
-      metaDescription: c.metaDescription || '',
-      ...(heroImageUrl ? { heroImageUrl } : {}),
-      ...(attachments.length ? { attachments } : {}),
-    };
-  } else {
     const c = content as GeneratedProject;
-    const imageUrls = images.map((im) => im.url);
     const { md, usedIndices } = resolvePhotoPlaceholders(c.bodyMarkdown || '', imageUrls);
     const bodyMarkdown = linkifyMarkdown(md);
-    // Photos not placed inline in the body become the gallery.
     const galleryImages = images
       .map((im, i) => ({ im, i }))
       .filter(({ i }) => !usedIndices.has(i))
-      .map(({ im }) => ({
-        _key: randomUUID().replace(/-/g, '').slice(0, 12),
-        url: im.url,
-        alt: c.title,
-      }));
-    doc = {
-      _id: draftId,
-      _type: 'project',
-      title: c.title,
+      .map(({ im }) => ({ url: im.url, alt: c.title }));
+    await saveProject({
       slug,
+      title: c.title,
       clientType: c.clientType || '',
       scopeSummary: c.scopeSummary || '',
       bodyMarkdown,
       timeline: c.timeline || '',
       squareFootage: c.squareFootage || '',
-      status: 'delivered',
-      featured: false,
+      imageUrls: galleryImages,
+      attachments,
       metaTitle: c.metaTitle || '',
       metaDescription: c.metaDescription || '',
-      ...(galleryImages.length ? { imageUrls: galleryImages } : {}),
-      ...(attachments.length ? { attachments } : {}),
-    };
-  }
-
-  try {
-    await writeClient.createOrReplace(doc as Parameters<typeof writeClient.createOrReplace>[0]);
+      status,
+    });
+    revalidatePath('/projects');
+    revalidatePath(`/projects/${slug}`);
+    revalidatePath('/');
+    return NextResponse.json({ ok: true, slug, url: `/projects/${slug}`, status });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Save failed.';
-    return NextResponse.json({ error: `Could not save draft: ${message}` }, { status: 502 });
+    return NextResponse.json({ error: `Could not save: ${message}` }, { status: 502 });
   }
-
-  // Sanity Studio intent link resolves to the draft for editing/publishing.
-  const studioUrl = `/studio/intent/edit/id=${baseId};type=${contentType}/`;
-  return NextResponse.json({ ok: true, id: baseId, studioUrl });
 }

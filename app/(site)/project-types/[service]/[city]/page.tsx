@@ -9,7 +9,7 @@ import {
 } from '@/lib/queries';
 import { getService as getServiceDef } from '@/lib/site-data';
 import { SERVICE_CONTENT } from '@/lib/fallback-content';
-import { urlForImage } from '@/sanity/lib/image';
+import { urlForImage } from '@/lib/image';
 import { CallButton } from '@/components/PhoneLink';
 import { CallCTA } from '@/components/CallCTA';
 import { PlanSteps } from '@/components/PlanSteps';

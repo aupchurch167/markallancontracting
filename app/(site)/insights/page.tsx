@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { getPosts, getSiteSettings } from '@/lib/queries';
 import { FALLBACK_POSTS } from '@/lib/fallback-insights';
-import { urlForImage } from '@/sanity/lib/image';
+import { urlForImage } from '@/lib/image';
 import { CallCTA } from '@/components/CallCTA';
 import { Section } from '@/components/Section';
 import { CLUSTERS } from '@/lib/clusters';

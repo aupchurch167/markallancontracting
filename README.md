@@ -6,9 +6,13 @@ rebuild of macont.com. **Primary conversion goal: phone calls.**
 ## Stack
 
 - **Next.js 15** (App Router, TypeScript)
-- **Sanity** — all page content is authored in the CMS (schemas in `sanity/schemaTypes`)
+- **Custom CMS** — posts, projects, and home-page media are authored in the
+  `/admin` console and stored in **Postgres** (`lib/db.ts`, `lib/content.ts`).
+  Everything else (services, project types, markets, team, settings) ships from
+  code fallbacks. No third-party CMS.
+- **Cloudflare R2** — image/PDF storage (`lib/r2.ts`), S3-compatible
 - **Tailwind CSS** — custom design tokens, no UI kit
-- **Vercel** hosting
+- **Railway** hosting (app + Postgres)
 - **CallRail** DNI loaded before first paint on every route
 
 ## Getting started
@@ -19,8 +23,9 @@ cp .env.example .env.local   # fill in the placeholders below
 npm run dev
 ```
 
-Embedded Sanity Studio is at [`/studio`](http://localhost:3000/studio) once a
-project id is set.
+The site renders on built-in fallback content with no database. To enable the
+CMS, set `DATABASE_URL` (attach a Railway Postgres service) — tables are created
+automatically on first write. The console is at [`/admin`](http://localhost:3000/admin).
 
 ## Resolved inputs
 

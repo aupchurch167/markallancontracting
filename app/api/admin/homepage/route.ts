@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { randomUUID } from 'crypto';
-import { revalidatePath, revalidateTag } from 'next/cache';
-import { writeClient, isWriteConfigured } from '@/sanity/lib/writeClient';
+import { revalidatePath } from 'next/cache';
 import { uploadToR2, isR2Configured } from '@/lib/r2';
 import { getHomepageMedia, HOMEPAGE_FALLBACK, type MediaSlot } from '@/lib/homepage-media';
+import { saveHomepage } from '@/lib/content';
+import { isDbConfigured } from '@/lib/db';
 import { requireAdmin } from '@/lib/admin-guard';
 
 export const runtime = 'nodejs';
@@ -48,9 +48,9 @@ export async function POST(req: Request) {
   const denied = await requireAdmin();
   if (denied) return denied;
 
-  if (!isWriteConfigured || !writeClient) {
+  if (!isDbConfigured) {
     return NextResponse.json(
-      { error: 'Publishing is not configured. Set NEXT_PUBLIC_SANITY_PROJECT_ID and SANITY_WRITE_TOKEN.' },
+      { error: 'The CMS database is not configured. Set DATABASE_URL (attach Railway Postgres).' },
       { status: 503 },
     );
   }
@@ -105,32 +105,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: message }, { status: 400 });
   }
 
-  const doc = {
-    _id: 'homepage',
-    _type: 'homepage',
-    ...(heroUrl ? { heroImage: { url: heroUrl, alt: config.hero?.alt || '' } } : {}),
-    ...(aboutUrl ? { aboutImage: { url: aboutUrl, alt: config.about?.alt || '' } } : {}),
-    galleryImages: gallery.map((g) => ({
-      _key: randomUUID().replace(/-/g, '').slice(0, 12),
-      url: g.url,
-      alt: g.alt,
-    })),
-  };
-
-  try {
-    await writeClient.createOrReplace(doc as Parameters<typeof writeClient.createOrReplace>[0]);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : 'Save failed.';
-    return NextResponse.json({ error: `Could not save: ${message}` }, { status: 502 });
-  }
-
-  // Push the change live immediately — no redeploy. revalidateTag drops the
-  // cached homepage fetch; revalidatePath re-renders the home route.
-  revalidateTag('homepage');
-  revalidatePath('/');
-
-  // Build the fresh state from what we just wrote (avoids a CDN read race),
-  // filling empty slots with the shipped fallback — same rule the site uses.
+  // Build the value from what we just uploaded, filling empty slots with the
+  // shipped fallback — the same rule the site uses to render.
   const media = {
     hero: heroUrl ? { url: heroUrl, alt: config.hero?.alt || HOMEPAGE_FALLBACK.hero.alt } : HOMEPAGE_FALLBACK.hero,
     about: aboutUrl
@@ -138,5 +114,16 @@ export async function POST(req: Request) {
       : HOMEPAGE_FALLBACK.about,
     gallery: gallery.length ? gallery : HOMEPAGE_FALLBACK.gallery,
   };
+
+  try {
+    await saveHomepage(media);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Save failed.';
+    return NextResponse.json({ error: `Could not save: ${message}` }, { status: 502 });
+  }
+
+  // Push the change live immediately — no redeploy.
+  revalidatePath('/');
+
   return NextResponse.json({ ok: true, media });
 }

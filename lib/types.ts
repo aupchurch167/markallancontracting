@@ -1,5 +1,4 @@
 import type { PortableTextBlock } from '@portabletext/react';
-import type { Image } from 'sanity';
 
 export interface PlanStep {
   stepNumber: number;
@@ -7,8 +6,12 @@ export interface PlanStep {
   description: string;
 }
 
-export interface SanityImage extends Image {
+/** Legacy image ref shape (kept for the fallback content types). */
+export interface SanityImage {
+  _type?: string;
+  asset?: { _ref?: string; _type?: string };
   alt?: string;
+  [key: string]: unknown;
 }
 
 export interface SiteSettings {

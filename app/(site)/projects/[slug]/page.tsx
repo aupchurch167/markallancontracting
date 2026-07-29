@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { getProject, getSiteSettings } from '@/lib/queries';
 import { getAllProjectSlugs } from '@/lib/projects';
 import { FALLBACK_PROJECTS_BY_SLUG } from '@/lib/fallback-projects';
-import { urlForImage } from '@/sanity/lib/image';
+import { urlForImage } from '@/lib/image';
 import { CallCTA } from '@/components/CallCTA';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Section, Eyebrow } from '@/components/Section';

@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
   // Campaign pages and the embedded Studio always stay out. Trade Partners is
   // disallowed only while gated (owner decision: it goes in the main nav once
   // real capability figures arrive — flip FEATURES.tradePartnersPublished).
-  const disallow = ['/lp/', '/studio', '/admin', '/api/'];
+  const disallow = ['/lp/', '/admin', '/api/'];
   if (!FEATURES.tradePartnersPublished) disallow.push('/trade-partners');
 
   return {

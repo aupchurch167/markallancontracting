@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import { getSiteSettings, getTeam } from '@/lib/queries';
 import { FALLBACK_TEAM } from '@/lib/fallback-team';
-import { urlForImage } from '@/sanity/lib/image';
+import { urlForImage } from '@/lib/image';
 import { CallCTA } from '@/components/CallCTA';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Section } from '@/components/Section';

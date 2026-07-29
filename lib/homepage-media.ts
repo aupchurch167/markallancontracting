@@ -1,4 +1,4 @@
-import { client } from '@/sanity/lib/client';
+import { getHomepageValue } from './content';
 
 /** One image slot on the home page. */
 export interface MediaSlot {
@@ -55,33 +55,16 @@ function slot(v: { url?: string; alt?: string } | undefined, fallback: MediaSlot
 }
 
 /**
- * Home page media: the Sanity `homepage` singleton (edited from /admin) wins,
- * with the shipped fallback filling any empty slot. Safe before Sanity exists.
+ * Home page media: the value edited from /admin (stored in the CMS) wins, with
+ * the shipped fallback filling any empty slot. Safe before the CMS is populated.
  */
 export async function getHomepageMedia(): Promise<HomepageMedia> {
-  if (!client) return HOMEPAGE_FALLBACK;
-  // Read from the API (not the CDN) so a just-saved change is reflected the
-  // moment the page re-renders — the CDN lags a write by up to ~60s. Tag the
-  // fetch so /api/admin/homepage can invalidate it on demand (revalidateTag).
-  const doc = await client.withConfig({ useCdn: false }).fetch<{
-    heroImage?: { url?: string; alt?: string };
-    aboutImage?: { url?: string; alt?: string };
-    galleryImages?: { url?: string; alt?: string }[];
-  } | null>(
-    `*[_type == "homepage"][0]{ heroImage, aboutImage, galleryImages }`,
-    {},
-    { next: { tags: ['homepage'] } },
-  );
-
-  if (!doc) return HOMEPAGE_FALLBACK;
-
-  const gallery = (doc.galleryImages || [])
-    .filter((g) => g?.url)
-    .map((g) => ({ url: g.url as string, alt: g.alt || '' }));
-
+  const v = await getHomepageValue();
+  if (!v) return HOMEPAGE_FALLBACK;
+  const gallery = (v.gallery || []).filter((g) => g?.url);
   return {
-    hero: slot(doc.heroImage, HOMEPAGE_FALLBACK.hero),
-    about: slot(doc.aboutImage, HOMEPAGE_FALLBACK.about),
+    hero: slot(v.hero, HOMEPAGE_FALLBACK.hero),
+    about: slot(v.about, HOMEPAGE_FALLBACK.about),
     gallery: gallery.length ? gallery : HOMEPAGE_FALLBACK.gallery,
   };
 }

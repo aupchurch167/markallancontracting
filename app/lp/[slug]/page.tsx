@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { getLandingPage, getSiteSettings } from '@/lib/queries';
-import { urlForImage } from '@/sanity/lib/image';
+import { urlForImage } from '@/lib/image';
 import { LP_CONTENT, LP_SLUGS } from '@/lib/fallback-lp';
 import { CallButton } from '@/components/PhoneLink';
 import { PortableText } from '@/components/PortableText';

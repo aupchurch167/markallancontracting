@@ -8,7 +8,7 @@ import {
   FALLBACK_POSTS_BY_SLUG,
   type FallbackPost,
 } from '@/lib/fallback-insights';
-import { urlForImage } from '@/sanity/lib/image';
+import { urlForImage } from '@/lib/image';
 import { CallCTA } from '@/components/CallCTA';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Section } from '@/components/Section';

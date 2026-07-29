@@ -5,7 +5,7 @@ import {
 } from '@portabletext/react';
 import type { PortableTextBlock } from '@portabletext/react';
 import Link from 'next/link';
-import { urlForImage } from '@/sanity/lib/image';
+import { urlForImage } from '@/lib/image';
 
 const components: PortableTextComponents = {
   types: {
