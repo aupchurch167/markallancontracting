@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 
-// ISR: refetch CMS content at runtime (the DB is unreachable at build).
-export const revalidate = 30;
+// Render dynamically: CMS edits (covers, text, photos) must appear immediately,
+// and a CDN edge can't serve a stale page. The DB is only reachable at runtime.
+export const dynamic = 'force-dynamic';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { getProject, getSiteSettings } from '@/lib/queries';
-import { getAllProjectSlugs } from '@/lib/projects';
 import { FALLBACK_PROJECTS_BY_SLUG } from '@/lib/fallback-projects';
 import { urlForImage } from '@/lib/image';
 import { CallCTA } from '@/components/CallCTA';
@@ -14,11 +14,6 @@ import { Section, Eyebrow } from '@/components/Section';
 import { PortableText } from '@/components/PortableText';
 import { MarkdownBody } from '@/components/MarkdownBody';
 import { pageMetadata } from '@/lib/seo';
-
-export async function generateStaticParams() {
-  const slugs = await getAllProjectSlugs();
-  return slugs.map((slug) => ({ slug }));
-}
 
 export async function generateMetadata({
   params,
