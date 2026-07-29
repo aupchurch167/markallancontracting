@@ -86,7 +86,13 @@ export default async function ProjectPage({
           .map((img, i) => ({ url: img.url, alt: img.alt || `${title} — photo ${i + 1}` }))
           .filter((x) => x.url)
       : fb?.images || [];
-  const hero = images[0];
+
+  // A dedicated cover photo (set in /admin) wins over the first gallery image.
+  // When a cover exists, every gallery image shows below; otherwise the first
+  // gallery image is promoted to the hero and the rest form the gallery.
+  const coverUrl = project?.heroImageUrl;
+  const hero = coverUrl ? { url: coverUrl, alt: title } : images[0];
+  const galleryImages = coverUrl ? images : images.slice(1);
 
   // PDFs and other non-image source files attached to the project.
   const docs = (project?.attachments || []).filter(
@@ -227,9 +233,9 @@ export default async function ProjectPage({
         )}
 
         {/* Gallery */}
-        {images.length > 1 && (
+        {galleryImages.length > 0 && (
           <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {images.slice(1).map((image, i) => (
+            {galleryImages.map((image, i) => (
               <div key={i} className="relative aspect-[4/3] overflow-hidden rounded-lg bg-stone-100">
                 <Image
                   src={image.url}

@@ -161,6 +161,7 @@ export async function POST(req: Request) {
       bodyMarkdown,
       timeline: c.timeline || '',
       squareFootage: c.squareFootage || '',
+      heroImageUrl: c.coverImageUrl,
       imageUrls: galleryImages,
       attachments,
       metaTitle: c.metaTitle || '',

@@ -89,6 +89,8 @@ export interface Attachment {
 
 export interface Project extends ProjectCard {
   timeline?: string;
+  /** Dedicated cover/hero photo (R2), shown at the top of the project page. */
+  heroImageUrl?: string;
   /** Markdown body authored from /admin; renders instead of challenge/solution. */
   bodyMarkdown?: string;
   challenge?: PortableTextBlock[];

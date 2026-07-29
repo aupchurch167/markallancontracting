@@ -59,6 +59,8 @@ export interface GeneratedProject {
   squareFootage: string;
   metaTitle: string;
   metaDescription: string;
+  /** Set by the editor (uploaded/generated cover), not by the model. */
+  coverImageUrl?: string;
 }
 
 export type ContentType = 'post' | 'project';

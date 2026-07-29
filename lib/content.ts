@@ -115,6 +115,7 @@ function toProject(r: ProjectRow): Project {
     cityState: r.city_state || undefined,
     serviceSlug: r.service_slug || undefined,
     scopeSummary: r.scope_summary || undefined,
+    heroImageUrl: cleanUrl(r.hero_image_url),
     bodyMarkdown: cleanMd(r.body_markdown),
     timeline: r.timeline || undefined,
     squareFootage: r.square_footage || undefined,
@@ -238,6 +239,7 @@ export interface ProjectInput {
   bodyMarkdown?: string;
   timeline?: string;
   squareFootage?: string;
+  heroImageUrl?: string;
   imageUrls?: { url: string; alt?: string }[];
   attachments?: Attachment[];
   metaTitle?: string;
@@ -282,20 +284,22 @@ export async function saveProject(input: ProjectInput): Promise<string> {
   const publishedAt = input.status === 'published' ? new Date().toISOString() : null;
   const row = await queryOne<{ id: string }>(
     `INSERT INTO projects (id, slug, title, client_type, scope_summary, body_markdown,
-        timeline, square_footage, image_urls, attachments, meta_title, meta_description,
-        featured, status, published_at, updated_at)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb,$10::jsonb,$11,$12,$13,$14,$15, now())
+        timeline, square_footage, hero_image_url, image_urls, attachments, meta_title,
+        meta_description, featured, status, published_at, updated_at)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10::jsonb,$11::jsonb,$12,$13,$14,$15,$16, now())
      ON CONFLICT (slug) DO UPDATE SET
         title=$3, client_type=$4, scope_summary=$5, body_markdown=$6, timeline=$7,
-        square_footage=$8, image_urls=$9::jsonb, attachments=$10::jsonb, meta_title=$11,
-        meta_description=$12, featured=$13, status=$14,
-        published_at=COALESCE(projects.published_at, $15), updated_at=now()
+        square_footage=$8, hero_image_url=COALESCE(NULLIF($9,''), projects.hero_image_url),
+        image_urls=$10::jsonb, attachments=$11::jsonb, meta_title=$12,
+        meta_description=$13, featured=$14, status=$15,
+        published_at=COALESCE(projects.published_at, $16), updated_at=now()
      RETURNING id`,
     [
       id, input.slug, input.title, input.clientType || null, input.scopeSummary || null,
       input.bodyMarkdown || null, input.timeline || null, input.squareFootage || null,
-      j(input.imageUrls || []), j(input.attachments || []), input.metaTitle || null,
-      input.metaDescription || null, input.featured || false, input.status, publishedAt,
+      input.heroImageUrl || '', j(input.imageUrls || []), j(input.attachments || []),
+      input.metaTitle || null, input.metaDescription || null, input.featured || false,
+      input.status, publishedAt,
     ],
   );
   return row?.id || id;
@@ -395,6 +399,7 @@ export interface EditorProject {
   squareFootage: string;
   metaTitle: string;
   metaDescription: string;
+  coverImageUrl: string;
 }
 
 export async function getEditorContent(
@@ -417,7 +422,7 @@ export async function getEditorContent(
       bodyMarkdown: r.body_markdown || '',
       metaTitle: r.meta_title || '',
       metaDescription: r.meta_description || '',
-      coverImageUrl: r.hero_image_url || '',
+      coverImageUrl: cleanUrl(r.hero_image_url) || '',
     };
   }
   const r = await queryOne<ProjectRow>(`SELECT ${PROJECT_COLS} FROM projects WHERE id = $1`, [id]);
@@ -434,6 +439,7 @@ export async function getEditorContent(
     squareFootage: r.square_footage || '',
     metaTitle: r.meta_title || '',
     metaDescription: r.meta_description || '',
+    coverImageUrl: cleanUrl(r.hero_image_url) || '',
   };
 }
 
@@ -472,6 +478,7 @@ export async function updateProjectById(
   await query(
     `UPDATE projects SET title=$2, slug=$3, client_type=$4, scope_summary=$5, body_markdown=$6,
         timeline=$7, square_footage=$8, meta_title=$9, meta_description=$10,
+        hero_image_url=COALESCE(NULLIF($13,''), hero_image_url),
         image_urls=COALESCE(image_urls,'[]'::jsonb) || $11::jsonb,
         attachments=COALESCE(attachments,'[]'::jsonb) || $12::jsonb, updated_at=now()
      WHERE id=$1`,
@@ -479,7 +486,7 @@ export async function updateProjectById(
       fields.id, fields.title, fields.slug, fields.clientType || null, fields.scopeSummary || null,
       fields.bodyMarkdown || null, fields.timeline || null, fields.squareFootage || null,
       fields.metaTitle || null, fields.metaDescription || null,
-      j(appendImageUrls), j(appendAttachments),
+      j(appendImageUrls), j(appendAttachments), fields.coverImageUrl || '',
     ],
   );
 }
