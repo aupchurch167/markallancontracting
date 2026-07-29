@@ -66,6 +66,8 @@ export interface ProjectCard {
   scopeSummary?: string;
   image?: SanityImage;
   imageUrls?: { url: string; alt?: string }[];
+  /** Dedicated cover photo — the best representative image for a card. */
+  heroImageUrl?: string;
   serviceSlug?: string;
 }
 
