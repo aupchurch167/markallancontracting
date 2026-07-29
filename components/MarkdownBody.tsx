@@ -31,18 +31,7 @@ const components: Components = {
   h2: ({ children }) => <h2 className="mt-10 text-2xl font-bold text-navy">{children}</h2>,
   h3: ({ children }) => <h3 className="mt-8 text-xl font-bold text-navy">{children}</h3>,
   h4: ({ children }) => <h4 className="mt-6 text-lg font-bold text-navy">{children}</h4>,
-  p: ({ children, node }) => {
-    // A standalone image becomes <p><img></p>; since our img renders a block
-    // <figure>, that's invalid nesting and causes a hydration mismatch (#418).
-    // Render such paragraphs without the <p> wrapper.
-    const kids = (node?.children ?? []).filter(
-      (c) => !(c.type === 'text' && !c.value.trim()),
-    );
-    if (kids.length === 1 && kids[0].type === 'element' && kids[0].tagName === 'img') {
-      return <>{children}</>;
-    }
-    return <p className="mb-4 leading-relaxed text-stone-600">{children}</p>;
-  },
+  p: ({ children }) => <p className="mb-4 leading-relaxed text-stone-600">{children}</p>,
   a: ({ href, children }) => {
     const url = href || '#';
     if (url.startsWith('/')) {
@@ -95,18 +84,22 @@ const components: Components = {
   td: ({ children }) => (
     <td className="border border-stone-200 px-3 py-2 align-top text-stone-600">{children}</td>
   ),
+  // Rendered with block-display <span>s (not <figure>/<div>) so an image is
+  // valid HTML wherever Markdown puts it — including inside a <p> or a link.
+  // Block elements inside a <p> get relocated by the browser parser and cause a
+  // hydration mismatch (React #418); spans never do.
   img: ({ src, alt }) => {
     if (!src || typeof src !== 'string') return null;
     return (
-      <figure className="my-8">
-        <div className="overflow-hidden rounded-lg border border-stone-200">
+      <span className="my-8 block">
+        <span className="block overflow-hidden rounded-lg border border-stone-200">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={src} alt={alt || ''} className="h-auto w-full object-cover" />
-        </div>
+        </span>
         {alt ? (
-          <figcaption className="mt-2 text-center text-sm text-stone-400">{alt}</figcaption>
+          <span className="mt-2 block text-center text-sm text-stone-400">{alt}</span>
         ) : null}
-      </figure>
+      </span>
     );
   },
 };
