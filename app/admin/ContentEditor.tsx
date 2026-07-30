@@ -540,7 +540,7 @@ export function ContentEditor({
               </span>
               <input
                 type="file"
-                accept="image/jpeg,image/png,image/gif,image/webp"
+                accept="image/*"
                 disabled={coverBusy}
                 className="mt-1 block w-full text-xs text-stone-600 file:mr-3 file:rounded-md file:border-0 file:bg-stone-100 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-navy hover:file:bg-stone-200"
                 onChange={(e) => uploadCover(e.target.files?.[0] || null)}
