@@ -198,11 +198,32 @@ export function ContentEditor({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Cover generation failed.');
       patch({ coverImageUrl: data.url });
-      toast.success('Cover generated.');
+      await persistCover(data.url, 'Cover generated');
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Cover generation failed.');
     } finally {
       setCoverBusy(false);
+    }
+  }
+
+  // When editing an existing item, save the cover to the database immediately so
+  // it can't be lost by forgetting to click Save. On a new (unsaved) item, it's
+  // held until Publish. Non-fatal: the preview stays either way.
+  async function persistCover(url: string, verb: string) {
+    if (!editingId) {
+      toast.success(`${verb} — Publish to make it live.`);
+      return;
+    }
+    try {
+      const res = await fetch(`/api/admin/content/${contentType}/${editingId}/cover`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ coverImageUrl: url }),
+      });
+      if (!res.ok) throw new Error((await res.json())?.error || 'Save failed.');
+      toast.success(`${verb} and saved — it's live now.`);
+    } catch {
+      toast.info(`${verb}. Click Save to apply it.`);
     }
   }
 
@@ -216,7 +237,7 @@ export function ContentEditor({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Upload failed.');
       patch({ coverImageUrl: data.url });
-      toast.success('Cover uploaded.');
+      await persistCover(data.url, 'Cover uploaded');
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Upload failed.');
     } finally {
@@ -523,7 +544,10 @@ export function ContentEditor({
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={content.coverImageUrl} alt="Cover" className="h-full w-full object-cover" />
                 <button
-                  onClick={() => patch({ coverImageUrl: undefined })}
+                  onClick={() => {
+                    patch({ coverImageUrl: '' });
+                    void persistCover('', 'Cover removed');
+                  }}
                   className="absolute right-2 top-2 rounded bg-white/90 px-2 py-1 text-xs font-medium text-red-600 hover:bg-white"
                 >
                   Remove

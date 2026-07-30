@@ -406,6 +406,19 @@ export async function deleteItem(type: 'post' | 'project', id: string): Promise<
   await query(`DELETE FROM ${table} WHERE id = $1`, [id]);
 }
 
+/** Set (or clear, with '') just the cover/header image for an existing item. */
+export async function setCoverImage(
+  type: 'post' | 'project',
+  id: string,
+  url: string,
+): Promise<void> {
+  const table = type === 'post' ? 'posts' : 'projects';
+  await query(`UPDATE ${table} SET hero_image_url = $2, updated_at = now() WHERE id = $1`, [
+    id,
+    url || null,
+  ]);
+}
+
 // ---------- editor load/update (preserves media not touched by the editor) ----------
 export interface EditorPost {
   id: string;
