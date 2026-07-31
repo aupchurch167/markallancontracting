@@ -4,6 +4,16 @@ import { SITE } from '@/lib/constants';
 
 export const dynamic = 'force-static';
 
+// published_at comes from Postgres (via `pg`) as a Date object, while the
+// authored fallback posts use ISO strings — so normalize to a timestamp
+// before sorting. (Guards against the earlier `.localeCompare` crash when
+// publishedAt wasn't a string.)
+function toTime(v?: string | Date | null): number {
+  if (!v) return 0;
+  const t = new Date(v).getTime();
+  return Number.isNaN(t) ? 0 : t;
+}
+
 function esc(s = ''): string {
   return s
     .replace(/&/g, '&amp;')
@@ -31,7 +41,7 @@ export async function GET() {
       author: p.author,
       publishedAt: p.publishedAt,
     })),
-  ].sort((a, b) => (b.publishedAt || '').localeCompare(a.publishedAt || ''));
+  ].sort((a, b) => toTime(b.publishedAt) - toTime(a.publishedAt));
 
   const body = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
