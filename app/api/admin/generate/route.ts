@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
+import sharp from 'sharp';
 import {
   generateContent,
   isAnthropicConfigured,
@@ -15,6 +16,27 @@ export const maxDuration = 120;
 const MAX_FILES = 8;
 const MAX_FILE_BYTES = 12 * 1024 * 1024; // 12MB each
 const ACCEPTED = /^(image\/(jpeg|png|gif|webp)|application\/pdf)$/;
+
+/**
+ * Prepare an image for the Claude vision API. Full-resolution phone/camera
+ * photos base64-encode past the API's 10MB-per-image limit (a ~9MB JPEG becomes
+ * ~12MB base64), so downscale the long edge to 1568px — the size the API would
+ * downsample to anyway — and re-encode as JPEG. Keeps every image well under the
+ * limit and cuts token cost. Falls back to the original only if it's already small.
+ */
+async function toClaudeImage(buf: Buffer, mediaType: string): Promise<AttachedFile> {
+  try {
+    const out = await sharp(buf)
+      .rotate() // honor EXIF orientation (portrait phone photos)
+      .resize({ width: 1568, height: 1568, fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: 80 })
+      .toBuffer();
+    return { mediaType: 'image/jpeg', data: out.toString('base64') };
+  } catch {
+    if (buf.length <= 6 * 1024 * 1024) return { mediaType, data: buf.toString('base64') };
+    throw new Error('Could not process an attached image — please try a smaller or different photo.');
+  }
+}
 
 export async function POST(req: Request) {
   const denied = await requireAdmin();
@@ -82,7 +104,11 @@ export async function POST(req: Request) {
       );
     }
     const buf = Buffer.from(await f.arrayBuffer());
-    files.push({ mediaType: f.type, data: buf.toString('base64') });
+    if (f.type.startsWith('image/')) {
+      files.push(await toClaudeImage(buf, f.type));
+    } else {
+      files.push({ mediaType: f.type, data: buf.toString('base64') }); // PDF
+    }
   }
 
   try {
