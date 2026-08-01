@@ -1,8 +1,9 @@
 import { CallButton } from './PhoneLink';
+import { StepLine } from './StepLine';
 
 /**
- * Closing call CTA. Every page ends with one — no exceptions. Copy can be
- * overridden per page; the default is the approved homepage closing copy.
+ * Closing call CTA. Every page ends with one — no exceptions. A full-bleed
+ * oxblood band with bone text, left-aligned.
  */
 export function CallCTA({
   phone,
@@ -16,12 +17,15 @@ export function CallCTA({
   body?: string;
 }) {
   return (
-    <section className="bg-navy py-16 text-white sm:py-20">
-      <div className="container-page text-center">
-        <h2 className="text-3xl font-bold text-white sm:text-4xl">{heading}</h2>
-        <p className="mx-auto mt-4 max-w-2xl text-lg text-stone-100/90">{body}</p>
-        <div className="mt-8 flex justify-center">
-          <CallButton phone={phone} phoneRaw={phoneRaw} />
+    <section className="bg-oxblood py-24 text-bone sm:py-28">
+      <div className="container-page">
+        <StepLine className="h-8 w-32" />
+        <h2 className="mt-8 max-w-3xl text-3xl font-bold uppercase tracking-heading text-bone sm:text-4xl">
+          {heading}
+        </h2>
+        <p className="mt-5 max-w-2xl text-lg text-bone/60">{body}</p>
+        <div className="mt-10">
+          <CallButton phone={phone} phoneRaw={phoneRaw} className="btn-call-ondark" />
         </div>
       </div>
     </section>

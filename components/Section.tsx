@@ -11,16 +11,12 @@ export function Section({
   muted?: boolean;
 }) {
   return (
-    <section className={`${muted ? 'bg-stone-50' : ''} py-14 sm:py-20 ${className}`}>
+    <section className={`${muted ? 'bg-bone-light' : ''} py-24 sm:py-32 ${className}`}>
       <div className="container-page">{children}</div>
     </section>
   );
 }
 
 export function Eyebrow({ children }: { children: ReactNode }) {
-  return (
-    <div className="text-sm font-semibold uppercase tracking-wider text-accent">
-      {children}
-    </div>
-  );
+  return <div className="eyebrow">{children}</div>;
 }

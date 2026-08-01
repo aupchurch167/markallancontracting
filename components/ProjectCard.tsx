@@ -7,9 +7,9 @@ export function ProjectCard({ project }: { project: ProjectSummary }) {
   return (
     <Link
       href={`/projects/${project.slug}`}
-      className="group overflow-hidden rounded-lg border border-stone-200 bg-paper transition-shadow hover:shadow-md"
+      className="group block border-2 border-brass/40 bg-bone transition-colors hover:border-brass"
     >
-      <div className="relative aspect-[4/3] bg-stone-100">
+      <div className="relative aspect-[4/3] overflow-hidden bg-stone-100">
         {project.imageUrl ? (
           <Image
             src={project.imageUrl}
@@ -24,16 +24,16 @@ export function ProjectCard({ project }: { project: ProjectSummary }) {
           </div>
         )}
       </div>
-      <div className="p-5">
-        <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-stone-400">
+      <div className="p-6">
+        <div className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-label text-brass">
           {project.clientType && <span>{project.clientType}</span>}
           {project.location && <span>· {project.location}</span>}
         </div>
-        <div className="mt-1 text-lg font-semibold text-navy group-hover:text-accent">
+        <div className="mt-2 text-base font-bold uppercase tracking-heading text-oxblood group-hover:text-brass">
           {project.title}
         </div>
         {project.scopeSummary && (
-          <p className="mt-1 line-clamp-2 text-sm text-stone-600">{project.scopeSummary}</p>
+          <p className="mt-2 line-clamp-2 text-sm text-oxblood/65">{project.scopeSummary}</p>
         )}
       </div>
     </Link>

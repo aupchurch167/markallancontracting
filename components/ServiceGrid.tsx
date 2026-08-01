@@ -9,14 +9,14 @@ export function ServiceGrid() {
         <Link
           key={s.slug}
           href={`/project-types/${s.slug}`}
-          className="group rounded-lg border border-stone-200 bg-paper p-6 transition-colors hover:border-accent hover:bg-stone-50"
+          className="group border-2 border-brass/40 bg-bone p-6 transition-colors hover:border-brass hover:bg-bone-light"
         >
-          <div className="text-lg font-semibold text-navy group-hover:text-accent">
+          <div className="text-lg font-bold uppercase tracking-heading text-oxblood group-hover:text-brass">
             {s.name}
           </div>
-          <div className="mt-2 flex items-center text-sm font-medium text-accent">
+          <div className="mt-3 flex items-center gap-2 text-[10px] font-medium uppercase tracking-label text-brass">
             Learn more
-            <span aria-hidden className="ml-1 transition-transform group-hover:translate-x-0.5">→</span>
+            <span aria-hidden>→</span>
           </div>
         </Link>
       ))}
