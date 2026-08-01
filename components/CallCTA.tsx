@@ -1,5 +1,4 @@
 import { CallButton } from './PhoneLink';
-import { StepLine } from './StepLine';
 
 /**
  * Closing call CTA. Every page ends with one — no exceptions. A full-bleed
@@ -19,8 +18,7 @@ export function CallCTA({
   return (
     <section className="bg-oxblood py-24 text-bone sm:py-28">
       <div className="container-page">
-        <StepLine className="h-8 w-32" />
-        <h2 className="mt-8 max-w-3xl text-3xl font-bold uppercase tracking-heading text-bone sm:text-4xl">
+        <h2 className="max-w-3xl text-3xl font-bold uppercase tracking-heading text-bone sm:text-4xl">
           {heading}
         </h2>
         <p className="mt-5 max-w-2xl text-lg text-bone/60">{body}</p>

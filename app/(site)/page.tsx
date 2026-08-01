@@ -12,7 +12,6 @@ import { CallCTA } from '@/components/CallCTA';
 import { ServiceGrid } from '@/components/ServiceGrid';
 import { ProjectCard } from '@/components/ProjectCard';
 import { Section, Eyebrow } from '@/components/Section';
-import { StepLine } from '@/components/StepLine';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = pageMetadata({
@@ -45,7 +44,6 @@ export default async function HomePage() {
                 Commercial buildouts and renovations across Georgia.
                 Family-owned since 1999.
               </p>
-              <StepLine className="mt-9 h-9 w-44" label="The build process, milestone to completion" />
               <div className="mt-9 flex flex-col items-start gap-5 sm:flex-row sm:items-center">
                 <CallButton phone={phone} phoneRaw={phoneRaw} className="btn-call-ondark" />
                 <a
