@@ -40,7 +40,7 @@ export default async function ServicesHub() {
       </section>
 
       <Section>
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
           {SERVICE_LINES.map((line, i) => {
             const cover = covers[line.slug];
             return (
@@ -60,7 +60,7 @@ export default async function ServicesHub() {
                     />
                   </div>
                 ) : null}
-                <div className="p-7">
+                <div className="p-5 sm:p-7">
                   <div className="flex items-baseline gap-3">
                     <span className="text-sm font-bold text-brass">
                       {String(i + 1).padStart(2, '0')}

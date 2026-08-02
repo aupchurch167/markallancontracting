@@ -16,14 +16,16 @@ import { ContentList } from './ContentList';
 import { ContentEditor } from './ContentEditor';
 import { HomepagePhotos } from './HomepagePhotos';
 import { SectionCovers } from './SectionCovers';
+import { ClientLogos } from './ClientLogos';
 
-type View = 'dashboard' | 'list' | 'editor' | 'homepage' | 'sections';
+type View = 'dashboard' | 'list' | 'editor' | 'homepage' | 'sections' | 'logos';
 
 const NAV: { id: View; label: string; icon: IconName; type?: ContentType }[] = [
   { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
   { id: 'list', label: 'Posts', icon: 'posts', type: 'post' },
   { id: 'list', label: 'Projects', icon: 'projects', type: 'project' },
   { id: 'sections', label: 'Section covers', icon: 'image' },
+  { id: 'logos', label: 'Client logos', icon: 'projects' },
   { id: 'homepage', label: 'Home page', icon: 'home' },
 ];
 
@@ -207,6 +209,8 @@ function Shell() {
               />
             ) : view === 'sections' ? (
               <SectionCovers />
+            ) : view === 'logos' ? (
+              <ClientLogos />
             ) : view === 'homepage' ? (
               <div className="mx-auto max-w-3xl">
                 <h1 className="mb-6 text-2xl font-bold text-navy">Home page photos</h1>

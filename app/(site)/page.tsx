@@ -12,6 +12,8 @@ import { CallCTA } from '@/components/CallCTA';
 import { ServiceGrid } from '@/components/ServiceGrid';
 import { ProjectCard } from '@/components/ProjectCard';
 import { Section, Eyebrow } from '@/components/Section';
+import { ClientLogoStrip } from '@/components/ClientLogoStrip';
+import { smsHref } from '@/lib/constants';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = pageMetadata({
@@ -47,10 +49,16 @@ export default async function HomePage() {
               <div className="mt-9 flex flex-col items-start gap-5 sm:flex-row sm:items-center">
                 <CallButton phone={phone} phoneRaw={phoneRaw} className="btn-call-ondark" />
                 <a
+                  href={smsHref(phoneRaw)}
+                  className="text-[11px] font-bold uppercase tracking-label text-bone underline-offset-4 hover:text-brass hover:underline"
+                >
+                  Text us the scope
+                </a>
+                <a
                   href="/contact"
                   className="text-[11px] font-bold uppercase tracking-label text-bone underline-offset-4 hover:text-brass hover:underline"
                 >
-                  Send us your scope
+                  Send plans / photos
                 </a>
               </div>
             </div>
@@ -84,6 +92,9 @@ export default async function HomePage() {
           </p>
         </div>
       </Section>
+
+      {/* 2b. Client logos — social proof, high on the page */}
+      <ClientLogoStrip />
 
       {/* 3. Plan + CTA */}
       <Section muted>

@@ -86,3 +86,12 @@ export const BOOKING = {
 export function telHref(phoneRaw: string = CONTACT.phoneRaw): string {
   return `tel:${phoneRaw}`;
 }
+
+/**
+ * sms: href helper — a low-friction async CTA for people who can't call right
+ * then (brokers/managers in meetings). Pre-fills a short message.
+ */
+export function smsHref(phoneRaw: string = CONTACT.phoneRaw): string {
+  const body = encodeURIComponent('Hi — I have a commercial space and a scope to price. ');
+  return `sms:${phoneRaw}?&body=${body}`;
+}

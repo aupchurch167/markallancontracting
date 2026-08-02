@@ -249,6 +249,34 @@ export async function saveSectionCovers(value: SectionCovers): Promise<void> {
   );
 }
 
+/**
+ * Client logos ("who we've worked with"), managed in /admin and shown as a
+ * strip on the home page. Stored as a singleton; order is preserved.
+ */
+export interface ClientLogo {
+  url: string;
+  name: string;
+}
+
+export async function getClientLogos(): Promise<ClientLogo[]> {
+  const row = await safeQueryOne<{ value: { logos?: ClientLogo[] } }>(
+    `SELECT value FROM singletons WHERE key = 'client-logos'`,
+  );
+  const logos = row?.value?.logos || [];
+  return logos
+    .map((l) => ({ url: cleanUrl(l.url) || '', name: l.name || '' }))
+    .filter((l) => l.url);
+}
+
+export async function saveClientLogos(logos: ClientLogo[]): Promise<void> {
+  await ensureSchema();
+  await query(
+    `INSERT INTO singletons (key, value, updated_at) VALUES ('client-logos', $1::jsonb, now())
+     ON CONFLICT (key) DO UPDATE SET value = $1::jsonb, updated_at = now()`,
+    [JSON.stringify({ logos })],
+  );
+}
+
 // ---------- admin writes ----------
 export interface PostInput {
   id?: string;

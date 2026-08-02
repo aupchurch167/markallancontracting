@@ -41,7 +41,7 @@ export default async function ProjectTypesHub() {
       </section>
 
       <Section>
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
           {SERVICES.map((s) => {
             const c = SERVICE_CONTENT[s.slug];
             const cover = covers[s.slug];
@@ -62,11 +62,11 @@ export default async function ProjectTypesHub() {
                     />
                   </div>
                 ) : null}
-                <div className="p-7">
-                  <div className="text-xl font-bold uppercase tracking-heading text-oxblood group-hover:text-brass">
+                <div className="p-5 sm:p-7">
+                  <div className="text-lg font-bold uppercase tracking-heading text-oxblood group-hover:text-brass sm:text-xl">
                     {s.name}
                   </div>
-                  <p className="mt-2 line-clamp-2 text-oxblood/65">{c.problem}</p>
+                  <p className="mt-2 line-clamp-2 text-sm text-oxblood/65 sm:text-base">{c.problem}</p>
                   <div className="mt-4 text-[10px] font-medium uppercase tracking-label text-brass">
                     Typical range {c.typicalRange}
                   </div>
