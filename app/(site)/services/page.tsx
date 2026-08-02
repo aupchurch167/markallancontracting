@@ -1,7 +1,12 @@
 import type { Metadata } from 'next';
+
+// Dynamic so admin-set section covers appear immediately.
+export const dynamic = 'force-dynamic';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getSiteSettings } from '@/lib/queries';
 import { SERVICE_LINES } from '@/lib/site-data';
+import { getSectionCovers } from '@/lib/content';
 import { CallCTA } from '@/components/CallCTA';
 import { Section, Eyebrow } from '@/components/Section';
 import { pageMetadata } from '@/lib/seo';
@@ -15,6 +20,7 @@ export const metadata: Metadata = pageMetadata({
 
 export default async function ServicesHub() {
   const { phone, phoneRaw } = await getSiteSettings();
+  const { services: covers } = await getSectionCovers();
 
   return (
     <>
@@ -35,26 +41,42 @@ export default async function ServicesHub() {
 
       <Section>
         <div className="grid gap-6 md:grid-cols-2">
-          {SERVICE_LINES.map((line, i) => (
-            <Link
-              key={line.slug}
-              href={line.href}
-              className="group flex flex-col rounded-xl border border-stone-200 bg-paper p-7 transition-colors hover:border-accent hover:bg-stone-50"
-            >
-              <div className="flex items-baseline gap-3">
-                <span className="text-sm font-bold text-accent">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <div className="text-xl font-bold text-navy group-hover:text-accent">
-                  {line.name}
+          {SERVICE_LINES.map((line, i) => {
+            const cover = covers[line.slug];
+            return (
+              <Link
+                key={line.slug}
+                href={line.href}
+                className="group block border-2 border-brass/40 bg-bone transition-colors hover:border-brass"
+              >
+                {cover ? (
+                  <div className="relative aspect-[16/9] overflow-hidden bg-stone-100">
+                    <Image
+                      src={cover}
+                      alt={line.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover"
+                    />
+                  </div>
+                ) : null}
+                <div className="p-7">
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-sm font-bold text-brass">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <div className="text-xl font-bold uppercase tracking-heading text-oxblood group-hover:text-brass">
+                      {line.name}
+                    </div>
+                  </div>
+                  <p className="mt-3 text-oxblood/65">{line.blurb}</p>
+                  <span className="mt-4 inline-block text-[10px] font-medium uppercase tracking-label text-brass">
+                    Learn more →
+                  </span>
                 </div>
-              </div>
-              <p className="mt-3 text-stone-600">{line.blurb}</p>
-              <span className="mt-4 inline-block text-sm font-semibold text-accent">
-                Learn more →
-              </span>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       </Section>
 

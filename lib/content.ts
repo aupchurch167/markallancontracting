@@ -211,6 +211,44 @@ export async function getHomepageValue(): Promise<HomepageMedia | null> {
   };
 }
 
+/**
+ * Cover photos for the (static) project types and service lines, keyed by slug.
+ * Managed in /admin, stored as a singleton, shown in the card lists on the home
+ * page, /project-types, and /services.
+ */
+export interface SectionCovers {
+  projectTypes: Record<string, string>;
+  services: Record<string, string>;
+}
+
+function cleanCoverMap(m?: Record<string, string>): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [k, u] of Object.entries(m || {})) {
+    const cleaned = cleanUrl(u);
+    if (cleaned) out[k] = cleaned;
+  }
+  return out;
+}
+
+export async function getSectionCovers(): Promise<SectionCovers> {
+  const row = await safeQueryOne<{ value: SectionCovers }>(
+    `SELECT value FROM singletons WHERE key = 'section-covers'`,
+  );
+  return {
+    projectTypes: cleanCoverMap(row?.value?.projectTypes),
+    services: cleanCoverMap(row?.value?.services),
+  };
+}
+
+export async function saveSectionCovers(value: SectionCovers): Promise<void> {
+  await ensureSchema();
+  await query(
+    `INSERT INTO singletons (key, value, updated_at) VALUES ('section-covers', $1::jsonb, now())
+     ON CONFLICT (key) DO UPDATE SET value = $1::jsonb, updated_at = now()`,
+    [JSON.stringify(value)],
+  );
+}
+
 // ---------- admin writes ----------
 export interface PostInput {
   id?: string;
