@@ -35,6 +35,11 @@ export function ProjectCard({ project }: { project: ProjectSummary }) {
         {project.scopeSummary && (
           <p className="mt-2 line-clamp-2 text-sm text-oxblood/65">{project.scopeSummary}</p>
         )}
+        {project.quote && (
+          <p className="mt-4 border-l-2 border-brass pl-3.5 text-sm italic leading-snug text-oxblood">
+            “{project.quote}”
+          </p>
+        )}
       </div>
     </Link>
   );

@@ -61,6 +61,8 @@ export interface GeneratedProject {
   metaDescription: string;
   /** Set by the editor (uploaded/generated cover), not by the model. */
   coverImageUrl?: string;
+  /** One-line client quote for the card; set by the editor, not the model. */
+  cardQuote?: string;
 }
 
 export type ContentType = 'post' | 'project';

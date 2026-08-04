@@ -16,6 +16,7 @@ export interface ProjectSummary {
   location?: string;
   scopeSummary?: string;
   imageUrl?: string;
+  quote?: string;
 }
 
 function locationOf(cityName?: string, cityState?: string): string | undefined {
@@ -35,6 +36,7 @@ function sanityToSummary(c: SanityCard): ProjectSummary {
       c.heroImageUrl ||
       c.imageUrls?.[0]?.url ||
       undefined,
+    quote: c.cardQuote,
   };
 }
 

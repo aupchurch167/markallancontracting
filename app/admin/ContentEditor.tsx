@@ -27,6 +27,7 @@ interface EditorContent {
   scopeSummary?: string;
   timeline?: string;
   squareFootage?: string;
+  cardQuote?: string;
   metaTitle: string;
   metaDescription: string;
   coverImageUrl?: string;
@@ -626,6 +627,15 @@ export function ContentEditor({
                     <input className={inputClass} value={content.squareFootage || ''} onChange={(e) => patch({ squareFootage: e.target.value })} />
                   </Field>
                 </div>
+                <Field label="Card quote" hint="one line shown on the project card">
+                  <textarea
+                    rows={2}
+                    className={inputClass}
+                    placeholder="A short client quote, e.g. “They hit the fixed open date and the space was clean and ready.”"
+                    value={content.cardQuote || ''}
+                    onChange={(e) => patch({ cardQuote: e.target.value })}
+                  />
+                </Field>
               </>
             )}
           </Card>

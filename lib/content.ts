@@ -44,6 +44,7 @@ interface ProjectRow {
   timeline: string | null;
   square_footage: string | null;
   hero_image_url: string | null;
+  card_quote: string | null;
   image_urls: { url: string; alt?: string }[] | null;
   attachments: Attachment[] | null;
   testimonial: { quote?: string; attribution?: string; role?: string } | null;
@@ -116,6 +117,7 @@ function toProject(r: ProjectRow): Project {
     serviceSlug: r.service_slug || undefined,
     scopeSummary: r.scope_summary || undefined,
     heroImageUrl: cleanUrl(r.hero_image_url),
+    cardQuote: r.card_quote || undefined,
     bodyMarkdown: cleanMd(r.body_markdown),
     timeline: r.timeline || undefined,
     squareFootage: r.square_footage || undefined,
@@ -133,7 +135,7 @@ function toProject(r: ProjectRow): Project {
 const POST_COLS = `id, slug, title, excerpt, cluster, tags, primary_keyword, secondary_keywords,
   body_markdown, hero_image_url, meta_title, meta_description, attachments, featured, status, published_at`;
 const PROJECT_COLS = `id, slug, title, client_type, city_name, city_state, service_slug, scope_summary,
-  body_markdown, timeline, square_footage, hero_image_url, image_urls, attachments, testimonial,
+  body_markdown, timeline, square_footage, hero_image_url, card_quote, image_urls, attachments, testimonial,
   highlights, completed_date, meta_title, meta_description, featured, status, published_at`;
 
 // ---------- public reads ----------
@@ -311,6 +313,8 @@ export interface ProjectInput {
   timeline?: string;
   squareFootage?: string;
   heroImageUrl?: string;
+  /** One-line client quote shown on the project card. */
+  cardQuote?: string;
   imageUrls?: { url: string; alt?: string }[];
   attachments?: Attachment[];
   metaTitle?: string;
@@ -357,8 +361,8 @@ export async function saveProject(input: ProjectInput): Promise<string> {
   const row = await queryOne<{ id: string }>(
     `INSERT INTO projects (id, slug, title, client_type, city_name, city_state, service_slug,
         scope_summary, body_markdown, timeline, square_footage, hero_image_url, image_urls,
-        attachments, meta_title, meta_description, featured, status, published_at, updated_at)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13::jsonb,$14::jsonb,$15,$16,$17,$18,$19, now())
+        attachments, meta_title, meta_description, featured, status, published_at, card_quote, updated_at)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13::jsonb,$14::jsonb,$15,$16,$17,$18,$19,$20, now())
      ON CONFLICT (slug) DO UPDATE SET
         title=$3, client_type=$4,
         city_name=COALESCE($5, projects.city_name),
@@ -368,7 +372,7 @@ export async function saveProject(input: ProjectInput): Promise<string> {
         square_footage=$11, hero_image_url=COALESCE(NULLIF($12,''), projects.hero_image_url),
         image_urls=$13::jsonb, attachments=$14::jsonb, meta_title=$15,
         meta_description=$16, featured=$17, status=$18,
-        published_at=COALESCE(projects.published_at, $19), updated_at=now()
+        published_at=COALESCE(projects.published_at, $19), card_quote=$20, updated_at=now()
      RETURNING id`,
     [
       id, input.slug, input.title, input.clientType || null,
@@ -376,7 +380,7 @@ export async function saveProject(input: ProjectInput): Promise<string> {
       input.scopeSummary || null, input.bodyMarkdown || null, input.timeline || null,
       input.squareFootage || null, input.heroImageUrl || '', j(input.imageUrls || []),
       j(input.attachments || []), input.metaTitle || null, input.metaDescription || null,
-      input.featured || false, input.status, publishedAt,
+      input.featured || false, input.status, publishedAt, input.cardQuote || null,
     ],
   );
   return row?.id || id;
@@ -512,6 +516,7 @@ export interface EditorProject {
   bodyMarkdown: string;
   timeline: string;
   squareFootage: string;
+  cardQuote: string;
   metaTitle: string;
   metaDescription: string;
   coverImageUrl: string;
@@ -554,6 +559,7 @@ export async function getEditorContent(
     bodyMarkdown: r.body_markdown || '',
     timeline: r.timeline || '',
     squareFootage: r.square_footage || '',
+    cardQuote: r.card_quote || '',
     metaTitle: r.meta_title || '',
     metaDescription: r.meta_description || '',
     coverImageUrl: cleanUrl(r.hero_image_url) || '',
@@ -600,7 +606,7 @@ export async function updateProjectById(
   await query(
     `UPDATE projects SET title=$2, slug=$3, client_type=$4, scope_summary=$5, body_markdown=$6,
         timeline=$7, square_footage=$8, meta_title=$9, meta_description=$10,
-        hero_image_url=$13,
+        hero_image_url=$13, card_quote=$14,
         image_urls=COALESCE(image_urls,'[]'::jsonb) || $11::jsonb,
         attachments=COALESCE(attachments,'[]'::jsonb) || $12::jsonb, updated_at=now()
      WHERE id=$1`,
@@ -609,6 +615,7 @@ export async function updateProjectById(
       fields.bodyMarkdown || null, fields.timeline || null, fields.squareFootage || null,
       fields.metaTitle || null, fields.metaDescription || null,
       j(appendImageUrls), j(appendAttachments), fields.coverImageUrl || null,
+      fields.cardQuote || null,
     ],
   );
 }

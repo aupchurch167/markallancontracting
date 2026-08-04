@@ -13,6 +13,7 @@ import { ServiceGrid } from '@/components/ServiceGrid';
 import { ProjectCard } from '@/components/ProjectCard';
 import { Section, Eyebrow } from '@/components/Section';
 import { ClientLogoStrip } from '@/components/ClientLogoStrip';
+import { ProcessStrip } from '@/components/ProcessStrip';
 import { smsHref } from '@/lib/constants';
 import { pageMetadata } from '@/lib/seo';
 
@@ -77,6 +78,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* 1b. Compact process strip — reliability promise up front */}
+      <ProcessStrip />
 
       {/* 2. Problem */}
       <Section>

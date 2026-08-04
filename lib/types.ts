@@ -68,6 +68,8 @@ export interface ProjectCard {
   imageUrls?: { url: string; alt?: string }[];
   /** Dedicated cover photo — the best representative image for a card. */
   heroImageUrl?: string;
+  /** One-line client quote shown on the card. */
+  cardQuote?: string;
   serviceSlug?: string;
 }
 
