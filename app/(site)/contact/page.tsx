@@ -27,13 +27,15 @@ export default async function ContactPage() {
           <p className="mt-4 max-w-2xl text-lg text-stone-100/90">
             The fastest way to a real number is a phone call and a site walk.
           </p>
-          {/* Phone first, large, tap-to-call */}
+          {/* Phone first, large, tap-to-call. The button is the action; the big
+              number is the tap target — so the button label omits the number to
+              avoid showing it twice. */}
           <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-            <CallButton phone={phone} phoneRaw={phoneRaw} className="btn-call text-lg" />
+            <CallButton phone={phone} phoneRaw={phoneRaw} label="Call now" className="btn-call-ondark" />
             <PhoneLink
               phone={phone}
               phoneRaw={phoneRaw}
-              className="text-2xl font-bold text-white underline decoration-accent decoration-2 underline-offset-4"
+              className="text-2xl font-bold text-bone underline decoration-brass decoration-2 underline-offset-4 hover:text-brass"
             />
           </div>
         </div>
