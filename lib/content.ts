@@ -139,7 +139,24 @@ const PROJECT_COLS = `id, slug, title, client_type, city_name, city_state, servi
   highlights, completed_date, meta_title, meta_description, featured, status, published_at`;
 
 // ---------- public reads ----------
+/**
+ * Apply any pending schema migrations (e.g. a newly added column) before a
+ * public read, without ever throwing. Reads reference the full column list, so
+ * right after a deploy that adds a column the SELECT would otherwise fail until
+ * the first admin write ran ensureSchema — blanking the page. ensureSchema is
+ * memoized, so this is a one-time cost per process. Guarded so a DDL hiccup
+ * still degrades to the fallback content rather than crashing the page.
+ */
+async function readyForRead(): Promise<void> {
+  try {
+    await ensureSchema();
+  } catch {
+    /* fall through — safeQuery below still degrades to fallback */
+  }
+}
+
 export async function getPublishedPostCards(): Promise<PostCard[]> {
+  await readyForRead();
   const rows = await safeQuery<PostRow>(
     `SELECT ${POST_COLS} FROM posts WHERE status = 'published' ORDER BY published_at DESC NULLS LAST`,
   );
@@ -147,6 +164,7 @@ export async function getPublishedPostCards(): Promise<PostCard[]> {
 }
 
 export async function getPublishedPost(slug: string): Promise<Post | null> {
+  await readyForRead();
   const row = await safeQueryOne<PostRow>(
     `SELECT ${POST_COLS} FROM posts WHERE slug = $1 AND status = 'published'`,
     [slug],
@@ -170,6 +188,7 @@ export async function getPublishedPostSlugs(): Promise<string[]> {
 }
 
 export async function getPublishedProjectCards(): Promise<ProjectCard[]> {
+  await readyForRead();
   const rows = await safeQuery<ProjectRow>(
     `SELECT ${PROJECT_COLS} FROM projects WHERE status = 'published' ORDER BY published_at DESC NULLS LAST`,
   );
@@ -177,6 +196,7 @@ export async function getPublishedProjectCards(): Promise<ProjectCard[]> {
 }
 
 export async function getFeaturedProjectCards(): Promise<ProjectCard[]> {
+  await readyForRead();
   const rows = await safeQuery<ProjectRow>(
     `SELECT ${PROJECT_COLS} FROM projects WHERE status = 'published' AND featured = true
        ORDER BY published_at DESC NULLS LAST LIMIT 3`,
@@ -185,6 +205,7 @@ export async function getFeaturedProjectCards(): Promise<ProjectCard[]> {
 }
 
 export async function getPublishedProject(slug: string): Promise<Project | null> {
+  await readyForRead();
   const row = await safeQueryOne<ProjectRow>(
     `SELECT ${PROJECT_COLS} FROM projects WHERE slug = $1 AND status = 'published'`,
     [slug],
