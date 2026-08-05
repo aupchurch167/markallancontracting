@@ -12,7 +12,7 @@ export async function ClientLogoStrip() {
   return (
     <section className="border-y-2 border-brass/40 bg-bone-light">
       <div className="container-page py-14">
-        <div className="eyebrow">Who we&apos;ve worked with</div>
+        <div className="eyebrow">Since 1999, we&apos;ve built for</div>
         <div className="mt-8 flex flex-wrap items-center gap-x-12 gap-y-8">
           {logos.map((logo, i) => (
             <div key={`${logo.url}-${i}`} className="flex h-10 items-center sm:h-12">
@@ -26,6 +26,9 @@ export async function ClientLogoStrip() {
             </div>
           ))}
         </div>
+        <p className="mt-8 text-oxblood/65">
+          National brands. Local business. People who needed it done right the first time.
+        </p>
       </div>
     </section>
   );
