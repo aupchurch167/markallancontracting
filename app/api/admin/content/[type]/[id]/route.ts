@@ -145,13 +145,11 @@ export async function PUT(
     }
 
     const c = content as EditorProject;
-    const { md, usedIndices } = resolvePhotoPlaceholders(c.bodyMarkdown || '', imageUrls);
+    // The gallery is managed explicitly in the editor (c.imageUrls); newly
+    // uploaded files here are only for placing inline body photos (photo:N).
+    const { md } = resolvePhotoPlaceholders(c.bodyMarkdown || '', imageUrls);
     const bodyMarkdown = linkifyMarkdown(md);
-    const newGallery = images
-      .map((im, i) => ({ im, i }))
-      .filter(({ i }) => !usedIndices.has(i))
-      .map(({ im }) => ({ url: im.url, alt: c.title }));
-    await updateProjectById({ ...c, id, bodyMarkdown }, newGallery, newAttachments);
+    await updateProjectById({ ...c, id, bodyMarkdown }, newAttachments);
     if (nextStatus) await setStatus('project', id, nextStatus);
     revalidatePath('/projects');
     revalidatePath(`/projects/${c.slug}`);

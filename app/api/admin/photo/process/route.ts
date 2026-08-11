@@ -35,30 +35,49 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Expected multipart form data.' }, { status: 400 });
   }
 
+  // Two sources: a new upload (File), or an already-uploaded image to re-edit (sourceUrl).
   const file = form.get('file');
-  if (!(file instanceof File)) {
-    return NextResponse.json({ error: 'No file provided.' }, { status: 400 });
-  }
-  if (file.size > MAX_FILE_BYTES) {
-    const mb = (file.size / (1024 * 1024)).toFixed(1);
-    return NextResponse.json({ error: `That image is ${mb}MB — the max is 25MB.` }, { status: 400 });
-  }
-  if (/image\/hei[cf]/i.test(file.type) || /\.hei[cf]$/i.test(file.name)) {
-    return NextResponse.json(
-      {
-        error:
-          'That looks like an iPhone HEIC photo, which can’t be processed. On your iPhone: ' +
-          'Settings → Camera → Formats → “Most Compatible”, or export as JPEG, then try again.',
-      },
-      { status: 400 },
-    );
+  const sourceUrl = String(form.get('sourceUrl') || '');
+  let base: Buffer;
+  let filename = 'photo.jpg';
+
+  if (file instanceof File) {
+    if (file.size > MAX_FILE_BYTES) {
+      const mb = (file.size / (1024 * 1024)).toFixed(1);
+      return NextResponse.json({ error: `That image is ${mb}MB — the max is 25MB.` }, { status: 400 });
+    }
+    if (/image\/hei[cf]/i.test(file.type) || /\.hei[cf]$/i.test(file.name)) {
+      return NextResponse.json(
+        {
+          error:
+            'That looks like an iPhone HEIC photo, which can’t be processed. On your iPhone: ' +
+            'Settings → Camera → Formats → “Most Compatible”, or export as JPEG, then try again.',
+        },
+        { status: 400 },
+      );
+    }
+    base = Buffer.from(await file.arrayBuffer());
+    filename = file.name;
+  } else if (/^https?:\/\//.test(sourceUrl)) {
+    try {
+      const r = await fetch(sourceUrl);
+      if (!r.ok) throw new Error(`status ${r.status}`);
+      const ab = await r.arrayBuffer();
+      if (ab.byteLength > MAX_FILE_BYTES) {
+        return NextResponse.json({ error: 'That image is too large to re-edit.' }, { status: 400 });
+      }
+      base = Buffer.from(ab);
+    } catch {
+      return NextResponse.json({ error: 'Could not load the image to edit.' }, { status: 400 });
+    }
+  } else {
+    return NextResponse.json({ error: 'No image provided.' }, { status: 400 });
   }
 
   const aspect: CropAspect = ASPECTS.includes(form.get('aspect') as CropAspect)
     ? (form.get('aspect') as CropAspect)
     : '16:9';
   const prefix = String(form.get('prefix') || 'covers');
-  const base = Buffer.from(await file.arrayBuffer());
 
   // Deterministic versions (sharp). If sharp can't read the input, it's not a
   // usable web image — fail clearly.
@@ -74,7 +93,7 @@ export async function POST(req: Request) {
   }
 
   const put = (buf: Buffer, ct: string) =>
-    uploadToR2({ buffer: buf, contentType: ct, filename: file.name, prefix });
+    uploadToR2({ buffer: buf, contentType: ct, filename, prefix });
 
   let originalUrl: string;
   let croppedUrl: string;

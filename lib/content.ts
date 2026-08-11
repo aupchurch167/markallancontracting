@@ -538,6 +538,7 @@ export interface EditorProject {
   timeline: string;
   squareFootage: string;
   cardQuote: string;
+  imageUrls: { url: string; alt?: string }[];
   metaTitle: string;
   metaDescription: string;
   coverImageUrl: string;
@@ -581,6 +582,7 @@ export async function getEditorContent(
     timeline: r.timeline || '',
     squareFootage: r.square_footage || '',
     cardQuote: r.card_quote || '',
+    imageUrls: (r.image_urls || []).map((im) => ({ url: cleanUrl(im.url) || im.url, alt: im.alt })),
     metaTitle: r.meta_title || '',
     metaDescription: r.meta_description || '',
     coverImageUrl: cleanUrl(r.hero_image_url) || '',
@@ -620,22 +622,21 @@ export async function updatePostById(
  */
 export async function updateProjectById(
   fields: EditorProject,
-  appendImageUrls: { url: string; alt?: string }[] = [],
   appendAttachments: Attachment[] = [],
 ): Promise<void> {
-  // Cover set directly (editor sends the authoritative value; empty = cleared).
+  // Cover and gallery set directly from the editor's authoritative values
+  // (empty gallery = intentionally cleared). Attachments still append.
   await query(
     `UPDATE projects SET title=$2, slug=$3, client_type=$4, scope_summary=$5, body_markdown=$6,
         timeline=$7, square_footage=$8, meta_title=$9, meta_description=$10,
-        hero_image_url=$13, card_quote=$14,
-        image_urls=COALESCE(image_urls,'[]'::jsonb) || $11::jsonb,
+        hero_image_url=$13, card_quote=$14, image_urls=$11::jsonb,
         attachments=COALESCE(attachments,'[]'::jsonb) || $12::jsonb, updated_at=now()
      WHERE id=$1`,
     [
       fields.id, fields.title, fields.slug, fields.clientType || null, fields.scopeSummary || null,
       fields.bodyMarkdown || null, fields.timeline || null, fields.squareFootage || null,
       fields.metaTitle || null, fields.metaDescription || null,
-      j(appendImageUrls), j(appendAttachments), fields.coverImageUrl || null,
+      j(fields.imageUrls || []), j(appendAttachments), fields.coverImageUrl || null,
       fields.cardQuote || null,
     ],
   );

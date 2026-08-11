@@ -163,7 +163,7 @@ export async function POST(req: Request) {
       squareFootage: c.squareFootage || '',
       cardQuote: c.cardQuote || '',
       heroImageUrl: c.coverImageUrl,
-      imageUrls: galleryImages,
+      imageUrls: c.imageUrls?.length ? c.imageUrls : galleryImages,
       attachments,
       metaTitle: c.metaTitle || '',
       metaDescription: c.metaDescription || '',

@@ -63,6 +63,8 @@ export interface GeneratedProject {
   coverImageUrl?: string;
   /** One-line client quote for the card; set by the editor, not the model. */
   cardQuote?: string;
+  /** Gallery photos, managed in the editor (processed URLs), not by the model. */
+  imageUrls?: { url: string; alt?: string }[];
 }
 
 export type ContentType = 'post' | 'project';

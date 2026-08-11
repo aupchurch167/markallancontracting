@@ -15,6 +15,11 @@ import {
 } from './ui';
 import { PhotoChoiceModal, type PhotoResult } from './PhotoChoiceModal';
 
+type PhotoTarget =
+  | { kind: 'cover' }
+  | { kind: 'gallery-add' }
+  | { kind: 'gallery-replace'; index: number };
+
 interface EditorContent {
   title: string;
   slug: string;
@@ -29,6 +34,7 @@ interface EditorContent {
   timeline?: string;
   squareFootage?: string;
   cardQuote?: string;
+  imageUrls?: { url: string; alt?: string }[];
   metaTitle: string;
   metaDescription: string;
   coverImageUrl?: string;
@@ -87,6 +93,7 @@ export function ContentEditor({
   const [photoModalOpen, setPhotoModalOpen] = useState(false);
   const [photoBusy, setPhotoBusy] = useState(false);
   const [photoResult, setPhotoResult] = useState<PhotoResult | null>(null);
+  const [photoTarget, setPhotoTarget] = useState<PhotoTarget>({ kind: 'cover' });
   const [saving, setSaving] = useState<'draft' | 'published' | null>(null);
 
   // Load existing content in edit mode.
@@ -232,18 +239,26 @@ export function ContentEditor({
     }
   }
 
-  async function uploadCover(file: File | null) {
-    if (!content || !file) return;
-    // Process the photo (align/crop + Gemini enhance + quality check), then let
-    // the user pick which version to keep from a before/after modal.
+  // Run a photo (new upload or an already-uploaded image by URL) through the
+  // align/crop + Gemini enhance + quality-check pipeline, then open the
+  // before/after modal. photoTarget decides where the chosen version lands.
+  async function processPhoto(opts: {
+    file?: File;
+    sourceUrl?: string;
+    aspect: string;
+    prefix: string;
+    target: PhotoTarget;
+  }) {
+    setPhotoTarget(opts.target);
     setPhotoResult(null);
     setPhotoBusy(true);
     setPhotoModalOpen(true);
     try {
       const fd = new FormData();
-      fd.set('file', file);
-      fd.set('aspect', '16:9');
-      fd.set('prefix', 'covers');
+      if (opts.file) fd.set('file', opts.file);
+      if (opts.sourceUrl) fd.set('sourceUrl', opts.sourceUrl);
+      fd.set('aspect', opts.aspect);
+      fd.set('prefix', opts.prefix);
       const res = await fetch('/api/admin/photo/process', { method: 'POST', body: fd });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Processing failed.');
@@ -256,10 +271,43 @@ export function ContentEditor({
     }
   }
 
-  async function chooseCoverPhoto(url: string) {
+  function uploadCover(file: File | null) {
+    if (!content || !file) return;
+    processPhoto({ file, aspect: '16:9', prefix: 'covers', target: { kind: 'cover' } });
+  }
+  function editCover() {
+    if (!content?.coverImageUrl) return;
+    processPhoto({ sourceUrl: content.coverImageUrl, aspect: '16:9', prefix: 'covers', target: { kind: 'cover' } });
+  }
+  function addGalleryPhoto(file: File | null) {
+    if (!content || !file) return;
+    processPhoto({ file, aspect: '4:3', prefix: 'projects', target: { kind: 'gallery-add' } });
+  }
+  function editGalleryPhoto(index: number, url: string) {
+    processPhoto({ sourceUrl: url, aspect: '4:3', prefix: 'projects', target: { kind: 'gallery-replace', index } });
+  }
+  function removeGalleryPhoto(index: number) {
+    patch({ imageUrls: (content?.imageUrls || []).filter((_, i) => i !== index) });
+  }
+
+  async function onChoosePhoto(url: string) {
     setPhotoModalOpen(false);
-    patch({ coverImageUrl: url });
-    await persistCover(url, 'Cover updated');
+    const t = photoTarget;
+    if (t.kind === 'cover') {
+      patch({ coverImageUrl: url });
+      await persistCover(url, 'Cover updated');
+      return;
+    }
+    if (t.kind === 'gallery-add') {
+      patch({ imageUrls: [...(content?.imageUrls || []), { url, alt: content?.title }] });
+      toast.success('Added to gallery — Save to publish.');
+      return;
+    }
+    // gallery-replace
+    const next = [...(content?.imageUrls || [])];
+    next[t.index] = { url, alt: next[t.index]?.alt || content?.title };
+    patch({ imageUrls: next });
+    toast.success('Photo updated — Save to publish.');
   }
 
   async function submit(status: 'draft' | 'published') {
@@ -425,7 +473,7 @@ export function ContentEditor({
         open={photoModalOpen}
         busy={photoBusy}
         result={photoResult}
-        onChoose={chooseCoverPhoto}
+        onChoose={onChoosePhoto}
         onCancel={() => setPhotoModalOpen(false)}
       />
       {/* Sticky action bar */}
@@ -528,6 +576,58 @@ export function ContentEditor({
             />
           </Card>
 
+          {/* Gallery (projects) — each photo runs through the align/crop +
+              enhance pipeline; existing photos can be re-edited or removed. */}
+          {contentType === 'project' && (
+            <Card className="space-y-3 p-5">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-navy">Gallery</span>
+                <label className="flex cursor-pointer items-center gap-1 text-sm font-semibold text-accent hover:text-accent-700">
+                  <Icon name="plus" className="h-4 w-4" /> Add photo
+                  <input
+                    type="file"
+                    accept="image/*"
+                    disabled={photoBusy}
+                    className="hidden"
+                    onChange={(e) => {
+                      addGalleryPhoto(e.target.files?.[0] || null);
+                      e.target.value = '';
+                    }}
+                  />
+                </label>
+              </div>
+              {content.imageUrls && content.imageUrls.length > 0 ? (
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {content.imageUrls.map((img, i) => (
+                    <div key={`${img.url}-${i}`} className="overflow-hidden rounded-md border border-stone-200">
+                      <div className="relative aspect-[4/3] bg-stone-100">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={img.url} alt={img.alt || ''} className="h-full w-full object-cover" />
+                      </div>
+                      <div className="flex items-center justify-between px-2 py-1.5 text-xs">
+                        <button
+                          onClick={() => editGalleryPhoto(i, img.url)}
+                          disabled={photoBusy}
+                          className="font-medium text-navy hover:text-accent disabled:opacity-50"
+                        >
+                          Edit / crop
+                        </button>
+                        <button onClick={() => removeGalleryPhoto(i)} className="text-red-600 hover:underline">
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-stone-400">
+                  No gallery photos yet. Add photos — each is auto-cropped and can be AI-enhanced
+                  before it&apos;s saved.
+                </p>
+              )}
+            </Card>
+          )}
+
           {/* Refine with Claude */}
           <Card className="space-y-2 bg-stone-50 p-4">
             <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-stone-500">
@@ -567,6 +667,13 @@ export function ContentEditor({
               <div className="relative aspect-[16/9] overflow-hidden rounded-md bg-stone-100">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={content.coverImageUrl} alt="Cover" className="h-full w-full object-cover" />
+                <button
+                  onClick={editCover}
+                  disabled={coverBusy || photoBusy}
+                  className="absolute left-2 top-2 rounded bg-white/90 px-2 py-1 text-xs font-medium text-navy hover:bg-white disabled:opacity-50"
+                >
+                  Edit / crop
+                </button>
                 <button
                   onClick={() => {
                     patch({ coverImageUrl: '' });
