@@ -13,6 +13,7 @@ import {
   useToast,
   type EditorTarget,
 } from './ui';
+import { PhotoChoiceModal, type PhotoResult } from './PhotoChoiceModal';
 
 interface EditorContent {
   title: string;
@@ -83,6 +84,9 @@ export function ContentEditor({
   const [refineNotes, setRefineNotes] = useState('');
   const [coverPrompt, setCoverPrompt] = useState('');
   const [coverBusy, setCoverBusy] = useState(false);
+  const [photoModalOpen, setPhotoModalOpen] = useState(false);
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const [photoResult, setPhotoResult] = useState<PhotoResult | null>(null);
   const [saving, setSaving] = useState<'draft' | 'published' | null>(null);
 
   // Load existing content in edit mode.
@@ -230,20 +234,32 @@ export function ContentEditor({
 
   async function uploadCover(file: File | null) {
     if (!content || !file) return;
-    setCoverBusy(true);
+    // Process the photo (align/crop + Gemini enhance + quality check), then let
+    // the user pick which version to keep from a before/after modal.
+    setPhotoResult(null);
+    setPhotoBusy(true);
+    setPhotoModalOpen(true);
     try {
       const fd = new FormData();
       fd.set('file', file);
-      const res = await fetch('/api/admin/cover/upload', { method: 'POST', body: fd });
+      fd.set('aspect', '16:9');
+      fd.set('prefix', 'covers');
+      const res = await fetch('/api/admin/photo/process', { method: 'POST', body: fd });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Upload failed.');
-      patch({ coverImageUrl: data.url });
-      await persistCover(data.url, 'Cover uploaded');
+      if (!res.ok) throw new Error(data.error || 'Processing failed.');
+      setPhotoResult(data);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Upload failed.');
+      toast.error(e instanceof Error ? e.message : 'Processing failed.');
+      setPhotoModalOpen(false);
     } finally {
-      setCoverBusy(false);
+      setPhotoBusy(false);
     }
+  }
+
+  async function chooseCoverPhoto(url: string) {
+    setPhotoModalOpen(false);
+    patch({ coverImageUrl: url });
+    await persistCover(url, 'Cover updated');
   }
 
   async function submit(status: 'draft' | 'published') {
@@ -405,6 +421,13 @@ export function ContentEditor({
   // ---- Editor ----
   return (
     <div className="mx-auto max-w-5xl">
+      <PhotoChoiceModal
+        open={photoModalOpen}
+        busy={photoBusy}
+        result={photoResult}
+        onChoose={chooseCoverPhoto}
+        onCancel={() => setPhotoModalOpen(false)}
+      />
       {/* Sticky action bar */}
       <div className="sticky top-0 z-30 -mx-5 mb-6 flex items-center gap-3 border-b border-stone-200 bg-stone-50/90 px-5 py-3 backdrop-blur sm:-mx-8 sm:px-8">
         <button onClick={onBack} className="flex items-center gap-1.5 text-sm font-medium text-stone-500 hover:text-navy">
@@ -566,7 +589,7 @@ export function ContentEditor({
               <input
                 type="file"
                 accept="image/*"
-                disabled={coverBusy}
+                disabled={coverBusy || photoBusy}
                 className="mt-1 block w-full text-xs text-stone-600 file:mr-3 file:rounded-md file:border-0 file:bg-stone-100 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-navy hover:file:bg-stone-200"
                 onChange={(e) => uploadCover(e.target.files?.[0] || null)}
               />

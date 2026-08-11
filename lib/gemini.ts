@@ -14,6 +14,7 @@ import 'server-only';
 
 const apiKey = process.env.GEMINI_API_KEY || '';
 const model = process.env.GEMINI_IMAGE_MODEL || 'gemini-2.5-flash-image';
+const textModel = process.env.GEMINI_TEXT_MODEL || 'gemini-2.5-flash';
 const base = (process.env.GEMINI_IMAGE_BASE || 'https://generativelanguage.googleapis.com').replace(
   /\/+$/,
   '',
@@ -116,4 +117,116 @@ export async function generateCoverImage(subject: string): Promise<GeneratedImag
     }
   }
   throw new Error(lastErr);
+}
+
+/** Shared POST to a Gemini generateContent endpoint, with retry/timeout. */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+async function callGemini(useModel: string, body: string): Promise<any> {
+  const endpoint = `${base}/v1beta/models/${useModel}:generateContent`;
+  let lastErr = 'Gemini request failed.';
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'x-goog-api-key': apiKey, 'Content-Type': 'application/json' },
+        body,
+        signal: controller.signal,
+      });
+      if (!res.ok) {
+        const detail = await res.text().catch(() => '');
+        if (RETRYABLE.has(res.status) && attempt < MAX_ATTEMPTS) {
+          lastErr = `Gemini ${res.status}`;
+          await new Promise((r) => setTimeout(r, 1000 * 2 ** (attempt - 1)));
+          continue;
+        }
+        throw new Error(`Gemini ${res.status}: ${detail.slice(0, 200)}`);
+      }
+      return await res.json();
+    } catch (err) {
+      const isAbort = err instanceof Error && err.name === 'AbortError';
+      lastErr = isAbort ? 'Gemini timed out.' : err instanceof Error ? err.message : lastErr;
+      if (attempt >= MAX_ATTEMPTS || !isAbort) break;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+  throw new Error(lastErr);
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+const ENHANCE_PROMPT =
+  'Enhance this photo for a professional commercial-construction portfolio: correct exposure, ' +
+  'white balance, contrast, and clarity, and gently reduce haze or dullness. Do NOT add, remove, ' +
+  'move, or alter any objects, people, structures, signage, finishes, or content — only improve ' +
+  'lighting and color. Keep it photorealistic and true to the original framing.';
+
+/**
+ * Conservatively enhance an existing photo (image-to-image). Only lighting/color
+ * are meant to change; the enhancement is always shown to the user for approval,
+ * so a bad result can be rejected. Throws on failure/timeout.
+ */
+export async function enhanceImage(buffer: Buffer, mimeType: string): Promise<GeneratedImage> {
+  if (!isGeminiConfigured) throw new Error('Gemini is not configured.');
+  const json = await callGemini(
+    model,
+    JSON.stringify({
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            { inlineData: { mimeType, data: buffer.toString('base64') } },
+            { text: ENHANCE_PROMPT },
+          ],
+        },
+      ],
+      generationConfig: { responseModalities: ['TEXT', 'IMAGE'] },
+    }),
+  );
+  const inline = findInlineData(json);
+  if (!inline) {
+    const reason = json?.promptFeedback?.blockReason || collectText(json) || 'no image returned';
+    throw new Error(`Gemini returned no enhanced image (${reason}).`);
+  }
+  return { buffer: Buffer.from(inline.data, 'base64'), mimeType: inline.mimeType || 'image/jpeg' };
+}
+
+export interface ImageCheck {
+  ok: boolean;
+  notes: string;
+}
+
+const CHECK_PROMPT =
+  'You are reviewing a photo for a commercial general contractor’s public website. ' +
+  'In ONE short sentence, note any quality or appropriateness problems (blurry, too dark or ' +
+  'overexposed, crooked, cluttered/messy, shows identifiable faces, exposes sensitive info like ' +
+  'documents or plates, or looks unprofessional). If it looks good, say so briefly. ' +
+  'Then on a new final line output exactly OK if it is fine to publish, or FLAG if it needs attention.';
+
+/** Best-effort quality/appropriateness check. Never throws — returns ok:true on error. */
+export async function checkImage(buffer: Buffer, mimeType: string): Promise<ImageCheck> {
+  if (!isGeminiConfigured) return { ok: true, notes: '' };
+  try {
+    const json = await callGemini(
+      textModel,
+      JSON.stringify({
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              { inlineData: { mimeType, data: buffer.toString('base64') } },
+              { text: CHECK_PROMPT },
+            ],
+          },
+        ],
+      }),
+    );
+    const text = collectText(json);
+    const flagged = /\bFLAG\b/i.test(text);
+    const notes = text.replace(/\b(OK|FLAG)\b\s*$/i, '').trim();
+    return { ok: !flagged, notes };
+  } catch {
+    return { ok: true, notes: '' };
+  }
 }
