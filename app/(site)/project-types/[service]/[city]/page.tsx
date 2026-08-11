@@ -2,33 +2,27 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import {
-  getServiceCity,
-  getServiceCitySlugs,
-  getSiteSettings,
-} from '@/lib/queries';
+import { getServiceCity, getSiteSettings } from '@/lib/queries';
 import { getService as getServiceDef } from '@/lib/site-data';
 import { SERVICE_CONTENT } from '@/lib/fallback-content';
-import { urlForImage } from '@/lib/image';
 import { CallButton } from '@/components/PhoneLink';
 import { CallCTA } from '@/components/CallCTA';
 import { PlanSteps } from '@/components/PlanSteps';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Section, Eyebrow } from '@/components/Section';
-import { PortableText } from '@/components/PortableText';
+import { MarkdownBody } from '@/components/MarkdownBody';
 import { JsonLd } from '@/components/JsonLd';
 import { serviceSchema } from '@/lib/schema';
 import { pageMetadata } from '@/lib/seo';
 
 /**
- * The route only exists where a serviceCity document exists — that enforces the
- * anti-thin-content rule at the data layer. No document → 404. We never generate
- * pages to fill the matrix.
+ * The route only renders where a PUBLISHED serviceCity row exists — that
+ * enforces the anti-thin-content rule at the data layer. No row → 404. Pages are
+ * produced one at a time by the /admin City page builder, never to fill a
+ * matrix. force-dynamic so a newly published page appears without a rebuild (and
+ * to bypass Railway edge caching), matching the posts/projects routes.
  */
-export async function generateStaticParams() {
-  const pairs = await getServiceCitySlugs();
-  return pairs.map((p) => ({ service: p.service, city: p.city }));
-}
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
   params,
@@ -38,7 +32,6 @@ export async function generateMetadata({
   const { service, city } = await params;
   const sc = await getServiceCity(service, city);
   if (!sc) return {};
-  // City pages canonical to themselves, never to the project-type hub.
   return pageMetadata({
     title: sc.metaTitle,
     description: sc.metaDescription,
@@ -60,7 +53,6 @@ export default async function ServiceCityPage({
   const { phone, phoneRaw } = settings;
   const c = SERVICE_CONTENT[def.slug];
   const cityLabel = `${sc.cityName}, ${sc.cityState.toUpperCase()}`;
-  const img = urlForImage(sc.localProject?.image)?.width(1000).height(700).url();
 
   return (
     <>
@@ -92,12 +84,18 @@ export default async function ServiceCityPage({
         </div>
       </section>
 
-      {/* Templated intro with city variable */}
+      {/* Intro — generated, unique to this city */}
       <Section>
-        <p className="max-w-3xl text-lg leading-relaxed text-stone-600">
-          {c.problem} We work {cityLabel} and the surrounding market, and the
-          three steps below are the same on every job.
-        </p>
+        <div className="max-w-3xl text-lg leading-relaxed text-stone-600">
+          {sc.intro ? (
+            <MarkdownBody>{sc.intro}</MarkdownBody>
+          ) : (
+            <p>
+              {c.problem} We work {cityLabel} and the surrounding market, and the three steps below
+              are the same on every job.
+            </p>
+          )}
+        </div>
       </Section>
 
       {/* Local project reference — unique, required */}
@@ -105,10 +103,10 @@ export default async function ServiceCityPage({
         <Eyebrow>On the ground in {sc.cityName}</Eyebrow>
         <div className="mt-6 grid items-start gap-8 lg:grid-cols-2">
           <div className="relative aspect-[10/7] overflow-hidden rounded-lg bg-stone-200">
-            {img ? (
+            {sc.photoUrl ? (
               <Image
-                src={img}
-                alt={sc.localProject?.image?.alt || sc.localProject?.title || `${def.name} in ${cityLabel}`}
+                src={sc.photoUrl}
+                alt={sc.photoAlt || sc.projectTitle || `${def.name} in ${cityLabel}`}
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
@@ -120,15 +118,13 @@ export default async function ServiceCityPage({
             )}
           </div>
           <div className="text-lg">
-            {sc.localProject?.title && (
-              <h2 className="mb-3 text-2xl font-bold text-navy">
-                {sc.localProject.title}
-              </h2>
+            {sc.projectTitle && (
+              <h2 className="mb-3 text-2xl font-bold text-navy">{sc.projectTitle}</h2>
             )}
-            <PortableText value={sc.localProjectNote} />
-            {sc.localProject?.slug && (
+            {sc.projectBody && <MarkdownBody>{sc.projectBody}</MarkdownBody>}
+            {sc.projectRefSlug && (
               <Link
-                href={`/projects/${sc.localProject.slug}`}
+                href={`/projects/${sc.projectRefSlug}`}
                 className="mt-2 inline-block text-sm font-semibold text-accent hover:text-accent-700"
               >
                 See the full project →
@@ -139,12 +135,12 @@ export default async function ServiceCityPage({
       </Section>
 
       {/* Permitting / jurisdiction note — unique, required */}
-      {sc.jurisdictionNote?.length ? (
+      {sc.jurisdictionBody ? (
         <Section>
           <div className="max-w-3xl">
             <Eyebrow>Permitting in {sc.county || sc.cityName}</Eyebrow>
             <div className="mt-3 text-lg">
-              <PortableText value={sc.jurisdictionNote} />
+              <MarkdownBody>{sc.jurisdictionBody}</MarkdownBody>
             </div>
           </div>
         </Section>
@@ -192,7 +188,7 @@ export default async function ServiceCityPage({
       <CallCTA
         phone={phone}
         phoneRaw={phoneRaw}
-        heading={`Got a ${def.name.toLowerCase()} project in ${sc.cityName}?`}
+        heading={sc.ctaLine || `Got a ${def.name.toLowerCase()} project in ${sc.cityName}?`}
       />
     </>
   );

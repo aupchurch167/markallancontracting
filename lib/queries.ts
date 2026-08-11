@@ -7,6 +7,8 @@ import {
   getFeaturedProjectCards,
   getPublishedProject,
   getPublishedProjectSlugs,
+  getServiceCityPage,
+  getServiceCityPairs,
 } from './content';
 import type {
   City,
@@ -58,13 +60,13 @@ export async function getCity(_slug: string): Promise<City | null> {
   return null;
 }
 export async function getServiceCity(
-  _serviceSlug: string,
-  _citySlug: string,
+  serviceSlug: string,
+  citySlug: string,
 ): Promise<ServiceCity | null> {
-  return null;
+  return getServiceCityPage(serviceSlug, citySlug);
 }
 export async function getServiceCitySlugs(): Promise<{ service: string; city: string }[]> {
-  return [];
+  return getServiceCityPairs();
 }
 export async function getCitySlugs(): Promise<string[]> {
   return [];

@@ -120,9 +120,17 @@ export interface ServiceCity {
   cityName: string;
   cityState: string;
   county?: string;
-  jurisdictionNote?: PortableTextBlock[];
-  localProjectNote?: PortableTextBlock[];
-  localProject?: ProjectCard;
+  /** Markdown bodies produced by the City page builder (rendered via MarkdownBody). */
+  intro?: string;
+  projectTitle?: string;
+  projectBody?: string;
+  /** Slug of a related /projects/[slug] case study, if one exists. */
+  projectRefSlug?: string;
+  /** R2 URL of the local project photo + its alt text. */
+  photoUrl?: string;
+  photoAlt?: string;
+  jurisdictionBody?: string;
+  ctaLine?: string;
 }
 
 export interface Market {

@@ -17,13 +17,15 @@ import { ContentEditor } from './ContentEditor';
 import { HomepagePhotos } from './HomepagePhotos';
 import { SectionCovers } from './SectionCovers';
 import { ClientLogos } from './ClientLogos';
+import { CityBuilder } from './CityBuilder';
 
-type View = 'dashboard' | 'list' | 'editor' | 'homepage' | 'sections' | 'logos';
+type View = 'dashboard' | 'list' | 'editor' | 'homepage' | 'sections' | 'logos' | 'cities';
 
 const NAV: { id: View; label: string; icon: IconName; type?: ContentType }[] = [
   { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
   { id: 'list', label: 'Posts', icon: 'posts', type: 'post' },
   { id: 'list', label: 'Projects', icon: 'projects', type: 'project' },
+  { id: 'cities', label: 'City pages', icon: 'home' },
   { id: 'sections', label: 'Section covers', icon: 'image' },
   { id: 'logos', label: 'Client logos', icon: 'projects' },
   { id: 'homepage', label: 'Home page', icon: 'home' },
@@ -207,6 +209,8 @@ function Shell() {
                 onBack={() => openList(editorTarget.type)}
                 onReload={reload}
               />
+            ) : view === 'cities' ? (
+              <CityBuilder />
             ) : view === 'sections' ? (
               <SectionCovers />
             ) : view === 'logos' ? (

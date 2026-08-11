@@ -130,6 +130,36 @@ CREATE TABLE IF NOT EXISTS singletons (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Service×City landing pages, produced by the /admin City page builder from a
+-- human-authored facts input. Draft by default; a human publishes. A row exists
+-- ONLY where there's a real local project + jurisdiction input (the
+-- anti-thin-content gate), so the public route renders one page per row.
+CREATE TABLE IF NOT EXISTS service_cities (
+  id                TEXT PRIMARY KEY,
+  service_slug      TEXT NOT NULL,
+  city_slug         TEXT NOT NULL,
+  city_name         TEXT NOT NULL,
+  city_state        TEXT NOT NULL,
+  county            TEXT,
+  meta_title        TEXT,
+  meta_description  TEXT,
+  h1                TEXT,
+  intro             TEXT,
+  project_title     TEXT,
+  project_body      TEXT,
+  project_ref_slug  TEXT,
+  photo_url         TEXT,
+  photo_alt         TEXT,
+  jurisdiction_body TEXT,
+  cta_line          TEXT,
+  client_nameable   BOOLEAN NOT NULL DEFAULT true,
+  status            TEXT NOT NULL DEFAULT 'draft',
+  published_at      TIMESTAMPTZ,
+  created_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (service_slug, city_slug)
+);
+
 -- Forward-compatible column adds (CREATE TABLE IF NOT EXISTS won't alter existing tables).
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS card_quote TEXT;
 ALTER TABLE posts ADD COLUMN IF NOT EXISTS gbp_post TEXT;

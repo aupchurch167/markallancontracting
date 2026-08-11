@@ -1,7 +1,7 @@
 import 'server-only';
 import { randomUUID } from 'crypto';
 import { query, queryOne, safeQuery, safeQueryOne, ensureSchema, isDbConfigured } from './db';
-import type { Attachment, Post, PostCard, Project, ProjectCard } from './types';
+import type { Attachment, Post, PostCard, Project, ProjectCard, ServiceCity } from './types';
 import type { HomepageMedia } from './homepage-media';
 
 /**
@@ -646,3 +646,183 @@ export async function updateProjectById(
     ],
   );
 }
+
+// ---------- service×city landing pages ----------
+interface ServiceCityRow {
+  id: string;
+  service_slug: string;
+  city_slug: string;
+  city_name: string;
+  city_state: string;
+  county: string | null;
+  meta_title: string | null;
+  meta_description: string | null;
+  h1: string | null;
+  intro: string | null;
+  project_title: string | null;
+  project_body: string | null;
+  project_ref_slug: string | null;
+  photo_url: string | null;
+  photo_alt: string | null;
+  jurisdiction_body: string | null;
+  cta_line: string | null;
+  client_nameable: boolean;
+  status: string;
+  published_at: string | null;
+  updated_at: string;
+}
+
+const SERVICE_CITY_COLS = `id, service_slug, city_slug, city_name, city_state, county, meta_title,
+  meta_description, h1, intro, project_title, project_body, project_ref_slug, photo_url, photo_alt,
+  jurisdiction_body, cta_line, client_nameable, status, published_at, updated_at`;
+
+function toServiceCity(r: ServiceCityRow): ServiceCity {
+  return {
+    _id: r.id,
+    serviceSlug: r.service_slug,
+    citySlug: r.city_slug,
+    cityName: r.city_name,
+    cityState: r.city_state,
+    county: r.county || undefined,
+    metaTitle: r.meta_title || '',
+    metaDescription: r.meta_description || '',
+    h1: r.h1 || '',
+    intro: r.intro || undefined,
+    projectTitle: r.project_title || undefined,
+    projectBody: cleanMd(r.project_body),
+    projectRefSlug: r.project_ref_slug || undefined,
+    photoUrl: cleanUrl(r.photo_url),
+    photoAlt: r.photo_alt || undefined,
+    jurisdictionBody: cleanMd(r.jurisdiction_body),
+    ctaLine: r.cta_line || undefined,
+  };
+}
+
+/** Published service×city page for the public route, or null (→ 404). */
+export async function getServiceCityPage(
+  serviceSlug: string,
+  citySlug: string,
+): Promise<ServiceCity | null> {
+  await readyForRead();
+  const row = await safeQueryOne<ServiceCityRow>(
+    `SELECT ${SERVICE_CITY_COLS} FROM service_cities
+       WHERE service_slug = $1 AND city_slug = $2 AND status = 'published'`,
+    [serviceSlug, citySlug],
+  );
+  return row ? toServiceCity(row) : null;
+}
+
+/** Published (service, city) slug pairs — drives generateStaticParams + sitemap. */
+export async function getServiceCityPairs(): Promise<{ service: string; city: string }[]> {
+  await readyForRead();
+  const rows = await safeQuery<{ service_slug: string; city_slug: string }>(
+    `SELECT service_slug, city_slug FROM service_cities WHERE status = 'published'`,
+  );
+  return rows.map((r) => ({ service: r.service_slug, city: r.city_slug }));
+}
+
+export interface ServiceCityInput {
+  id?: string;
+  serviceSlug: string;
+  citySlug: string;
+  cityName: string;
+  cityState: string;
+  county?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  h1?: string;
+  intro?: string;
+  projectTitle?: string;
+  projectBody?: string;
+  projectRefSlug?: string;
+  photoUrl?: string;
+  photoAlt?: string;
+  jurisdictionBody?: string;
+  ctaLine?: string;
+  clientNameable?: boolean;
+  status: 'draft' | 'published';
+}
+
+/** Insert or update a service×city page by (service, city). Returns its id. */
+export async function saveServiceCity(input: ServiceCityInput): Promise<string> {
+  await ensureSchema();
+  const id = input.id || randomUUID();
+  const publishedAt = input.status === 'published' ? new Date().toISOString() : null;
+  const row = await queryOne<{ id: string }>(
+    `INSERT INTO service_cities (id, service_slug, city_slug, city_name, city_state, county,
+        meta_title, meta_description, h1, intro, project_title, project_body, project_ref_slug,
+        photo_url, photo_alt, jurisdiction_body, cta_line, client_nameable, status, published_at, updated_at)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20, now())
+     ON CONFLICT (service_slug, city_slug) DO UPDATE SET
+        city_name=$4, city_state=$5, county=$6, meta_title=$7, meta_description=$8, h1=$9,
+        intro=$10, project_title=$11, project_body=$12, project_ref_slug=$13, photo_url=$14,
+        photo_alt=$15, jurisdiction_body=$16, cta_line=$17, client_nameable=$18, status=$19,
+        published_at=COALESCE(service_cities.published_at, $20), updated_at=now()
+     RETURNING id`,
+    [
+      id, input.serviceSlug, input.citySlug, input.cityName, input.cityState, input.county || null,
+      input.metaTitle || null, input.metaDescription || null, input.h1 || null, input.intro || null,
+      input.projectTitle || null, input.projectBody || null, input.projectRefSlug || null,
+      input.photoUrl || null, input.photoAlt || null, input.jurisdictionBody || null,
+      input.ctaLine || null, input.clientNameable !== false, input.status, publishedAt,
+    ],
+  );
+  return row?.id || id;
+}
+
+export interface ServiceCityListItem {
+  id: string;
+  serviceSlug: string;
+  citySlug: string;
+  cityName: string;
+  cityState: string;
+  status: string;
+  updatedAt: string;
+}
+
+export async function listServiceCities(): Promise<ServiceCityListItem[]> {
+  if (!isDbConfigured) return [];
+  await ensureSchema();
+  const rows = await query<ServiceCityRow>(
+    `SELECT ${SERVICE_CITY_COLS} FROM service_cities ORDER BY updated_at DESC`,
+  );
+  return rows.map((r) => ({
+    id: r.id,
+    serviceSlug: r.service_slug,
+    citySlug: r.city_slug,
+    cityName: r.city_name,
+    cityState: r.city_state,
+    status: r.status,
+    updatedAt: r.updated_at,
+  }));
+}
+
+/** Whether a PUBLISHED page already exists for this service+city (duplicate gate). */
+export async function publishedServiceCityExists(
+  serviceSlug: string,
+  citySlug: string,
+): Promise<boolean> {
+  if (!isDbConfigured) return false;
+  await ensureSchema();
+  const row = await queryOne<{ id: string }>(
+    `SELECT id FROM service_cities WHERE service_slug = $1 AND city_slug = $2 AND status = 'published'`,
+    [serviceSlug, citySlug],
+  );
+  return !!row;
+}
+
+export async function setServiceCityStatus(
+  id: string,
+  status: 'draft' | 'published',
+): Promise<void> {
+  const pubClause = status === 'published' ? 'COALESCE(published_at, now())' : 'published_at';
+  await query(
+    `UPDATE service_cities SET status = $2, published_at = ${pubClause}, updated_at = now() WHERE id = $1`,
+    [id, status],
+  );
+}
+
+export async function deleteServiceCity(id: string): Promise<void> {
+  await query(`DELETE FROM service_cities WHERE id = $1`, [id]);
+}
+
