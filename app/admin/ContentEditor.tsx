@@ -38,6 +38,7 @@ interface EditorContent {
   metaTitle: string;
   metaDescription: string;
   coverImageUrl?: string;
+  gbpPost?: string;
   status?: string;
 }
 
@@ -780,9 +781,70 @@ export function ContentEditor({
               <textarea rows={3} className={inputClass} value={content.metaDescription} onChange={(e) => patch({ metaDescription: e.target.value })} />
             </Field>
           </Card>
+
+          {/* Google Business Profile post (posts only) */}
+          {contentType === 'post' && <GbpPostCard value={content.gbpPost || ''} onChange={(v) => patch({ gbpPost: v })} />}
         </div>
       </div>
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+/**
+ * A plain, persisted text box for the Google Business Profile "What's new" post
+ * to copy/paste into GBP. GBP posts allow up to 1,500 characters (only ~250 are
+ * visible before "Read more"), so the counter warns as you approach the limit.
+ */
+const GBP_LIMIT = 1500;
+const GBP_VISIBLE = 250;
+
+function GbpPostCard({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const toast = useToast();
+  const [copied, setCopied] = useState(false);
+  const len = value.length;
+  const over = len > GBP_LIMIT;
+
+  async function copy() {
+    if (!value.trim()) return;
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      toast.success('Copied — paste it into your Google Business Profile post.');
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error('Could not copy. Select the text and copy manually.');
+    }
+  }
+
+  return (
+    <Card className="space-y-3 p-4">
+      <div className="flex items-center justify-between">
+        <div className="text-xs font-semibold uppercase tracking-wide text-stone-500">Google Business Profile post</div>
+        <Button variant="ghost" size="sm" icon={copied ? 'check' : 'copy'} onClick={copy} disabled={!value.trim()}>
+          {copied ? 'Copied' : 'Copy'}
+        </Button>
+      </div>
+      <p className="text-xs text-stone-500">
+        A ready-to-paste update for your Google Business Profile. Only about the first {GBP_VISIBLE} characters show before
+        “Read more,” so lead with the key point.
+      </p>
+      <textarea
+        rows={6}
+        className={inputClass}
+        placeholder="Write or paste the update you'll post to Google Business Profile…"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
+      <div className="flex items-center justify-between text-xs">
+        <span className={len > GBP_VISIBLE ? 'text-stone-400' : 'text-green-600'}>
+          {len <= GBP_VISIBLE ? `${GBP_VISIBLE - len} left before “Read more”` : 'Past the visible preview length'}
+        </span>
+        <span className={over ? 'font-semibold text-red-600' : 'text-stone-400'}>
+          {len.toLocaleString()} / {GBP_LIMIT.toLocaleString()}
+        </span>
+      </div>
+    </Card>
   );
 }
 

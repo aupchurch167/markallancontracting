@@ -322,6 +322,7 @@ export type IconName =
   | 'sparkles'
   | 'upload'
   | 'download'
+  | 'copy'
   | 'arrowLeft';
 
 const PATHS: Record<IconName, ReactNode> = {
@@ -435,6 +436,12 @@ const PATHS: Record<IconName, ReactNode> = {
       <path d="M12 3v12" />
       <path d="M7 10l5 5 5-5" />
       <path d="M5 15v4a1 1 0 001 1h12a1 1 0 001-1v-4" />
+    </>
+  ),
+  copy: (
+    <>
+      <rect x="9" y="9" width="11" height="11" rx="2" />
+      <path d="M5 15V5a2 2 0 012-2h8" />
     </>
   ),
   arrowLeft: (

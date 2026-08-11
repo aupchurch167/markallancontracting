@@ -46,6 +46,8 @@ export interface GeneratedPost {
   metaDescription: string;
   /** Set by the editor (AI-generated or pasted R2 cover), not by the model. */
   coverImageUrl?: string;
+  /** Copy-ready caption for a Google Business Profile post; editor-managed. */
+  gbpPost?: string;
 }
 
 export interface GeneratedProject {

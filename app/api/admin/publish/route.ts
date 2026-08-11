@@ -138,6 +138,7 @@ export async function POST(req: Request) {
         metaTitle: c.metaTitle || '',
         metaDescription: c.metaDescription || '',
         attachments,
+        gbpPost: c.gbpPost || '',
         status,
       });
       revalidatePath('/insights');

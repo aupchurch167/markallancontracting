@@ -29,6 +29,7 @@ interface PostRow {
   featured: boolean;
   status: string;
   published_at: string | null;
+  gbp_post: string | null;
 }
 
 interface ProjectRow {
@@ -133,7 +134,7 @@ function toProject(r: ProjectRow): Project {
 }
 
 const POST_COLS = `id, slug, title, excerpt, cluster, tags, primary_keyword, secondary_keywords,
-  body_markdown, hero_image_url, meta_title, meta_description, attachments, featured, status, published_at`;
+  body_markdown, hero_image_url, meta_title, meta_description, attachments, featured, status, published_at, gbp_post`;
 const PROJECT_COLS = `id, slug, title, client_type, city_name, city_state, service_slug, scope_summary,
   body_markdown, timeline, square_footage, hero_image_url, card_quote, image_urls, attachments, testimonial,
   highlights, completed_date, meta_title, meta_description, featured, status, published_at`;
@@ -318,6 +319,8 @@ export interface PostInput {
   featured?: boolean;
   /** Preserve an original publish date (used when importing existing posts). */
   publishedAt?: string;
+  /** Copy-ready caption for a Google Business Profile "What's new" post. */
+  gbpPost?: string;
   status: 'draft' | 'published';
 }
 
@@ -355,20 +358,20 @@ export async function savePost(input: PostInput): Promise<string> {
   const row = await queryOne<{ id: string }>(
     `INSERT INTO posts (id, slug, title, excerpt, cluster, tags, primary_keyword,
         secondary_keywords, body_markdown, hero_image_url, meta_title, meta_description,
-        attachments, featured, status, published_at, updated_at)
-     VALUES ($1,$2,$3,$4,$5,$6::jsonb,$7,$8::jsonb,$9,$10,$11,$12,$13::jsonb,$14,$15,$16, now())
+        attachments, featured, status, published_at, gbp_post, updated_at)
+     VALUES ($1,$2,$3,$4,$5,$6::jsonb,$7,$8::jsonb,$9,$10,$11,$12,$13::jsonb,$14,$15,$16,$17, now())
      ON CONFLICT (slug) DO UPDATE SET
         title=$3, excerpt=$4, cluster=$5, tags=$6::jsonb, primary_keyword=$7,
         secondary_keywords=$8::jsonb, body_markdown=$9, hero_image_url=$10, meta_title=$11,
         meta_description=$12, attachments=$13::jsonb, featured=$14, status=$15,
-        published_at=COALESCE(posts.published_at, $16), updated_at=now()
+        published_at=COALESCE(posts.published_at, $16), gbp_post=$17, updated_at=now()
      RETURNING id`,
     [
       id, input.slug, input.title, input.excerpt || null, input.cluster || null,
       j(input.tags || []), input.primaryKeyword || null, j(input.secondaryKeywords || []),
       input.bodyMarkdown || null, input.heroImageUrl || null, input.metaTitle || null,
       input.metaDescription || null, j(input.attachments || []), input.featured || false,
-      input.status, publishedAt,
+      input.status, publishedAt, input.gbpPost || null,
     ],
   );
   return row?.id || id;
@@ -525,6 +528,7 @@ export interface EditorPost {
   metaTitle: string;
   metaDescription: string;
   coverImageUrl: string;
+  gbpPost: string;
   status: string;
 }
 export interface EditorProject {
@@ -566,6 +570,7 @@ export async function getEditorContent(
       metaTitle: r.meta_title || '',
       metaDescription: r.meta_description || '',
       coverImageUrl: cleanUrl(r.hero_image_url) || '',
+      gbpPost: r.gbp_post || '',
       status: r.status,
     };
   }
@@ -605,13 +610,13 @@ export async function updatePostById(
     `UPDATE posts SET title=$2, slug=$3, excerpt=$4, cluster=$5, tags=$6::jsonb,
         primary_keyword=$7, secondary_keywords=$8::jsonb, body_markdown=$9, meta_title=$10,
         meta_description=$11, hero_image_url=$12,
-        attachments=COALESCE(attachments,'[]'::jsonb) || $13::jsonb, updated_at=now()
+        attachments=COALESCE(attachments,'[]'::jsonb) || $13::jsonb, gbp_post=$14, updated_at=now()
      WHERE id=$1`,
     [
       fields.id, fields.title, fields.slug, fields.excerpt || null, fields.cluster || null,
       j(fields.tags || []), fields.primaryKeyword || null, j(fields.secondaryKeywords || []),
       fields.bodyMarkdown || null, fields.metaTitle || null, fields.metaDescription || null,
-      fields.coverImageUrl || null, j(appendAttachments),
+      fields.coverImageUrl || null, j(appendAttachments), fields.gbpPost || null,
     ],
   );
 }

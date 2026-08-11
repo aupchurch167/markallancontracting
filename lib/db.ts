@@ -132,6 +132,7 @@ CREATE TABLE IF NOT EXISTS singletons (
 
 -- Forward-compatible column adds (CREATE TABLE IF NOT EXISTS won't alter existing tables).
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS card_quote TEXT;
+ALTER TABLE posts ADD COLUMN IF NOT EXISTS gbp_post TEXT;
 `;
 
 let schemaReady: Promise<void> | null = null;
