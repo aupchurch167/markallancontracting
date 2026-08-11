@@ -160,6 +160,48 @@ CREATE TABLE IF NOT EXISTS service_cities (
   UNIQUE (service_slug, city_slug)
 );
 
+-- Link-in-bio page (macont.com/links): tappable buttons, jobsite updates, and
+-- captured leads/subscribers. Profile copy + section flags + socials live in a
+-- singleton ('links-profile').
+CREATE TABLE IF NOT EXISTS link_buttons (
+  id          TEXT PRIMARY KEY,
+  label       TEXT NOT NULL,
+  sublabel    TEXT,
+  href        TEXT NOT NULL,
+  icon        TEXT,
+  visible     BOOLEAN NOT NULL DEFAULT true,
+  sort_order  INT NOT NULL DEFAULT 0,
+  click_count INT NOT NULL DEFAULT 0,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS link_updates (
+  id         TEXT PRIMARY KEY,
+  body       TEXT NOT NULL,
+  image_url  TEXT,
+  status     TEXT NOT NULL DEFAULT 'published',
+  posted_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS link_leads (
+  id           TEXT PRIMARY KEY,
+  name         TEXT,
+  phone        TEXT,
+  project_type TEXT,
+  notes        TEXT,
+  status       TEXT NOT NULL DEFAULT 'New',
+  source       TEXT,
+  created_at   TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS link_subscribers (
+  email      TEXT PRIMARY KEY,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 -- Forward-compatible column adds (CREATE TABLE IF NOT EXISTS won't alter existing tables).
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS card_quote TEXT;
 ALTER TABLE posts ADD COLUMN IF NOT EXISTS gbp_post TEXT;
