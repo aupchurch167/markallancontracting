@@ -350,6 +350,87 @@ async function runStructured(
   }
 }
 
+const GBP_POST_SCHEMA = {
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    post: {
+      type: 'string',
+      description:
+        'The full Google Business Profile "What\'s new" post text, plain text only (no Markdown, no headings, no links). 550-900 characters, never over 1,400.',
+    },
+  },
+  required: ['post'],
+} as const;
+
+/**
+ * Draft a Google Business Profile "What's new" post from an existing blog post.
+ * Returns plain text the user copies into GBP. Grounded strictly on the supplied
+ * post — it states no fact that isn't already in the title/excerpt/body — and is
+ * kept well under GBP's 1,500-char limit with the hook in the first ~200 chars
+ * (all that shows before "Read more"). Throws on API/parse errors.
+ */
+export async function generateGbpPost(opts: {
+  title: string;
+  excerpt?: string;
+  bodyMarkdown?: string;
+}): Promise<string> {
+  const client = new Anthropic();
+  const { title, excerpt = '', bodyMarkdown = '' } = opts;
+
+  // Strip [VERIFY: ...] placeholders and the "Before publishing" list so they
+  // never leak into a customer-facing caption.
+  const cleanedBody = bodyMarkdown
+    .replace(/\[VERIFY:[^\]]*\]/g, '')
+    .replace(/##\s*Before publishing[\s\S]*$/i, '')
+    .trim();
+
+  const instruction = `Write a Google Business Profile "What's new" post that promotes the blog post below and drives a phone call to Mark Allan Contracting.
+
+FORMAT
+- Plain text only. Google Business Profile does not render Markdown — no #, no **bold**, no bullet characters, no Markdown links, no hashtags, no emoji.
+- 550-900 characters total. Never exceed 1,400. Only about the first 250 characters show before "Read more," so put the single most useful, specific point in the first sentence.
+- 2-4 short paragraphs separated by a blank line. Short declarative sentences.
+- End with a call to action that names the phone number ${CONTACT.phone} and says what happens on the call. Never "contact us today," never "reach out," no exclamation points.
+
+GROUNDING
+- Use only what is in the post below. State no number, name, date, jurisdiction, or claim that is not already there. Do not invent a promotion, discount, or deadline.
+- Stay inside MAC's boundaries (commercial tenant improvements, office/retail/restaurant/warehouse buildouts, $50K-$500K, Metro Atlanta and the Southeast; no ground-up, no self-perform claims).
+
+SOURCE POST
+Title: ${title}
+${excerpt ? `Excerpt: ${excerpt}\n` : ''}Body:
+${cleanedBody || '(no body supplied — work from the title and excerpt only)'}`;
+
+  const message = await client.messages.create({
+    model: MODEL,
+    max_tokens: 2000,
+    thinking: { type: 'adaptive' },
+    system: VOICE,
+    output_config: { format: { type: 'json_schema', schema: GBP_POST_SCHEMA } },
+    messages: [{ role: 'user', content: instruction }],
+  });
+
+  if (message.stop_reason === 'max_tokens') {
+    throw new Error('The draft got cut off before it finished. Try again.');
+  }
+
+  const text = message.content
+    .filter((b): b is Anthropic.TextBlock => b.type === 'text')
+    .map((b) => b.text)
+    .join('');
+  if (!text) throw new Error('The model returned no content. Try again.');
+
+  try {
+    const parsed = JSON.parse(text) as { post?: string };
+    const post = (parsed.post || '').trim();
+    if (!post) throw new Error('empty');
+    return post;
+  } catch {
+    throw new Error('The model returned malformed content. Try again.');
+  }
+}
+
 /**
  * Refine an existing draft per editor instructions (tone + notes), returning the
  * full revised object in the same shape so the editor can swap it in. Grounded

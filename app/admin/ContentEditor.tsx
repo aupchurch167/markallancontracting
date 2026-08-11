@@ -783,7 +783,13 @@ export function ContentEditor({
           </Card>
 
           {/* Google Business Profile post (posts only) */}
-          {contentType === 'post' && <GbpPostCard value={content.gbpPost || ''} onChange={(v) => patch({ gbpPost: v })} />}
+          {contentType === 'post' && (
+            <GbpPostCard
+              value={content.gbpPost || ''}
+              onChange={(v) => patch({ gbpPost: v })}
+              source={{ title: content.title, excerpt: content.excerpt, bodyMarkdown: content.bodyMarkdown }}
+            />
+          )}
         </div>
       </div>
     </div>
@@ -799,9 +805,18 @@ export function ContentEditor({
 const GBP_LIMIT = 1500;
 const GBP_VISIBLE = 250;
 
-function GbpPostCard({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+function GbpPostCard({
+  value,
+  onChange,
+  source,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  source: { title: string; excerpt?: string; bodyMarkdown?: string };
+}) {
   const toast = useToast();
   const [copied, setCopied] = useState(false);
+  const [busy, setBusy] = useState(false);
   const len = value.length;
   const over = len > GBP_LIMIT;
 
@@ -817,6 +832,32 @@ function GbpPostCard({ value, onChange }: { value: string; onChange: (v: string)
     }
   }
 
+  async function draft() {
+    if (!source.title?.trim()) {
+      toast.error('Add a title first so Claude has something to work from.');
+      return;
+    }
+    if (value.trim() && !window.confirm('Replace the current Google Business Profile text with a fresh draft?')) {
+      return;
+    }
+    setBusy(true);
+    try {
+      const res = await fetch('/api/admin/gbp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(source),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not draft the post.');
+      onChange(data.post || '');
+      toast.success('Draft ready — review it, then Copy to paste into Google Business Profile.');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not draft the post.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <Card className="space-y-3 p-4">
       <div className="flex items-center justify-between">
@@ -826,13 +867,16 @@ function GbpPostCard({ value, onChange }: { value: string; onChange: (v: string)
         </Button>
       </div>
       <p className="text-xs text-stone-500">
-        A ready-to-paste update for your Google Business Profile. Only about the first {GBP_VISIBLE} characters show before
-        “Read more,” so lead with the key point.
+        A ready-to-paste update for your Google Business Profile. Let Claude draft it from this post, tweak the wording, then
+        copy. Only about the first {GBP_VISIBLE} characters show before “Read more,” so lead with the key point.
       </p>
+      <Button variant="ghost" size="sm" icon="sparkles" loading={busy} onClick={draft} className="w-full justify-center">
+        {busy ? 'Drafting…' : value.trim() ? 'Redraft with Claude' : 'Draft with Claude'}
+      </Button>
       <textarea
         rows={6}
         className={inputClass}
-        placeholder="Write or paste the update you'll post to Google Business Profile…"
+        placeholder="Write it yourself, or let Claude draft it from this post…"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
