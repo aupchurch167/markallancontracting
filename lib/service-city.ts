@@ -128,10 +128,12 @@ const CITY_SCHEMA = {
 } as const;
 
 async function callOnce(client: Anthropic, userJson: string): Promise<GeneratedCity> {
+  // Note: the spec called for temperature 0.3, but claude-sonnet-5 deprecates
+  // (and rejects) `temperature` — it's omitted. The locked prompt + JSON schema
+  // keep output tight without it.
   const message = await client.messages.create({
     model: MODEL,
     max_tokens: 2000,
-    temperature: 0.3,
     system: SERVICE_CITY_SYSTEM_PROMPT,
     output_config: { format: { type: 'json_schema', schema: CITY_SCHEMA } },
     messages: [{ role: 'user', content: userJson }],
