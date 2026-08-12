@@ -68,7 +68,6 @@ const serviceCityRedirects = Object.entries(SERVICE_CITY_MAP)
   }));
 
 const staticRedirects = [
-  { source: '/about', destination: '/how-we-build', statusCode: 301 },
   { source: '/our-services', destination: '/services', statusCode: 301 },
   { source: '/blog', destination: '/insights', statusCode: 301 },
   { source: '/glossary', destination: '/construction-process', statusCode: 301 },

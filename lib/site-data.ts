@@ -163,6 +163,7 @@ const BASE_NAV: NavItem[] = [
   },
   { label: 'Projects', href: '/projects' },
   { label: 'Blog', href: '/insights' },
+  { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
 ];
 
