@@ -45,14 +45,16 @@ export default async function LinksPage() {
         <section className="rounded-3xl bg-oxblood px-8 py-10 text-center text-bone shadow-sm">
           <div className="flex flex-col items-center">
             {profile.avatarUrl ? (
-              <Image
-                src={profile.avatarUrl}
-                alt={profile.name}
-                width={100}
-                height={100}
-                className="rounded-full border border-bone/40 object-cover"
-                style={{ height: 100, width: 100 }}
-              />
+              // Logo sits on a bone plate so a dark mark still reads on the oxblood hero.
+              <div className="flex h-28 w-28 items-center justify-center rounded-full bg-bone p-4 shadow-sm">
+                <Image
+                  src={profile.avatarUrl}
+                  alt={profile.name}
+                  width={96}
+                  height={96}
+                  className="h-full w-full rounded-full object-contain"
+                />
+              </div>
             ) : (
               <div className="flex h-24 w-24 items-center justify-center rounded-full border border-bone/40 text-2xl font-bold uppercase tracking-wordmark text-bone">
                 MAC
@@ -61,12 +63,11 @@ export default async function LinksPage() {
             <h1 className="mt-6 text-3xl font-bold uppercase leading-[1.15] tracking-wordmark text-bone sm:text-4xl">
               {profile.name}
             </h1>
-            <p className="mt-3 text-xs font-medium uppercase tracking-label text-brass">{profile.tagline}</p>
-            <p className="mt-4 max-w-md text-[15px] leading-relaxed text-bone/70">{profile.blurb}</p>
-            <div className="mt-6 flex flex-wrap justify-center gap-2 text-[11px] font-medium uppercase tracking-label">
-              <span className="rounded-full border border-bone/40 px-3 py-1 text-bone">Licensed &amp; insured</span>
-              <span className="rounded-full bg-brass px-3 py-1 text-oxblood">Metro Atlanta</span>
-              {profile.since && <span className="rounded-full border border-bone/40 px-3 py-1 text-bone">{profile.since}</span>}
+            <p className="mt-3 text-xs font-semibold uppercase tracking-label text-bone-light">{profile.tagline}</p>
+            <p className="mt-4 max-w-md text-[15px] leading-relaxed text-bone">{profile.blurb}</p>
+            <div className="mt-6 text-[11px] font-semibold uppercase tracking-label text-bone/90">
+              Licensed &amp; insured&nbsp;&nbsp;·&nbsp;&nbsp;Metro Atlanta
+              {profile.since ? <>&nbsp;&nbsp;·&nbsp;&nbsp;{profile.since}</> : null}
             </div>
           </div>
         </section>

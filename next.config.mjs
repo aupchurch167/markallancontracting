@@ -142,7 +142,7 @@ const csp = [
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
   "connect-src 'self' https://*.sanity.io wss://*.sanity.io https://www.google-analytics.com https://*.analytics.google.com https://*.google-analytics.com https://www.googletagmanager.com https://*.callrail.com https://calendly.com https://*.calendly.com",
-  "frame-src 'self' https://calendly.com https://*.calendly.com",
+  "frame-src 'self' https://calendly.com https://*.calendly.com https://www.openstreetmap.org https://openstreetmap.org",
   "media-src 'self' https:",
   "worker-src 'self' blob:",
 ].join('; ');

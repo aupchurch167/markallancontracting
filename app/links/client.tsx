@@ -74,8 +74,8 @@ export function LinkButtons({ buttons }: { buttons: PublicButton[] }) {
             rel={external ? 'noreferrer' : undefined}
             className={
               primary
-                ? 'group flex min-h-[64px] items-center gap-4 rounded-2xl bg-oxblood px-6 py-4 text-bone shadow-sm transition-all hover:bg-brass hover:text-oxblood hover:shadow-md'
-                : 'group flex min-h-[64px] items-center gap-4 rounded-2xl border border-brass/30 bg-bone-light px-6 py-4 text-oxblood shadow-sm transition-all hover:border-brass/60 hover:shadow-md'
+                ? 'group flex min-h-[64px] items-center gap-4 rounded-2xl bg-oxblood px-6 py-4 text-bone shadow-md transition-all hover:bg-brass hover:text-oxblood hover:shadow-lg'
+                : 'group flex min-h-[64px] items-center gap-4 rounded-2xl border border-brass/70 bg-bone-light px-6 py-4 text-oxblood shadow-md ring-1 ring-oxblood/5 transition-all hover:border-brass hover:bg-brass/5 hover:shadow-lg'
             }
           >
             <IconCmp
@@ -117,7 +117,7 @@ export function SocialRow({ socials, shareUrl }: { socials: PublicSocial[]; shar
     }
   }
   const tile =
-    'flex h-12 w-12 items-center justify-center rounded-xl border border-brass/30 bg-bone-light text-oxblood shadow-sm transition-all hover:border-brass/60 hover:text-brass hover:shadow-md';
+    'flex h-12 w-12 items-center justify-center rounded-xl border border-brass/70 bg-bone-light text-oxblood shadow-md ring-1 ring-oxblood/5 transition-all hover:border-brass hover:text-brass hover:shadow-lg';
   return (
     <div className="flex justify-center gap-3">
       {socials
