@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { CallRail } from '@/components/CallRail';
 import { Analytics } from '@/components/Analytics';
@@ -18,6 +18,25 @@ export const metadata: Metadata = {
   alternates: {
     types: { 'application/rss+xml': `${SITE.url}/feed.xml` },
   },
+  // Homepage/site default social card (per-page routes override via pageMetadata).
+  openGraph: {
+    type: 'website',
+    siteName: SITE.name,
+    url: SITE.url,
+    title: `${SITE.name} — Commercial General Contractor, Metro Atlanta`,
+    description: SITE.oneLiner,
+    images: [{ url: '/api/og', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${SITE.name} — Commercial General Contractor, Metro Atlanta`,
+    description: SITE.oneLiner,
+    images: ['/api/og'],
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#5A2634',
 };
 
 /**

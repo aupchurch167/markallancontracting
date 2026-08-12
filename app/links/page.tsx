@@ -19,6 +19,15 @@ export const metadata: Metadata = {
     title: 'Mark Allan Contracting',
     description: 'A family-owned commercial general contractor. Renovations and tenant buildouts across Metro Atlanta.',
     url: SHARE_URL,
+    siteName: 'Mark Allan Contracting',
+    type: 'website',
+    images: [{ url: '/api/og?eyebrow=Call%20%C2%B7%20Book%20%C2%B7%20Download', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Mark Allan Contracting',
+    description: 'Call or text, book a buildout call, and see recent jobsite updates.',
+    images: ['/api/og?eyebrow=Call%20%C2%B7%20Book%20%C2%B7%20Download'],
   },
 };
 
