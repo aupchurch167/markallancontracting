@@ -60,6 +60,8 @@ export interface LinksProfile {
   blurb: string;
   since: string;
   avatarUrl: string;
+  /** Wide banner photo at the very top of the page. */
+  coverUrl: string;
   socials: LinkSocial[];
   testimonials: LinkTestimonial[];
   sections: LinkSections;
@@ -87,6 +89,7 @@ const DEFAULT_PROFILE: LinksProfile = {
     'Commercial renovations and tenant buildouts across Metro Atlanta — restaurants, retail, office and warehouse conversions. 27 years and counting.',
   since: 'Est. 1998',
   avatarUrl: '',
+  coverUrl: '',
   socials: [
     { label: 'Instagram', href: 'https://www.instagram.com/markallancontracting/', icon: 'instagram' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/company/markallancontractinginc/', icon: 'linkedin' },

@@ -4,7 +4,6 @@ import { getSiteSettings } from '@/lib/queries';
 import { getAboutPhotos } from '@/lib/content';
 import { CallButton } from '@/components/PhoneLink';
 import { CallCTA } from '@/components/CallCTA';
-import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Reveal } from '@/components/Reveal';
 import { CountUp } from '@/components/CountUp';
 import { pageMetadata } from '@/lib/seo';
@@ -109,13 +108,6 @@ export default async function AboutPage() {
 
   return (
     <>
-      <Breadcrumbs
-        crumbs={[
-          { name: 'Home', path: '/' },
-          { name: 'About', path: '/about' },
-        ]}
-      />
-
       {/* Hero */}
       <section className="bg-oxblood text-bone">
         <div className="container-page py-24 sm:py-32">

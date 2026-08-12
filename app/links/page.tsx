@@ -42,8 +42,12 @@ export default async function LinksPage() {
     <main className="min-h-screen bg-bone pb-28">
       <div className="mx-auto flex max-w-xl flex-col gap-12 px-5 py-10 sm:py-14">
         {/* Hero card */}
-        <section className="rounded-3xl bg-oxblood px-8 py-10 text-center text-bone shadow-sm">
-          <div className="flex flex-col items-center">
+        <section className="overflow-hidden rounded-3xl bg-oxblood text-center text-bone shadow-sm">
+          {profile.coverUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={profile.coverUrl} alt="" className="h-40 w-full object-cover sm:h-52" />
+          )}
+          <div className="flex flex-col items-center px-8 py-10">
             {profile.avatarUrl ? (
               // Logo sits on a bone plate so a dark mark still reads on the oxblood hero.
               <div className="flex h-28 w-28 items-center justify-center rounded-full bg-bone p-4 shadow-sm">

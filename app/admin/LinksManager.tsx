@@ -60,6 +60,7 @@ interface Profile {
   blurb: string;
   since: string;
   avatarUrl: string;
+  coverUrl: string;
   socials: Social[];
   testimonials: Testimonial[];
   sections: Sections;
@@ -519,6 +520,7 @@ function ProfileTab({ profile, setProfile, toast }: { profile: Profile; setProfi
   const [draft, setDraft] = useState<Profile>(profile);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
 
   function set<K extends keyof Profile>(k: K, v: Profile[K]) {
     setDraft((p) => ({ ...p, [k]: v }));
@@ -535,6 +537,20 @@ function ProfileTab({ profile, setProfile, toast }: { profile: Profile; setProfi
       toast.error(err instanceof Error ? err.message : 'Upload failed.');
     } finally {
       setUploading(false);
+    }
+  }
+
+  async function onCover(file: File | null) {
+    if (!file) return;
+    setUploadingCover(true);
+    try {
+      const url = await uploadPhoto(file);
+      set('coverUrl', url);
+      toast.success('Cover photo uploaded — save to publish.');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Upload failed.');
+    } finally {
+      setUploadingCover(false);
     }
   }
 
@@ -562,7 +578,33 @@ function ProfileTab({ profile, setProfile, toast }: { profile: Profile; setProfi
   return (
     <div className="max-w-2xl space-y-5">
       <Card className="space-y-4 p-4">
-        <div className="flex items-center gap-4">
+        {/* Cover photo — the banner at the very top of the links page */}
+        <div>
+          <div className="mb-1.5 text-xs font-medium text-stone-500">Cover photo (top of the page)</div>
+          <div className="relative aspect-[16/6] overflow-hidden rounded-lg bg-stone-100">
+            {draft.coverUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={draft.coverUrl} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <div className="flex h-full items-center justify-center text-stone-300">
+                <Icon name="image" className="h-6 w-6" />
+              </div>
+            )}
+          </div>
+          <div className="mt-2 flex items-center gap-4">
+            <label className="cursor-pointer text-sm font-medium text-accent hover:text-accent-700">
+              {uploadingCover ? 'Uploading…' : draft.coverUrl ? 'Replace cover' : 'Upload cover'}
+              <input type="file" accept="image/*" className="hidden" disabled={uploadingCover} onChange={(e) => onCover(e.target.files?.[0] || null)} />
+            </label>
+            {draft.coverUrl && (
+              <button onClick={() => set('coverUrl', '')} className="text-xs text-red-500 hover:underline">
+                Remove
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4 border-t border-stone-100 pt-4">
           <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-stone-200 bg-stone-50">
             {draft.avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
