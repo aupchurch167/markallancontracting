@@ -274,6 +274,52 @@ export async function saveSectionCovers(value: SectionCovers): Promise<void> {
 }
 
 /**
+ * Photos for the /about story page, managed in /admin. Three named slots keyed
+ * to the story beats; each is a URL + alt. Stored as a singleton; the page
+ * falls back to a branded placeholder when a slot is empty.
+ */
+export interface AboutPhoto {
+  url: string;
+  alt: string;
+}
+export interface AboutPhotos {
+  team: AboutPhoto;
+  early: AboutPhoto;
+  recent: AboutPhoto;
+}
+
+function cleanAboutPhoto(p?: Partial<AboutPhoto>): AboutPhoto {
+  return { url: cleanUrl(p?.url) || '', alt: p?.alt || '' };
+}
+
+export async function getAboutPhotos(): Promise<AboutPhotos> {
+  await readyForRead();
+  const row = await safeQueryOne<{ value: Partial<AboutPhotos> }>(
+    `SELECT value FROM singletons WHERE key = 'about-photos'`,
+  );
+  const v = row?.value || {};
+  return {
+    team: cleanAboutPhoto(v.team),
+    early: cleanAboutPhoto(v.early),
+    recent: cleanAboutPhoto(v.recent),
+  };
+}
+
+export async function saveAboutPhotos(value: AboutPhotos): Promise<void> {
+  await ensureSchema();
+  const clean: AboutPhotos = {
+    team: { url: value.team?.url || '', alt: value.team?.alt || '' },
+    early: { url: value.early?.url || '', alt: value.early?.alt || '' },
+    recent: { url: value.recent?.url || '', alt: value.recent?.alt || '' },
+  };
+  await query(
+    `INSERT INTO singletons (key, value, updated_at) VALUES ('about-photos', $1::jsonb, now())
+     ON CONFLICT (key) DO UPDATE SET value = $1::jsonb, updated_at = now()`,
+    [JSON.stringify(clean)],
+  );
+}
+
+/**
  * Client logos ("who we've worked with"), managed in /admin and shown as a
  * strip on the home page. Stored as a singleton; order is preserved.
  */

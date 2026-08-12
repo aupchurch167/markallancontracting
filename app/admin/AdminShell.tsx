@@ -15,6 +15,7 @@ import { Dashboard } from './Dashboard';
 import { ContentList } from './ContentList';
 import { ContentEditor } from './ContentEditor';
 import { HomepagePhotos } from './HomepagePhotos';
+import { AboutPhotos } from './AboutPhotos';
 import { SectionCovers } from './SectionCovers';
 import { ClientLogos } from './ClientLogos';
 import { CityBuilder } from './CityBuilder';
@@ -30,7 +31,7 @@ const NAV: { id: View; label: string; icon: IconName; type?: ContentType }[] = [
   { id: 'links', label: 'Links page', icon: 'external' },
   { id: 'sections', label: 'Section covers', icon: 'image' },
   { id: 'logos', label: 'Client logos', icon: 'projects' },
-  { id: 'homepage', label: 'Home page', icon: 'home' },
+  { id: 'homepage', label: 'Page photos', icon: 'home' },
 ];
 
 export function AdminShell() {
@@ -220,9 +221,17 @@ function Shell() {
             ) : view === 'logos' ? (
               <ClientLogos />
             ) : view === 'homepage' ? (
-              <div className="mx-auto max-w-3xl">
-                <h1 className="mb-6 text-2xl font-bold text-navy">Home page photos</h1>
-                <HomepagePhotos />
+              <div className="mx-auto max-w-4xl space-y-12">
+                <div>
+                  <h1 className="mb-1 text-2xl font-bold text-navy">Home page photos</h1>
+                  <p className="mb-6 text-sm text-stone-500">Hero, about, and the “on the job” gallery.</p>
+                  <HomepagePhotos />
+                </div>
+                <div className="border-t border-stone-200 pt-10">
+                  <h2 className="mb-1 text-2xl font-bold text-navy">About page photos</h2>
+                  <p className="mb-6 text-sm text-stone-500">The three photo slots on the /about story page.</p>
+                  <AboutPhotos />
+                </div>
               </div>
             ) : null}
           </main>

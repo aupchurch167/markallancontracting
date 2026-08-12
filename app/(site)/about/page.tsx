@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Buildings } from '@phosphor-icons/react/dist/ssr';
 import { getSiteSettings } from '@/lib/queries';
+import { getAboutPhotos } from '@/lib/content';
 import { CallButton } from '@/components/PhoneLink';
 import { CallCTA } from '@/components/CallCTA';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
@@ -14,6 +15,10 @@ export const metadata: Metadata = pageMetadata({
     'From a single Domino’s drive-thru window to a second-generation commercial contractor serving Metro Atlanta. The Mark Allan Contracting story.',
   path: '/about',
 });
+
+// Photos are admin-managed (Page photos), so render fresh — matches the other
+// CMS-driven routes and lets edits show without a rebuild.
+export const dynamic = 'force-dynamic';
 
 const TIMELINE = [
   {
@@ -73,8 +78,21 @@ const BUYS = [
   },
 ];
 
-/** Branded placeholder for a photo the client will supply. Reads as an editorial slot. */
-function PhotoSlot({ caption }: { caption: string }) {
+/**
+ * A managed About-page photo. Renders the uploaded image when set, otherwise a
+ * branded placeholder captioned with the intended shot (admin: Page photos).
+ */
+function AboutImage({ photo, caption }: { photo: { url: string; alt: string }; caption: string }) {
+  if (photo.url) {
+    return (
+      <figure className="overflow-hidden rounded-2xl border border-brass/30 bg-bone-light shadow-sm">
+        <div className="aspect-[16/10] overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={photo.url} alt={photo.alt || caption} className="h-full w-full object-cover" />
+        </div>
+      </figure>
+    );
+  }
   return (
     <figure className="overflow-hidden rounded-2xl border border-brass/40 bg-bone-light shadow-sm">
       <div className="flex aspect-[16/10] flex-col items-center justify-center gap-3 text-brass/70">
@@ -87,7 +105,7 @@ function PhotoSlot({ caption }: { caption: string }) {
 }
 
 export default async function AboutPage() {
-  const { phone, phoneRaw } = await getSiteSettings();
+  const [{ phone, phoneRaw }, photos] = await Promise.all([getSiteSettings(), getAboutPhotos()]);
 
   return (
     <>
@@ -141,7 +159,7 @@ export default async function AboutPage() {
               </div>
             </Reveal>
             <Reveal delay={120}>
-              <PhotoSlot caption="Mark, Adam, and Justin on a current jobsite" />
+              <AboutImage photo={photos.team} caption="Mark, Adam, and Justin on a current jobsite" />
             </Reveal>
           </div>
         </div>
@@ -183,6 +201,20 @@ export default async function AboutPage() {
           </div>
         </div>
       </section>
+
+      {/* Then + now photos (appears once at least one is uploaded) */}
+      {(photos.early.url || photos.recent.url) && (
+        <section className="py-20 sm:py-24">
+          <div className="container-page grid gap-6 sm:grid-cols-2">
+            <Reveal>
+              <AboutImage photo={photos.early} caption="An early Mark Allan project" />
+            </Reveal>
+            <Reveal delay={100}>
+              <AboutImage photo={photos.recent} caption="Recent work — a national-brand buildout" />
+            </Reveal>
+          </div>
+        </section>
+      )}
 
       {/* Stats band */}
       <section className="bg-oxblood py-20 text-bone sm:py-24">
