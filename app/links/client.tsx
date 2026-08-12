@@ -33,7 +33,7 @@ const ICONS: Record<string, Icon> = {
 };
 
 const FORM_INPUT =
-  'mt-1 w-full border-2 border-brass/40 bg-bone px-3 py-2 text-oxblood placeholder:text-oxblood/40 focus:border-brass focus:outline-none';
+  'mt-1.5 w-full rounded-lg border border-brass/40 bg-bone px-3.5 py-2.5 text-oxblood placeholder:text-oxblood/40 focus:border-brass focus:outline-none focus:ring-2 focus:ring-brass/30';
 
 export interface PublicButton {
   id: string;
@@ -74,8 +74,8 @@ export function LinkButtons({ buttons }: { buttons: PublicButton[] }) {
             rel={external ? 'noreferrer' : undefined}
             className={
               primary
-                ? 'group flex min-h-[64px] items-center gap-4 bg-oxblood px-6 py-4 text-bone transition-colors hover:bg-brass hover:text-oxblood'
-                : 'group flex min-h-[64px] items-center gap-4 border-2 border-brass/40 bg-bone-light px-6 py-4 text-oxblood transition-colors hover:border-brass hover:bg-brass/5'
+                ? 'group flex min-h-[64px] items-center gap-4 rounded-2xl bg-oxblood px-6 py-4 text-bone shadow-sm transition-all hover:bg-brass hover:text-oxblood hover:shadow-md'
+                : 'group flex min-h-[64px] items-center gap-4 rounded-2xl border border-brass/30 bg-bone-light px-6 py-4 text-oxblood shadow-sm transition-all hover:border-brass/60 hover:shadow-md'
             }
           >
             <IconCmp
@@ -84,9 +84,9 @@ export function LinkButtons({ buttons }: { buttons: PublicButton[] }) {
               className={primary ? 'text-bone group-hover:text-oxblood' : 'text-brass'}
             />
             <span className="flex flex-1 flex-col">
-              <span className="text-sm font-bold uppercase tracking-heading">{b.label}</span>
+              <span className="text-[15px] font-bold uppercase tracking-heading">{b.label}</span>
               {b.sublabel && (
-                <span className={`mt-0.5 text-xs ${primary ? 'text-bone/70 group-hover:text-oxblood/70' : 'text-oxblood/60'}`}>
+                <span className={`mt-0.5 text-xs ${primary ? 'text-bone/70 group-hover:text-oxblood/70' : 'text-oxblood/55'}`}>
                   {b.sublabel}
                 </span>
               )}
@@ -117,7 +117,7 @@ export function SocialRow({ socials, shareUrl }: { socials: PublicSocial[]; shar
     }
   }
   const tile =
-    'flex h-11 w-11 items-center justify-center border-2 border-brass/40 text-oxblood transition-colors hover:border-brass hover:text-brass';
+    'flex h-12 w-12 items-center justify-center rounded-xl border border-brass/30 bg-bone-light text-oxblood shadow-sm transition-all hover:border-brass/60 hover:text-brass hover:shadow-md';
   return (
     <div className="flex justify-center gap-3">
       {socials
@@ -168,7 +168,7 @@ export function ContactForm() {
 
   if (state === 'sent') {
     return (
-      <div className="flex items-center gap-3 border-2 border-brass/60 bg-brass/10 px-4 py-3 text-sm text-oxblood">
+      <div className="flex items-center gap-3 rounded-xl border border-brass/50 bg-brass/10 px-4 py-3 text-sm text-oxblood">
         <Check size={20} className="text-brass" />
         <span>Thanks — we&apos;ll be in touch today or tomorrow.</span>
       </div>
@@ -204,7 +204,7 @@ export function ContactForm() {
       {state === 'error' && (
         <p className="text-sm text-oxblood/70">Something went wrong. Please call (404) 724-8709 and we&apos;ll take it from there.</p>
       )}
-      <button type="submit" disabled={state === 'submitting'} className="btn-call w-full disabled:opacity-60">
+      <button type="submit" disabled={state === 'submitting'} className="btn-call w-full rounded-xl disabled:opacity-60">
         {state === 'submitting' ? 'Sending…' : 'Send it over'}
       </button>
     </form>
@@ -242,9 +242,15 @@ export function SignupForm() {
 
   return (
     <form onSubmit={onSubmit} className="flex flex-wrap gap-3">
-      <input name="email" type="email" placeholder="you@company.com" required className="min-w-[200px] flex-1 border-2 border-brass/40 bg-bone px-3 py-2 text-oxblood placeholder:text-oxblood/40 focus:border-brass focus:outline-none" />
+      <input
+        name="email"
+        type="email"
+        placeholder="you@company.com"
+        required
+        className="min-w-[200px] flex-1 rounded-lg border border-brass/40 bg-bone px-3.5 py-2.5 text-oxblood placeholder:text-oxblood/40 focus:border-brass focus:outline-none focus:ring-2 focus:ring-brass/30"
+      />
       <input type="text" name="company" tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-px w-px opacity-0" />
-      <button type="submit" disabled={state === 'submitting'} className="btn-ghost disabled:opacity-60">
+      <button type="submit" disabled={state === 'submitting'} className="btn-ghost rounded-lg disabled:opacity-60">
         {state === 'submitting' ? '…' : 'Subscribe'}
       </button>
       {state === 'error' && <p className="w-full text-sm text-oxblood/70">Could not subscribe — try again.</p>}
