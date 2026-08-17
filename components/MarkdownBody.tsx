@@ -27,16 +27,16 @@ const schema = {
   },
 };
 const components: Components = {
-  h1: ({ children }) => <h2 className="mt-10 text-2xl font-bold text-navy">{children}</h2>,
-  h2: ({ children }) => <h2 className="mt-10 text-2xl font-bold text-navy">{children}</h2>,
-  h3: ({ children }) => <h3 className="mt-8 text-xl font-bold text-navy">{children}</h3>,
-  h4: ({ children }) => <h4 className="mt-6 text-lg font-bold text-navy">{children}</h4>,
-  p: ({ children }) => <p className="mb-4 leading-relaxed text-stone-600">{children}</p>,
+  h1: ({ children }) => <h2 className="mb-4 mt-10 font-display text-[32px] font-bold uppercase text-ink sm:text-[36px]">{children}</h2>,
+  h2: ({ children }) => <h2 className="mb-4 mt-10 font-display text-[32px] font-bold uppercase text-ink sm:text-[36px]">{children}</h2>,
+  h3: ({ children }) => <h3 className="mb-3 mt-8 font-display text-[24px] font-semibold uppercase text-ink">{children}</h3>,
+  h4: ({ children }) => <h4 className="mb-2 mt-6 font-display text-[20px] font-semibold uppercase text-ink">{children}</h4>,
+  p: ({ children }) => <p className="mb-5 text-[18px] leading-[1.75] text-body">{children}</p>,
   a: ({ href, children }) => {
     const url = href || '#';
     if (url.startsWith('/')) {
       return (
-        <Link href={url} className="text-accent underline hover:text-accent-700">
+        <Link href={url} className="text-maroon underline decoration-1 underline-offset-2 hover:text-maroon-light">
           {children}
         </Link>
       );
@@ -46,29 +46,29 @@ const components: Components = {
         href={url}
         target="_blank"
         rel="noreferrer"
-        className="text-accent underline hover:text-accent-700"
+        className="text-maroon underline decoration-1 underline-offset-2 hover:text-maroon-light"
       >
         {children}
       </a>
     );
   },
   ul: ({ children }) => (
-    <ul className="mb-4 list-disc space-y-1 pl-5 text-stone-600">{children}</ul>
+    <ul className="mb-5 list-disc space-y-2 pl-5 text-[18px] leading-[1.7] text-body">{children}</ul>
   ),
   ol: ({ children }) => (
-    <ol className="mb-4 list-decimal space-y-1 pl-5 text-stone-600">{children}</ol>
+    <ol className="mb-5 list-decimal space-y-2 pl-5 text-[18px] leading-[1.7] text-body">{children}</ol>
   ),
   li: ({ children }) => <li className="leading-relaxed">{children}</li>,
   blockquote: ({ children }) => (
-    <blockquote className="my-6 border-l-4 border-accent pl-4 italic text-stone-600">
+    <blockquote className="my-8 border-l-2 border-maroon pl-6 font-display text-[26px] font-semibold uppercase leading-[1.15] text-ink [&>p]:mb-0 [&>p]:text-ink [&>p]:text-[26px] [&>p]:leading-[1.15]">
       {children}
     </blockquote>
   ),
-  strong: ({ children }) => <strong className="font-semibold text-navy">{children}</strong>,
+  strong: ({ children }) => <strong className="font-semibold text-ink">{children}</strong>,
   em: ({ children }) => <em className="italic">{children}</em>,
-  hr: () => <hr className="my-8 border-stone-200" />,
+  hr: () => <hr className="my-8 border-hairline" />,
   code: ({ children }) => (
-    <code className="rounded bg-stone-100 px-1.5 py-0.5 text-sm text-navy">{children}</code>
+    <code className="rounded-[2px] bg-paper-alt px-1.5 py-0.5 text-[15px] text-ink">{children}</code>
   ),
   // Tables — from Markdown pipe tables or pasted <table> HTML. Wrapped so wide
   // tables scroll on mobile instead of breaking the layout.
@@ -77,12 +77,12 @@ const components: Components = {
       <table className="w-full border-collapse text-left text-sm">{children}</table>
     </div>
   ),
-  thead: ({ children }) => <thead className="bg-stone-100 text-navy">{children}</thead>,
+  thead: ({ children }) => <thead className="bg-paper-alt text-ink">{children}</thead>,
   th: ({ children }) => (
-    <th className="border border-stone-200 px-3 py-2 font-semibold">{children}</th>
+    <th className="border border-hairline px-3 py-2 font-semibold">{children}</th>
   ),
   td: ({ children }) => (
-    <td className="border border-stone-200 px-3 py-2 align-top text-stone-600">{children}</td>
+    <td className="border border-hairline px-3 py-2 align-top text-body">{children}</td>
   ),
   // Rendered with block-display <span>s (not <figure>/<div>) so an image is
   // valid HTML wherever Markdown puts it — including inside a <p> or a link.
@@ -92,12 +92,12 @@ const components: Components = {
     if (!src || typeof src !== 'string') return null;
     return (
       <span className="my-8 block">
-        <span className="block overflow-hidden rounded-lg border border-stone-200">
+        <span className="block overflow-hidden border border-hairline">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={src} alt={alt || ''} className="h-auto w-full object-cover" />
         </span>
         {alt ? (
-          <span className="mt-2 block text-center text-sm text-stone-400">{alt}</span>
+          <span className="mt-2 block text-[13px] italic text-faint">{alt}</span>
         ) : null}
       </span>
     );

@@ -4,6 +4,7 @@ import {
   getProjectSlugs,
 } from './queries';
 import { urlForImage } from '@/lib/image';
+import { getService } from './site-data';
 import { FALLBACK_PROJECTS, FALLBACK_PROJECTS_BY_SLUG } from './fallback-projects';
 import type { ProjectCard as SanityCard } from './types';
 
@@ -17,10 +18,16 @@ export interface ProjectSummary {
   scopeSummary?: string;
   imageUrl?: string;
   quote?: string;
+  /** Project-type display name (from serviceSlug), used as the filter/badge. */
+  category?: string;
 }
 
 function locationOf(cityName?: string, cityState?: string): string | undefined {
   return cityName && cityState ? `${cityName}, ${cityState.toUpperCase()}` : undefined;
+}
+
+function categoryOf(serviceSlug?: string): string | undefined {
+  return serviceSlug ? getService(serviceSlug)?.name : undefined;
 }
 
 function sanityToSummary(c: SanityCard): ProjectSummary {
@@ -37,6 +44,7 @@ function sanityToSummary(c: SanityCard): ProjectSummary {
       c.imageUrls?.[0]?.url ||
       undefined,
     quote: c.cardQuote,
+    category: categoryOf(c.serviceSlug),
   };
 }
 
@@ -50,6 +58,7 @@ function fallbackToSummary(slug: string): ProjectSummary {
     location: locationOf(p.cityName, p.cityState),
     scopeSummary: p.scopeSummary,
     imageUrl: p.images[0]?.url,
+    category: categoryOf(p.serviceSlug),
   };
 }
 

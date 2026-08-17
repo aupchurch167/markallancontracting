@@ -1,13 +1,11 @@
 import type { Metadata } from 'next';
 
-// Render dynamically: CMS edits (covers, text, photos) must appear immediately,
-// and a CDN edge can't serve a stale page. The DB is only reachable at runtime.
+// CMS edits must appear immediately; the DB is only reachable at runtime.
 export const dynamic = 'force-dynamic';
 import { getSiteSettings } from '@/lib/queries';
 import { getAllProjectSummaries } from '@/lib/projects';
-import { CallCTA } from '@/components/CallCTA';
-import { ProjectCard } from '@/components/ProjectCard';
-import { Section } from '@/components/Section';
+import { EditorialCTA } from '@/components/EditorialCTA';
+import { ProjectsGrid } from './ProjectsGrid';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = pageMetadata({
@@ -18,40 +16,32 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default async function ProjectsPage() {
-  const [projects, settings] = await Promise.all([
-    getAllProjectSummaries(),
-    getSiteSettings(),
-  ]);
-  const { phone, phoneRaw } = settings;
+  const [projects, settings] = await Promise.all([getAllProjectSummaries(), getSiteSettings()]);
+  const { phone, phoneRaw, email } = settings;
 
   return (
     <>
-      <section className="bg-navy text-white">
-        <div className="container-page py-16 sm:py-20">
-          <h1 className="max-w-3xl text-4xl font-bold text-white sm:text-5xl">Projects</h1>
-          <p className="mt-4 max-w-2xl text-lg text-stone-100/90">
-            Delivered work — not renderings. Every project here is finished and
-            occupied.
+      <div className="container-page pt-16 sm:pt-[72px]">
+        <div className="kicker mb-5 text-maroon">Delivered work · $50K–$500K</div>
+        <div className="mb-9 flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-end">
+          <h1 className="font-display text-[15vw] leading-[0.92] sm:text-[72px] lg:text-[88px]">Projects</h1>
+          <p className="max-w-[46ch] text-[17px] leading-relaxed text-muted lg:mb-2">
+            Tenant improvements, buildouts, conversions, and repairs across Georgia, Tennessee, Alabama, and South Carolina.
           </p>
         </div>
-      </section>
+      </div>
 
-      <Section>
-        {projects.length > 0 ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {projects.map((p) => (
-              <ProjectCard key={p.id} project={p} />
-            ))}
+      {projects.length > 0 ? (
+        <ProjectsGrid projects={projects} />
+      ) : (
+        <div className="container-page pb-20">
+          <div className="border border-dashed border-hairline bg-paper-alt p-10 text-center text-muted">
+            Project case studies are being loaded from CompanyCam. Call us and we&apos;ll walk you through delivered work in your market.
           </div>
-        ) : (
-          <div className="rounded-lg border border-dashed border-stone-200 bg-stone-50 p-10 text-center text-stone-500">
-            Project case studies are being loaded from CompanyCam. Call us and
-            we&apos;ll walk you through delivered work in your market.
-          </div>
-        )}
-      </Section>
+        </div>
+      )}
 
-      <CallCTA phone={phone} phoneRaw={phoneRaw} />
+      <EditorialCTA phone={phone} phoneRaw={phoneRaw} email={email} />
     </>
   );
 }

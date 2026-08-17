@@ -13,9 +13,7 @@ import {
   type FallbackPost,
 } from '@/lib/fallback-insights';
 import { urlForImage } from '@/lib/image';
-import { CallCTA } from '@/components/CallCTA';
-import { Breadcrumbs } from '@/components/Breadcrumbs';
-import { Section } from '@/components/Section';
+import { telHref } from '@/lib/constants';
 import { PortableText } from '@/components/PortableText';
 import { MarkdownBody } from '@/components/MarkdownBody';
 import { FallbackArticle } from '@/components/FallbackArticle';
@@ -89,12 +87,11 @@ export default async function PostPage({
   const fb: FallbackPost | undefined = FALLBACK_POSTS_BY_SLUG[slug];
   if (!sanityPost && !fb) notFound();
 
-  const { phone, phoneRaw } = await getSiteSettings();
+  const { phoneRaw } = await getSiteSettings();
 
   const title = sanityPost?.title || fb!.title;
   const authorName = sanityPost?.author?.name || fb?.author;
   const authorRole = sanityPost?.author?.role;
-  const authorPhoto = urlForImage(sanityPost?.author?.photo)?.width(80).height(80).url();
   const authorSlug = sanityPost?.author?.slug;
   const publishedAt = sanityPost?.publishedAt || fb?.publishedAt;
   const clusterValue = sanityPost?.cluster || fb?.cluster;
@@ -116,13 +113,6 @@ export default async function PostPage({
 
   return (
     <>
-      <Breadcrumbs
-        crumbs={[
-          { name: 'Home', path: '/' },
-          { name: 'Insights', path: '/insights' },
-          { name: title, path: `/insights/${slug}` },
-        ]}
-      />
       <JsonLd
         data={articleSchema({
           title,
@@ -133,87 +123,107 @@ export default async function PostPage({
         })}
       />
 
-      <Section>
-        <article className="mx-auto max-w-prose">
-          {cluster && (
-            <Link href="/insights" className="text-sm font-semibold text-accent hover:text-accent-700">
-              {cluster}
-            </Link>
-          )}
-          <h1 className="mt-2 text-3xl font-bold text-navy sm:text-4xl">{title}</h1>
-
-          {/* Byline */}
-          <div className="mt-5 flex items-center gap-3">
-            {authorPhoto && (
-              <span className="relative h-10 w-10 overflow-hidden rounded-full bg-stone-100">
-                <Image src={authorPhoto} alt={authorName || ''} fill sizes="40px" className="object-cover" />
+      {/* Header */}
+      <div className="container-page">
+        <div className="mx-auto max-w-[820px] pt-16">
+          <Link href="/insights" className="text-[14px] font-semibold text-maroon hover:text-maroon-light">
+            ← All insights
+          </Link>
+          {cluster && <div className="kicker mb-5 mt-7 text-maroon">{cluster}</div>}
+          <h1 className="mb-6 font-display text-[42px] leading-[0.95] sm:text-[68px]">{title}</h1>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-hairline pb-9 text-[14px] text-faint">
+            {authorName && (
+              <span className="font-semibold text-body">
+                {authorSlug ? (
+                  <Link href="/team" className="hover:text-maroon">
+                    {authorName}
+                  </Link>
+                ) : (
+                  authorName
+                )}
+                {authorRole && <span className="font-normal text-faint"> · {authorRole}</span>}
               </span>
             )}
-            <div className="text-sm text-stone-500">
-              {authorName && (
-                <span className="font-semibold text-navy">
-                  {authorSlug ? (
-                    <Link href="/team" className="hover:text-accent">{authorName}</Link>
-                  ) : (
-                    authorName
-                  )}
-                </span>
-              )}
-              {authorRole && <span className="text-stone-400"> · {authorRole}</span>}
-              <div className="text-xs text-stone-400">
-                {[formatDate(publishedAt), rt].filter(Boolean).join(' · ')}
-              </div>
-            </div>
+            {publishedAt && (
+              <>
+                <span>·</span>
+                <span>{formatDate(publishedAt)}</span>
+              </>
+            )}
+            <span>·</span>
+            <span>{rt}</span>
           </div>
+        </div>
+      </div>
 
-          {/* Hero image */}
-          {heroUrl && (
-            <div className="relative mt-8 aspect-video overflow-hidden rounded-xl bg-stone-100">
-              <Image src={heroUrl} alt={sanityPost?.mainImage?.alt || title} fill priority sizes="720px" className="object-cover" />
+      {/* Hero image */}
+      {heroUrl && (
+        <div className="container-page">
+          <div className="mx-auto max-w-[1000px] pt-10">
+            <div className="relative h-[280px] sm:h-[440px]">
+              <Image src={heroUrl} alt={sanityPost?.mainImage?.alt || title} fill priority sizes="1000px" className="object-cover" />
             </div>
-          )}
-
-          <div className="mt-8 text-lg">
-            {sanityPost?.bodyMarkdown ? (
-              <MarkdownBody>{sanityPost.bodyMarkdown}</MarkdownBody>
-            ) : sanityPost?.body?.length ? (
-              <PortableText value={sanityPost.body} />
-            ) : fb ? (
-              <FallbackArticle body={fb.body} />
-            ) : null}
+            {sanityPost?.mainImage?.alt && <div className="pt-3 text-[13px] italic text-faint">{sanityPost.mainImage.alt}</div>}
           </div>
+        </div>
+      )}
 
-          {/* Tags */}
-          {tags && tags.length > 0 && (
-            <div className="mt-8 flex flex-wrap gap-2">
-              {tags.map((t) => (
-                <span key={t} className="rounded-full bg-stone-100 px-3 py-1 text-xs font-medium text-stone-600">
-                  {t}
-                </span>
+      {/* Body */}
+      <div className="container-page">
+        <div className="prose-article mx-auto max-w-[720px] pt-12">
+          {sanityPost?.bodyMarkdown ? (
+            <MarkdownBody>{sanityPost.bodyMarkdown}</MarkdownBody>
+          ) : sanityPost?.body?.length ? (
+            <PortableText value={sanityPost.body} />
+          ) : fb ? (
+            <FallbackArticle body={fb.body} />
+          ) : null}
+        </div>
+
+        {tags && tags.length > 0 && (
+          <div className="mx-auto mt-8 flex max-w-[720px] flex-wrap gap-2">
+            {tags.map((t) => (
+              <span key={t} className="rounded-[2px] border border-hairline px-3 py-1 text-[12px] font-medium uppercase tracking-[0.06em] text-muted">
+                {t}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Mid-article CTA card */}
+        <div className="mx-auto max-w-[720px] pb-2 pt-14">
+          <div className="flex flex-col items-start justify-between gap-6 bg-ink p-10 text-cream sm:flex-row sm:items-center">
+            <div>
+              <div className="mb-2 font-display text-[30px] font-bold uppercase leading-none text-cream">Want a real number for your space?</div>
+              <div className="text-[15px] text-cream-muted">Five minutes on the phone. We&apos;ll tell you if we&apos;re a fit.</div>
+            </div>
+            <a href={telHref(phoneRaw)} data-tracked-phone className="btn-maroon-ondark whitespace-nowrap">
+              Call us
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Keep reading */}
+      {related.length > 0 && (
+        <div className="mt-2 border-t border-hairline">
+          <div className="container-page py-14">
+            <div className="mb-7 flex items-baseline justify-between">
+              <h2 className="font-display text-[36px] sm:text-[40px]">Keep reading</h2>
+              <Link href="/insights" className="text-[15px] font-semibold text-maroon hover:text-maroon-light">
+                All insights →
+              </Link>
+            </div>
+            <div className="grid gap-px border border-hairline bg-hairline sm:grid-cols-3">
+              {related.slice(0, 3).map((r) => (
+                <Link key={r.slug} href={`/insights/${r.slug}`} className="bg-paper p-7 transition-colors hover:bg-[#FFFFFF]">
+                  <div className="font-display text-[26px] font-semibold uppercase leading-[1.02] text-ink">{r.title}</div>
+                </Link>
               ))}
             </div>
-          )}
-
-          {related.length > 0 && (
-            <div className="mt-14 border-t border-stone-200 pt-8">
-              <div className="text-sm font-semibold uppercase tracking-wider text-stone-400">
-                Related
-              </div>
-              <ul className="mt-3 space-y-2">
-                {related.map((r) => (
-                  <li key={r.slug}>
-                    <Link href={`/insights/${r.slug}`} className="font-medium text-accent hover:text-accent-700">
-                      {r.title}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </article>
-      </Section>
-
-      <CallCTA phone={phone} phoneRaw={phoneRaw} />
+          </div>
+        </div>
+      )}
     </>
   );
 }

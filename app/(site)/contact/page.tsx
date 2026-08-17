@@ -1,9 +1,6 @@
 import type { Metadata } from 'next';
 import { getSiteSettings } from '@/lib/queries';
-import { CallButton, PhoneLink } from '@/components/PhoneLink';
-import { BookingEmbed } from '@/components/BookingEmbed';
-import { Section, Eyebrow } from '@/components/Section';
-import { SITE, CONTACT } from '@/lib/constants';
+import { SITE, CONTACT, telHref } from '@/lib/constants';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = pageMetadata({
@@ -13,134 +10,96 @@ export const metadata: Metadata = pageMetadata({
   path: '/contact',
 });
 
+const NEXT_STEPS = [
+  { n: '01', body: 'A ten-minute call about the space, your timeline, and what has to be true for this to be a win.' },
+  { n: '02', body: "If it's a fit, we walk the space that week — measurements, conditions, real estimate." },
+  { n: '03', body: 'We walk you through the estimate, every line, before you sign anything.' },
+];
+
 export default async function ContactPage() {
   const settings = await getSiteSettings();
   const { phone, phoneRaw, email, raw } = settings;
 
   return (
-    <>
-      <section className="bg-navy text-white">
-        <div className="container-page py-16 sm:py-20">
-          <h1 className="text-4xl font-bold text-white sm:text-5xl">
-            Call us. We&apos;ll come walk it.
-          </h1>
-          <p className="mt-4 max-w-2xl text-lg text-stone-100/90">
-            The fastest way to a real number is a phone call and a site walk.
+    <div className="container-page py-16 sm:py-[72px]">
+      <div className="grid items-start gap-14 lg:grid-cols-[1.05fr_1fr] lg:gap-[72px]">
+        {/* Left */}
+        <div>
+          <div className="kicker mb-5 text-maroon">Contact</div>
+          <h1 className="mb-6 font-display text-[13vw] leading-[0.92] sm:text-[64px] lg:text-[80px]">You&apos;ve got a space that needs to be ready.</h1>
+          <p className="mb-9 max-w-[48ch] text-[18px] leading-relaxed text-body">
+            We&apos;ve been doing this since 1999. Call or fill out the form. We&apos;ll get back to you within one business day — and if we&apos;re not the right fit for your project, we&apos;ll tell you that on the first call.
           </p>
-          {/* Phone first, large, tap-to-call. The button is the action; the big
-              number is the tap target — so the button label omits the number to
-              avoid showing it twice. */}
-          <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-            <CallButton phone={phone} phoneRaw={phoneRaw} label="Call now" className="btn-call-ondark" />
-            <PhoneLink
-              phone={phone}
-              phoneRaw={phoneRaw}
-              className="text-2xl font-bold text-bone underline decoration-brass decoration-2 underline-offset-4 hover:text-brass"
-            />
-          </div>
-        </div>
-      </section>
+          <a href={telHref(phoneRaw)} data-tracked-phone className="btn-ink mb-9">
+            Call {phone}
+          </a>
 
-      <Section>
-        <div className="grid gap-12 lg:grid-cols-2">
-          {/* Secondary path — send us your scope */}
-          <div>
-            <Eyebrow>Prefer to send it over?</Eyebrow>
-            <h2 className="mt-2 text-2xl font-bold text-navy">Send us your scope</h2>
-            <p className="mt-2 text-stone-600">
-              Drawings, a lease exhibit, or a few sentences about the space and the
-              date it needs to be ready. We&apos;ll get you a number back.
-            </p>
-            <form
-              className="mt-6 space-y-4"
-              action={`mailto:${email}`}
-              method="post"
-              encType="text/plain"
-              data-lead-form
-            >
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="block">
-                  <span className="text-sm font-medium text-navy">Name</span>
-                  <input
-                    name="name"
-                    type="text"
-                    required
-                    className="mt-1 w-full rounded-md border border-stone-200 px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
-                  />
-                </label>
-                <label className="block">
-                  <span className="text-sm font-medium text-navy">Phone</span>
-                  <input
-                    name="phone"
-                    type="tel"
-                    className="mt-1 w-full rounded-md border border-stone-200 px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
-                  />
-                </label>
-              </div>
-              <label className="block">
-                <span className="text-sm font-medium text-navy">Email</span>
-                <input
-                  name="email"
-                  type="email"
-                  required
-                  className="mt-1 w-full rounded-md border border-stone-200 px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
-                />
-              </label>
-              <label className="block">
-                <span className="text-sm font-medium text-navy">The space and the scope</span>
-                <textarea
-                  name="scope"
-                  rows={5}
-                  required
-                  className="mt-1 w-full rounded-md border border-stone-200 px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
-                />
-              </label>
-              <button type="submit" className="btn-ghost">
-                Send it over
-              </button>
-            </form>
-          </div>
-
-          {/* NAP block — must match GBP exactly */}
-          <div>
-            <Eyebrow>Where we are</Eyebrow>
-            <div className="mt-2 rounded-lg border border-stone-200 bg-stone-50 p-6">
-              <div className="text-lg font-bold text-navy">{SITE.name}</div>
-              <address className="mt-3 space-y-1 text-stone-600 not-italic">
-                <div>{raw?.addressStreet || CONTACT.address.street}</div>
-                <div>
-                  {(raw?.addressCity || CONTACT.address.city) +
-                    ', ' +
-                    (raw?.addressState || CONTACT.address.state) +
-                    ' ' +
-                    (raw?.addressZip || CONTACT.address.zip)}
-                </div>
-                <div className="pt-3">
-                  <PhoneLink phone={phone} phoneRaw={phoneRaw} className="font-semibold text-navy hover:text-accent" />
-                </div>
-                <div>
-                  <a href={`mailto:${email}`} className="hover:text-accent">{email}</a>
-                </div>
-                <div className="pt-2 text-sm text-stone-500">{raw?.hours || CONTACT.hours}</div>
-              </address>
+          <div className="grid gap-7 border-t border-hairline pt-7 text-[15px] leading-relaxed text-body sm:grid-cols-2">
+            <div>
+              <div className="mb-2 text-[13px] font-semibold uppercase tracking-label text-faint">Office</div>
+              {raw?.addressStreet || CONTACT.address.street}
+              <br />
+              {(raw?.addressCity || CONTACT.address.city) + ', ' + (raw?.addressState || CONTACT.address.state) + ' ' + (raw?.addressZip || CONTACT.address.zip)}
             </div>
+            <div>
+              <div className="mb-2 text-[13px] font-semibold uppercase tracking-label text-faint">Reach us</div>
+              <a href={telHref(phoneRaw)} data-tracked-phone className="text-maroon hover:text-maroon-light">
+                {phone}
+              </a>
+              <br />
+              <a href={`mailto:${email}`} className="text-maroon hover:text-maroon-light">
+                {email}
+              </a>
+              <div className="mt-2 text-faint">{raw?.hours || CONTACT.hours}</div>
+            </div>
+          </div>
 
-            <div className="mt-6">
-              <Eyebrow>Service area</Eyebrow>
-              <p className="mt-2 text-stone-600">
-                Based in Metro Atlanta, working across {SITE.statesServed.join(', ')}.
-                Regional projects in Chattanooga, Nashville, Birmingham, Huntsville,
-                Greenville, and Columbia.
-              </p>
+          <div className="mt-7 border-t border-hairline pt-7">
+            <div className="mb-4 text-[13px] font-semibold uppercase tracking-label text-faint">What happens next</div>
+            <div className="flex flex-col gap-3.5">
+              {NEXT_STEPS.map((s) => (
+                <div key={s.n} className="flex items-baseline gap-4">
+                  <span className="w-8 flex-none font-display text-[24px] font-bold text-maroon">{s.n}</span>
+                  <span className="text-[15px] text-body">{s.body}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Optional site-walk scheduler (hidden until a Calendly URL is set) */}
-        <div className="mt-12">
-          <BookingEmbed />
-        </div>
-      </Section>
-    </>
+        {/* Right — form card */}
+        <form
+          className="flex flex-col gap-[18px] border border-hairline bg-[#FFFFFF] p-10 shadow-[0_16px_40px_rgba(29,21,23,0.06)]"
+          action={`mailto:${email}`}
+          method="post"
+          encType="text/plain"
+          data-lead-form
+        >
+          <div className="font-display text-[26px] font-semibold uppercase text-ink">Send it over</div>
+          <div className="grid gap-[18px] sm:grid-cols-2">
+            <label className="flex flex-col gap-1.5">
+              <span className="field-label">Name</span>
+              <input name="name" type="text" required className="field-input" />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className="field-label">Phone</span>
+              <input name="phone" type="tel" className="field-input" />
+            </label>
+          </div>
+          <label className="flex flex-col gap-1.5">
+            <span className="field-label">Email</span>
+            <input name="email" type="email" required className="field-input" />
+          </label>
+          <label className="flex flex-col gap-1.5">
+            <span className="field-label">What&apos;s the project?</span>
+            <textarea name="scope" rows={6} required placeholder="Space, location, rough timeline" className="field-input resize-y" />
+          </label>
+          <button type="submit" className="btn-maroon w-full">
+            Send it over
+          </button>
+          <div className="text-center text-[13px] text-faint">Response within one business day.</div>
+        </form>
+      </div>
+    </div>
   );
 }
