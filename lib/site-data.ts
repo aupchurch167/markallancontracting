@@ -149,20 +149,11 @@ export const SERVICE_LINES: ServiceLine[] = [
   },
 ];
 
+// Jobsite Editorial nav — slim, flat. Project Types lives in the footer.
 const BASE_NAV: NavItem[] = [
-  { label: 'Home', href: '/' },
-  {
-    label: 'Services',
-    href: '/services',
-    children: SERVICE_LINES.map((l) => ({ label: l.name, href: l.href })),
-  },
-  {
-    label: 'Project Types',
-    href: '/project-types',
-    children: SERVICES.map((s) => ({ label: s.name, href: `/project-types/${s.slug}` })),
-  },
+  { label: 'Services', href: '/services' },
   { label: 'Projects', href: '/projects' },
-  { label: 'Blog', href: '/insights' },
+  { label: 'Insights', href: '/insights' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
 ];

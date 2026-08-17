@@ -2,139 +2,100 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { NAV } from '@/lib/site-data';
-import { SITE } from '@/lib/constants';
-import { CallButton } from './PhoneLink';
+import { CONTACT, telHref } from '@/lib/constants';
 
+/**
+ * Jobsite Editorial header: sticky, translucent paper + blur, bottom hairline.
+ * Wordmark left, flat nav + maroon phone button right. Mobile → full-screen
+ * ink overlay with condensed uppercase rows.
+ */
 export function Header({ phone, phoneRaw }: { phone: string; phoneRaw: string }) {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const isActive = (href: string) => pathname === href || (href !== '/' && pathname.startsWith(href + '/')) || pathname === href;
 
   return (
-    <header className="sticky top-0 z-50 border-b-2 border-brass/50 bg-oxblood text-bone">
-      <div className="container-page flex h-16 items-center justify-between gap-4 lg:h-20">
+    <header className="sticky top-0 z-50 border-b border-hairline bg-paper/95 backdrop-blur-md">
+      <div className="container-page flex h-[68px] items-center justify-between gap-4">
         {/* Wordmark */}
-        <Link href="/" className="flex flex-col leading-none">
-          <span className="whitespace-nowrap text-base font-bold uppercase tracking-wordmark text-bone sm:text-lg">
-            {SITE.name}
-          </span>
-          <span className="mt-1 hidden text-[10px] font-medium uppercase tracking-label text-brass sm:block">
-            Established {SITE.established}
-          </span>
+        <Link href="/" className="flex items-baseline gap-2 font-display text-[21px] uppercase tracking-wordmark text-ink">
+          <span className="font-bold">Mark Allan</span>
+          <span className="font-medium text-faint">Contracting</span>
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-1 lg:flex">
-          {NAV.map((item) =>
-            item.children ? (
-              <div
-                key={item.label}
-                className="relative"
-                onMouseEnter={() => setOpenMenu(item.label)}
-                onMouseLeave={() => setOpenMenu(null)}
-              >
-                <Link
-                  href={item.href ?? '#'}
-                  className="flex items-center gap-1 px-3 py-2 text-[11px] font-medium uppercase tracking-label text-bone/70 transition-colors hover:text-brass"
-                >
-                  {item.label}
-                  <span aria-hidden className="text-brass/70">
-                    ▾
-                  </span>
-                </Link>
-                {openMenu === item.label && (
-                  <div className="absolute left-0 top-full w-64 border-2 border-brass/50 bg-bone p-2">
-                    {item.children.map((child) =>
-                      child.heading ? (
-                        <div
-                          key={child.label}
-                          className="px-3 pb-1 pt-3 text-[10px] font-semibold uppercase tracking-label text-brass"
-                        >
-                          {child.label}
-                        </div>
-                      ) : (
-                        <Link
-                          key={child.href}
-                          href={child.href}
-                          className="block px-3 py-2 text-sm text-oxblood transition-colors hover:bg-bone-light hover:text-brass"
-                        >
-                          {child.label}
-                        </Link>
-                      ),
-                    )}
-                  </div>
-                )}
-              </div>
-            ) : (
+        <nav className="hidden items-center gap-7 lg:flex">
+          {NAV.map((item) => {
+            const active = isActive(item.href ?? '#');
+            return (
               <Link
                 key={item.label}
                 href={item.href ?? '#'}
-                className="px-3 py-2 text-[11px] font-medium uppercase tracking-label text-bone/70 transition-colors hover:text-brass"
+                className={`text-[15px] font-medium transition-colors ${
+                  active ? 'border-b-2 border-maroon pb-0.5 text-maroon' : 'text-body hover:text-maroon'
+                }`}
               >
                 {item.label}
               </Link>
-            ),
-          )}
+            );
+          })}
+          <a href={telHref(phoneRaw)} data-tracked-phone className="rounded-[2px] bg-maroon px-5 py-2.5 text-[15px] font-semibold text-paper transition-colors hover:bg-maroon-dark">
+            {phone}
+          </a>
         </nav>
 
-        {/* Persistent phone CTA — not a nav item */}
-        <div className="flex items-center gap-3">
-          <CallButton
-            phone={phone}
-            phoneRaw={phoneRaw}
-            className="btn-call-ondark hidden whitespace-nowrap px-4 py-2 text-xs sm:inline-flex"
-          />
-          <button
-            type="button"
-            aria-label="Toggle menu"
-            aria-expanded={mobileOpen}
-            aria-controls="mobile-nav"
-            className="text-bone lg:hidden"
-            onClick={() => setMobileOpen((v) => !v)}
-          >
-            <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
-            </svg>
-          </button>
-        </div>
+        {/* Mobile hamburger */}
+        <button
+          type="button"
+          aria-label="Open menu"
+          aria-expanded={open}
+          className="flex flex-col gap-[5px] p-1.5 lg:hidden"
+          onClick={() => setOpen(true)}
+        >
+          <span className="h-0.5 w-[22px] bg-ink" />
+          <span className="h-0.5 w-[22px] bg-ink" />
+          <span className="h-0.5 w-[14px] bg-ink" />
+        </button>
       </div>
 
-      {/* Mobile drawer */}
-      {mobileOpen && (
-        <nav id="mobile-nav" className="border-t-2 border-brass/50 bg-oxblood lg:hidden">
-          <div className="container-page space-y-1 py-4">
-            {NAV.map((item) => (
-              <div key={item.label}>
-                <Link
-                  href={item.href ?? '#'}
-                  className="block py-2 text-sm font-bold uppercase tracking-heading text-bone"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {item.label}
-                </Link>
-                {item.children && (
-                  <div className="ml-3 space-y-1 border-l-2 border-brass/40 pl-3">
-                    {item.children
-                      .filter((c) => !c.heading)
-                      .map((child) => (
-                        <Link
-                          key={child.href}
-                          href={child.href}
-                          className="block py-1.5 text-sm text-bone/60 hover:text-brass"
-                          onClick={() => setMobileOpen(false)}
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
-                  </div>
-                )}
-              </div>
-            ))}
-            <div className="pt-3">
-              <CallButton phone={phone} phoneRaw={phoneRaw} className="btn-call-ondark w-full" />
-            </div>
+      {/* Mobile full-screen menu */}
+      {open && (
+        <div className="fixed inset-0 z-[60] flex flex-col bg-ink text-cream lg:hidden">
+          <div className="flex items-center justify-between border-b border-cream/10 px-5 py-4">
+            <span className="font-display text-[17px] uppercase tracking-wordmark">
+              <span className="font-bold text-cream">Mark Allan</span> <span className="font-medium text-faint">Contracting</span>
+            </span>
+            <button type="button" aria-label="Close menu" onClick={() => setOpen(false)} className="relative h-6 w-6">
+              <span className="absolute left-0 top-1/2 h-0.5 w-6 rotate-45 bg-cream" />
+              <span className="absolute left-0 top-1/2 h-0.5 w-6 -rotate-45 bg-cream" />
+            </button>
           </div>
-        </nav>
+          <nav className="flex flex-1 flex-col px-5 py-6">
+            <Link href="/" onClick={() => setOpen(false)} className="border-b border-cream/10 py-2.5 font-display text-[40px] font-bold uppercase text-cream">
+              Home
+            </Link>
+            {NAV.map((item, i) => (
+              <Link
+                key={item.label}
+                href={item.href ?? '#'}
+                onClick={() => setOpen(false)}
+                className={`py-2.5 font-display text-[40px] font-bold uppercase text-cream ${i < NAV.length - 1 ? 'border-b border-cream/10' : ''}`}
+              >
+                {item.label}
+              </Link>
+            ))}
+            <div className="mt-auto flex flex-col gap-3 pt-8">
+              <a href={telHref(phoneRaw)} data-tracked-phone className="rounded-[2px] bg-maroon py-4 text-center text-base font-semibold text-paper">
+                Call {phone}
+              </a>
+              <div className="text-center text-[13px] text-faint">
+                {CONTACT.address.street} · {CONTACT.address.city}, {CONTACT.address.state} {CONTACT.address.zip}
+              </div>
+            </div>
+          </nav>
+        </div>
       )}
     </header>
   );

@@ -4,8 +4,8 @@
 
 @layer base {
   :root {
-    /* One family, no webfont. */
-    --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --font-sans: 'Barlow', system-ui, sans-serif;
+    --font-display: 'Barlow Condensed', system-ui, sans-serif;
   }
 
   html {
@@ -13,79 +13,109 @@
   }
 
   body {
-    @apply bg-bone text-oxblood antialiased;
+    @apply bg-paper text-body antialiased;
     font-family: var(--font-sans);
-    letter-spacing: 0.02em;
-    line-height: 1.65;
+    line-height: 1.6;
   }
 
-  /* Display headings: uppercase, letterspaced, tight leading. */
+  /* Display headings: Barlow Condensed, uppercase, tight leading, ink. */
   h1,
   h2,
   h3,
   h4 {
-    @apply font-bold uppercase text-oxblood;
-    letter-spacing: 0.04em;
-    line-height: 1.15;
+    font-family: var(--font-display);
+    @apply font-bold uppercase text-ink;
+    line-height: 0.95;
+    letter-spacing: 0.01em;
     text-wrap: balance;
-  }
-  h1 {
-    letter-spacing: 0.06em;
   }
 
   ::selection {
-    background: #a98b62;
-    color: #e8e1d5;
+    background: #5a2634;
+    color: #fff;
   }
 }
 
 @layer components {
   .container-page {
-    @apply mx-auto w-full max-w-6xl px-5 sm:px-6 lg:px-8;
+    @apply mx-auto w-full max-w-[1240px] px-5 sm:px-8;
   }
 
-  /* Eyebrow / small-caps label — brass, widely letterspaced. */
-  .eyebrow {
-    @apply text-[11px] font-medium uppercase text-brass;
-    letter-spacing: 0.2em;
+  /* Kicker — 32×2 bar (currentColor) + small-caps label. Set text-maroon (light)
+     or text-rose (on dark) in markup. */
+  .kicker {
+    @apply inline-flex items-center gap-3 text-[13px] font-semibold uppercase;
+    letter-spacing: 0.14em;
+  }
+  .kicker::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 2px;
+    background: currentColor;
+    flex: none;
   }
 
-  /* Thin brass rule used as a divider. */
-  .rule-brass {
-    @apply border-0 border-t-2 border-brass/60;
+  /* Buttons — 2px radius, the only rounded things in the system. */
+  .btn-ink {
+    @apply inline-flex items-center justify-center gap-2 rounded-[2px] bg-ink px-8 py-4
+      text-base font-semibold text-paper transition-colors hover:bg-maroon
+      focus:outline-none focus:ring-2 focus:ring-maroon focus:ring-offset-2 focus:ring-offset-paper;
+  }
+  .btn-maroon {
+    @apply inline-flex items-center justify-center gap-2 rounded-[2px] bg-maroon px-8 py-4
+      text-base font-semibold text-paper transition-colors hover:bg-maroon-dark
+      focus:outline-none focus:ring-2 focus:ring-maroon focus:ring-offset-2 focus:ring-offset-paper;
+  }
+  .btn-line {
+    @apply inline-flex items-center justify-center gap-2 rounded-[2px] border-[1.5px] border-ink/25
+      px-8 py-4 text-base font-semibold text-ink transition-colors hover:border-maroon hover:text-maroon
+      focus:outline-none focus:ring-2 focus:ring-maroon focus:ring-offset-2 focus:ring-offset-paper;
+  }
+  /* On dark (ink) sections. */
+  .btn-maroon-ondark {
+    @apply inline-flex items-center justify-center gap-2 rounded-[2px] bg-maroon px-8 py-4
+      text-base font-semibold text-paper transition-colors hover:bg-maroon-light;
+  }
+  .btn-cream-ondark {
+    @apply inline-flex items-center justify-center gap-2 rounded-[2px] border border-cream/30
+      px-8 py-4 text-base font-semibold text-cream transition-colors hover:border-rose hover:text-rose;
   }
 
-  /* Primary CTA — the phone. Flat oxblood, bone text, brass on hover. */
-  .btn-call {
-    @apply inline-flex items-center justify-center gap-2 bg-oxblood px-7 py-3
-      text-sm font-bold uppercase text-bone transition-colors
-      hover:bg-brass hover:text-oxblood focus:outline-none focus:ring-2
-      focus:ring-brass focus:ring-offset-2 focus:ring-offset-bone;
-    letter-spacing: 0.12em;
+  /* Editorial form input. */
+  .field-input {
+    @apply w-full rounded-[2px] border border-hairline bg-paper px-3.5 py-3 text-[15px] text-ink
+      outline-none transition-colors placeholder:text-faint focus:border-maroon;
   }
-
-  /* Secondary — brass hairline outline. */
-  .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 border-2 border-brass/60
-      px-7 py-3 text-sm font-bold uppercase text-oxblood transition-colors
-      hover:border-brass hover:bg-brass/10 focus:outline-none focus:ring-2
-      focus:ring-brass focus:ring-offset-2 focus:ring-offset-bone;
-    letter-spacing: 0.12em;
-  }
-
-  /* CTA sitting on an oxblood band — bone fill so it reads. */
-  .btn-call-ondark {
-    @apply inline-flex items-center justify-center gap-2 bg-bone px-7 py-3
-      text-sm font-bold uppercase text-oxblood transition-colors
-      hover:bg-brass focus:outline-none focus:ring-2 focus:ring-brass
-      focus:ring-offset-2 focus:ring-offset-oxblood;
-    letter-spacing: 0.12em;
+  .field-label {
+    @apply text-[13px] font-semibold uppercase tracking-[0.08em] text-muted;
   }
 
   .prose-copy {
-    @apply max-w-prose text-lg leading-relaxed text-oxblood/70;
+    @apply max-w-prose text-[17px] leading-relaxed text-body;
   }
   .prose-copy p {
     @apply mb-4;
+  }
+
+  /* ---- legacy classes kept so un-migrated pages still render on the new ground ---- */
+  .eyebrow {
+    @apply inline-flex items-center gap-3 text-[13px] font-semibold uppercase text-maroon;
+    letter-spacing: 0.14em;
+  }
+  .rule-brass {
+    @apply border-0 border-t border-hairline;
+  }
+  .btn-call {
+    @apply inline-flex items-center justify-center gap-2 rounded-[2px] bg-ink px-8 py-4
+      text-base font-semibold text-paper transition-colors hover:bg-maroon;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-[2px] border-[1.5px] border-ink/25
+      px-8 py-4 text-base font-semibold text-ink transition-colors hover:border-maroon hover:text-maroon;
+  }
+  .btn-call-ondark {
+    @apply inline-flex items-center justify-center gap-2 rounded-[2px] bg-maroon px-8 py-4
+      text-base font-semibold text-paper transition-colors hover:bg-maroon-light;
   }
 }

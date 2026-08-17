@@ -1,5 +1,21 @@
 import type { Metadata, Viewport } from 'next';
+import { Barlow, Barlow_Condensed } from 'next/font/google';
 import './globals.css';
+
+// Jobsite Editorial type: Barlow (body) + Barlow Condensed (uppercase display).
+const barlow = Barlow({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  style: ['normal', 'italic'],
+  variable: '--font-sans',
+  display: 'swap',
+});
+const barlowCondensed = Barlow_Condensed({
+  subsets: ['latin'],
+  weight: ['500', '600', '700'],
+  variable: '--font-display',
+  display: 'swap',
+});
 import { CallRail } from '@/components/CallRail';
 import { Analytics } from '@/components/Analytics';
 import { ConversionTracking } from '@/components/ConversionTracking';
@@ -53,7 +69,7 @@ export default async function RootLayout({
   const settings = await getSiteSettings();
 
   return (
-    <html lang="en">
+    <html lang="en" className={`${barlow.variable} ${barlowCondensed.variable}`}>
       <head>
         <CallRail
           callRailId={settings.callRailId}

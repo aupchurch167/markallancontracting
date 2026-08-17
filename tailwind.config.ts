@@ -1,19 +1,16 @@
 import type { Config } from 'tailwindcss';
 
 /**
- * Print-system design tokens (presentation folder + proposal cover).
+ * "Jobsite Editorial" design tokens.
  *
- * Exactly three flat colors — oxblood, bone, brass — no gradients. The legacy
- * token names (navy/accent/ink/paper/stone) are remapped onto the new palette so
- * existing markup adopts the system without a second styling layer:
- *   navy/ink  → oxblood (brand + text on bone)
- *   accent    → brass   (accent only: rules, labels, link hover)
- *   paper     → bone    (page background; pure white is not in the palette)
- *   white     → bone    (text on oxblood is bone, never #FFF)
- *   stone-*   → bone tints, a brass hairline, and muted-oxblood text
+ * Warm paper ground, near-black ink, maroon brand accent, editorial grays.
+ * Display type is Barlow Condensed (uppercase), body is Barlow. Sharp corners
+ * (2px only on buttons/inputs), hairline rules.
+ *
+ * Legacy names (oxblood/bone/brass/navy/accent/stone) are kept and re-pointed so
+ * pages not yet migrated to the new primitives still render on the new ground.
  */
-const OXBLOOD = { DEFAULT: '#5A2634', 900: '#49202B', 700: '#5A2634', 600: '#6C3140' };
-const BRASS = { DEFAULT: '#A98B62', 600: '#A98B62', 700: '#8C7150' };
+const MAROON = { DEFAULT: '#5A2634', dark: '#431C26', light: '#7A3446' };
 
 const config: Config = {
   content: [
@@ -24,33 +21,44 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Named system tokens
-        oxblood: OXBLOOD,
-        bone: { DEFAULT: '#E8E1D5', light: '#F1EBE1' },
-        brass: BRASS,
+        // Jobsite Editorial palette
+        paper: { DEFAULT: '#F7F4F1', alt: '#EFEAE6' },
+        ink: { DEFAULT: '#1D1517', deep: '#15100F' },
+        body: '#3D3234',
+        muted: '#6B5D60',
+        faint: '#8A7C7F',
+        maroon: MAROON,
+        rose: '#C9A8B0',
+        cream: { DEFAULT: '#F2ECE8', muted: '#BCA9AD' },
+        darkcard: '#241B1E',
+        hairline: 'rgba(29,21,23,0.12)',
 
-        // Legacy remaps → new palette
-        white: '#E8E1D5',
-        navy: OXBLOOD,
-        accent: BRASS,
-        ink: '#5A2634',
-        paper: '#E8E1D5',
+        // Brand accent still available under its old name (== maroon)
+        oxblood: { DEFAULT: '#5A2634', 900: '#431C26', 700: '#5A2634', 600: '#7A3446' },
+        brass: { DEFAULT: '#A98B62', 600: '#A98B62', 700: '#8C7150' },
+
+        // Legacy remaps → new ground so un-migrated pages still read
+        bone: { DEFAULT: '#F7F4F1', light: '#EFEAE6' },
+        white: '#F7F4F1',
+        navy: { DEFAULT: '#5A2634', 900: '#431C26', 700: '#5A2634', 600: '#7A3446' },
+        accent: { DEFAULT: '#A98B62', 600: '#A98B62', 700: '#8C7150' },
         stone: {
-          50: '#F1EBE1', // second lighter surface
-          100: '#DCD4C5', // faint fill / image placeholder, still legible on oxblood
-          200: '#C8B69B', // brass hairline (~brass at 0.5 on bone)
-          400: '#9A7C84', // small-caps labels / meta (muted oxblood)
-          600: '#835F65', // secondary body text (oxblood at ~65% on bone)
+          50: '#EFEAE6',
+          100: '#E4DED8',
+          200: 'rgba(29,21,23,0.15)',
+          400: '#8A7C7F',
+          600: '#6B5D60',
         },
       },
       fontFamily: {
-        sans: ['var(--font-sans)', "'Helvetica Neue'", 'Helvetica', 'Arial', 'sans-serif'],
+        sans: ['var(--font-sans)', 'Barlow', 'system-ui', 'sans-serif'],
+        display: ['var(--font-display)', "'Barlow Condensed'", 'system-ui', 'sans-serif'],
       },
       letterSpacing: {
-        wordmark: '0.06em',
-        heading: '0.04em',
-        label: '0.2em',
-        body: '0.02em',
+        wordmark: '0.05em',
+        heading: '0.01em',
+        label: '0.14em',
+        body: '0',
       },
       maxWidth: {
         prose: '68ch',
