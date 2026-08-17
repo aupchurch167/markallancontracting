@@ -41,17 +41,17 @@ export function PhotoChoiceModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy-900/40 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4">
       <Card className="w-full max-w-3xl p-5">
         <div className="flex items-center justify-between">
-          <h3 className="font-bold text-navy">Choose a version</h3>
-          <button onClick={onCancel} className="text-stone-400 hover:text-navy" aria-label="Cancel">
+          <h3 className="font-bold text-ink">Choose a version</h3>
+          <button onClick={onCancel} className="text-faint hover:text-ink" aria-label="Cancel">
             <Icon name="close" className="h-5 w-5" />
           </button>
         </div>
 
         {busy || !result ? (
-          <div className="flex flex-col items-center justify-center gap-3 py-16 text-stone-500">
+          <div className="flex flex-col items-center justify-center gap-3 py-16 text-muted">
             <Spinner />
             <p className="text-sm">Aligning, cropping, and enhancing the photo…</p>
           </div>
@@ -59,9 +59,9 @@ export function PhotoChoiceModal({
           <>
             {result.check.notes ? (
               <div
-                className={`mt-3 rounded-lg border p-3 text-sm ${
+                className={`mt-3 rounded-[2px] border p-3 text-sm ${
                   result.check.ok
-                    ? 'border-stone-200 bg-stone-50 text-stone-600'
+                    ? 'border-hairline bg-paper text-body'
                     : 'border-amber-200 bg-amber-50 text-amber-800'
                 }`}
               >
@@ -71,21 +71,21 @@ export function PhotoChoiceModal({
             ) : null}
 
             {result.enhanceError && result.geminiConfigured ? (
-              <p className="mt-2 text-xs text-stone-400">
+              <p className="mt-2 text-xs text-faint">
                 (AI enhancement unavailable this time — pick a version below.)
               </p>
             ) : null}
 
             <div className="mt-4 grid gap-4 sm:grid-cols-3">
               {options.map((opt) => (
-                <div key={opt.key} className="flex flex-col overflow-hidden rounded-lg border border-stone-200">
-                  <div className="relative aspect-[16/9] bg-stone-100">
+                <div key={opt.key} className="flex flex-col overflow-hidden rounded-[2px] border border-hairline">
+                  <div className="relative aspect-[16/9] bg-paper-alt">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={opt.url} alt={opt.label} className="h-full w-full object-cover" />
                   </div>
                   <div className="flex flex-1 flex-col p-3">
-                    <div className="text-sm font-semibold text-navy">{opt.label}</div>
-                    <div className="mt-0.5 text-xs text-stone-400">{opt.tag}</div>
+                    <div className="text-sm font-semibold text-ink">{opt.label}</div>
+                    <div className="mt-0.5 text-xs text-faint">{opt.tag}</div>
                     <Button
                       variant={opt.key === 'enhanced' ? 'primary' : 'ghost'}
                       size="sm"

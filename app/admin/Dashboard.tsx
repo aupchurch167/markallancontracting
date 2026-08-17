@@ -62,8 +62,8 @@ export function Dashboard({
     <div className="mx-auto max-w-5xl space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-navy">Dashboard</h1>
-          <p className="mt-1 text-sm text-stone-500">
+          <h1 className="font-display text-2xl font-bold uppercase text-ink">Dashboard</h1>
+          <p className="mt-1 text-sm text-muted">
             Everything published on macont.com, in one place.
           </p>
         </div>
@@ -104,31 +104,31 @@ export function Dashboard({
 
       {/* Recent edits */}
       <div>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-stone-400">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-faint">
           Recently edited
         </h2>
         {recent.length === 0 ? (
-          <Card className="p-6 text-sm text-stone-500">
+          <Card className="p-6 text-sm text-muted">
             Nothing yet. Create your first post or project, or import the original site&apos;s content
             below.
           </Card>
         ) : (
-          <Card className="divide-y divide-stone-100">
+          <Card className="divide-y divide-hairline">
             {recent.map((item) => (
               <button
                 key={item.id}
                 onClick={() => onOpenEditor({ mode: 'edit', type: item.type, id: item.id })}
-                className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-stone-50"
+                className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-paper"
               >
                 <Thumb item={item} />
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-sm font-medium text-navy">{item.title}</div>
-                  <div className="text-xs text-stone-400">
+                  <div className="truncate text-sm font-medium text-ink">{item.title}</div>
+                  <div className="text-xs text-faint">
                     {item.type === 'post' ? 'Post' : 'Project'} · edited {relativeTime(item.updatedAt)}
                   </div>
                 </div>
                 <StatusBadge status={item.status} />
-                <Icon name="chevron" className="h-4 w-4 text-stone-300" />
+                <Icon name="chevron" className="h-4 w-4 text-faint" />
               </button>
             ))}
           </Card>
@@ -136,9 +136,9 @@ export function Dashboard({
       </div>
 
       {/* Import existing content */}
-      <Card className="flex flex-wrap items-center justify-between gap-3 bg-stone-50 p-4">
-        <div className="text-sm text-stone-600">
-          <span className="font-semibold text-navy">Import existing site content.</span> Pull the
+      <Card className="flex flex-wrap items-center justify-between gap-3 bg-paper p-4">
+        <div className="text-sm text-body">
+          <span className="font-semibold text-ink">Import existing site content.</span> Pull the
           original projects and blog posts into the CMS so you can edit them here. Anything already in
           the CMS is skipped.
         </div>
@@ -165,22 +165,22 @@ function StatCard({
 }) {
   return (
     <button onClick={onClick} className="text-left">
-      <Card className="p-5 transition-shadow hover:shadow-md">
+      <Card className="p-5">
         <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-navy/5 p-2 text-navy">
+          <div className="rounded-[2px] bg-ink/5 p-2 text-ink">
             <Icon name={icon} className="h-5 w-5" />
           </div>
-          <span className="text-sm font-semibold text-navy">{label}</span>
-          <Icon name="chevron" className="ml-auto h-4 w-4 text-stone-300" />
+          <span className="text-sm font-semibold text-ink">{label}</span>
+          <Icon name="chevron" className="ml-auto h-4 w-4 text-faint" />
         </div>
         <div className="mt-4 flex items-baseline gap-6">
           <div>
-            <div className="text-3xl font-bold text-navy">{published}</div>
-            <div className="text-xs font-medium uppercase tracking-wide text-stone-400">Published</div>
+            <div className="text-3xl font-bold text-ink">{published}</div>
+            <div className="text-xs font-medium uppercase tracking-wide text-faint">Published</div>
           </div>
           <div>
-            <div className="text-3xl font-bold text-stone-400">{drafts}</div>
-            <div className="text-xs font-medium uppercase tracking-wide text-stone-400">Drafts</div>
+            <div className="text-3xl font-bold text-faint">{drafts}</div>
+            <div className="text-xs font-medium uppercase tracking-wide text-faint">Drafts</div>
           </div>
         </div>
       </Card>
@@ -191,14 +191,14 @@ function StatCard({
 function Thumb({ item }: { item: AdminItem }) {
   if (item.heroImageUrl) {
     return (
-      <div className="h-10 w-10 shrink-0 overflow-hidden rounded-md bg-stone-100">
+      <div className="h-10 w-10 shrink-0 overflow-hidden rounded-[2px] bg-paper-alt">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={item.heroImageUrl} alt="" className="h-full w-full object-cover" />
       </div>
     );
   }
   return (
-    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-stone-100 text-stone-300">
+    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[2px] bg-paper-alt text-faint">
       <Icon name={item.type === 'post' ? 'posts' : 'projects'} className="h-5 w-5" />
     </div>
   );

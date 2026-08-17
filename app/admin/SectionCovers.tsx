@@ -85,7 +85,7 @@ export function SectionCovers() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-24 text-stone-400">
+      <div className="flex items-center justify-center py-24 text-faint">
         <Spinner />
       </div>
     );
@@ -95,8 +95,8 @@ export function SectionCovers() {
     <div className="mx-auto max-w-5xl space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-navy">Section covers</h1>
-          <p className="mt-1 text-sm text-stone-500">
+          <h1 className="font-display text-2xl font-bold uppercase text-ink">Section covers</h1>
+          <p className="mt-1 text-sm text-muted">
             Cover photos for each project type and service. They show in the home-page grid and on
             the /project-types and /services pages.
           </p>
@@ -114,7 +114,7 @@ export function SectionCovers() {
 
       {GROUPS.map((group) => (
         <div key={group.key}>
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-stone-400">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-faint">
             {group.label}
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -124,7 +124,7 @@ export function SectionCovers() {
               const busy = busyKey === key;
               return (
                 <Card key={item.slug} className="overflow-hidden">
-                  <div className="relative aspect-[16/9] bg-stone-100">
+                  <div className="relative aspect-[16/9] bg-paper-alt">
                     {url ? (
                       <>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -137,19 +137,19 @@ export function SectionCovers() {
                         </button>
                       </>
                     ) : (
-                      <div className="flex h-full items-center justify-center text-stone-300">
+                      <div className="flex h-full items-center justify-center text-faint">
                         <Icon name="image" className="h-8 w-8" />
                       </div>
                     )}
                     {busy ? (
-                      <div className="absolute inset-0 flex items-center justify-center bg-white/60 text-stone-500">
+                      <div className="absolute inset-0 flex items-center justify-center bg-white/60 text-muted">
                         <Spinner />
                       </div>
                     ) : null}
                   </div>
                   <div className="p-3">
-                    <div className="text-sm font-medium text-navy">{item.name}</div>
-                    <label className="mt-2 block cursor-pointer text-xs font-semibold text-accent hover:underline">
+                    <div className="text-sm font-medium text-ink">{item.name}</div>
+                    <label className="mt-2 block cursor-pointer text-xs font-semibold text-maroon hover:underline">
                       {url ? 'Replace photo' : 'Upload photo'}
                       <input
                         type="file"
@@ -171,7 +171,7 @@ export function SectionCovers() {
         <Button variant="primary" icon="check" loading={saving} onClick={save}>
           Save
         </Button>
-        <span className="text-xs text-stone-400">Covers go live immediately after saving.</span>
+        <span className="text-xs text-faint">Covers go live immediately after saving.</span>
       </div>
     </div>
   );

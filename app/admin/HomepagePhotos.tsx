@@ -26,7 +26,7 @@ function nextKey() {
 }
 
 const inputClass =
-  'mt-1 w-full rounded-md border border-stone-200 px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent';
+  'mt-1 w-full rounded-[2px] border border-hairline px-3 py-2 text-sm text-ink focus:border-maroon focus:outline-none focus:ring-1 focus:ring-maroon';
 
 function slotFrom(s: { url: string; alt: string }): Slot {
   return { url: s.url, alt: s.alt, file: null, preview: null };
@@ -149,16 +149,16 @@ export function HomepagePhotos() {
   }
 
   if (loading) {
-    return <p className="text-sm text-stone-400">Loading current photos…</p>;
+    return <p className="text-sm text-faint">Loading current photos…</p>;
   }
 
   return (
     <div className="space-y-8">
       {error ? (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>
+        <div className="rounded-[2px] border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>
       ) : null}
       {saved ? (
-        <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-800">
+        <div className="rounded-[2px] border border-green-200 bg-green-50 p-3 text-sm text-green-800">
           Saved — the home page is updated. Refresh macont.com to see it live.
         </div>
       ) : null}
@@ -169,25 +169,25 @@ export function HomepagePhotos() {
           { label: 'Hero photo', slot: hero, setter: setHero, field: 'heroFile' },
           { label: 'About / history photo', slot: about, setter: setAbout, field: 'aboutFile' },
         ].map(({ label, slot, setter }) => (
-          <div key={label} className="rounded-xl bg-white p-4 shadow-sm">
-            <div className="text-sm font-semibold text-navy">{label}</div>
-            <div className="relative mt-2 aspect-[4/3] overflow-hidden rounded-lg bg-stone-100">
+          <div key={label} className="rounded-[2px] bg-white p-4">
+            <div className="text-sm font-semibold text-ink">{label}</div>
+            <div className="relative mt-2 aspect-[4/3] overflow-hidden rounded-[2px] bg-paper-alt">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               {displayUrl(slot) ? (
                 <img src={displayUrl(slot)} alt={slot.alt} className="h-full w-full object-cover" />
               ) : null}
             </div>
             <label className="mt-3 block">
-              <span className="text-xs font-medium text-stone-500">Replace photo</span>
+              <span className="text-xs font-medium text-muted">Replace photo</span>
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/gif,image/webp"
-                className="mt-1 block w-full text-sm text-stone-600 file:mr-3 file:rounded-md file:border-0 file:bg-stone-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-navy hover:file:bg-stone-200"
+                className="mt-1 block w-full text-sm text-body file:mr-3 file:rounded-[2px] file:border-0 file:bg-paper-alt file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-ink hover:file:bg-paper-alt"
                 onChange={(e) => pickFile(setter, slot, e.target.files?.[0] || null)}
               />
             </label>
             <label className="mt-3 block">
-              <span className="text-xs font-medium text-stone-500">Alt text</span>
+              <span className="text-xs font-medium text-muted">Alt text</span>
               <input
                 className={inputClass}
                 value={slot.alt}
@@ -202,13 +202,13 @@ export function HomepagePhotos() {
       </div>
 
       {/* Gallery */}
-      <div className="rounded-xl bg-white p-4 shadow-sm">
+      <div className="rounded-[2px] bg-white p-4">
         <div className="flex items-center justify-between">
-          <div className="text-sm font-semibold text-navy">“On the job” gallery</div>
+          <div className="text-sm font-semibold text-ink">“On the job” gallery</div>
           <button
             type="button"
             onClick={() => galleryInput.current?.click()}
-            className="text-sm font-semibold text-accent hover:text-accent-700"
+            className="text-sm font-semibold text-maroon hover:text-maroon-dark"
           >
             + Add photos
           </button>
@@ -223,12 +223,12 @@ export function HomepagePhotos() {
         </div>
 
         {gallery.length === 0 ? (
-          <p className="mt-3 text-sm text-stone-400">No gallery photos. Add some above.</p>
+          <p className="mt-3 text-sm text-faint">No gallery photos. Add some above.</p>
         ) : (
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {gallery.map((g, i) => (
-              <div key={g.key} className="rounded-lg border border-stone-200 p-2">
-                <div className="relative aspect-[4/3] overflow-hidden rounded bg-stone-100">
+              <div key={g.key} className="rounded-[2px] border border-hairline p-2">
+                <div className="relative aspect-[4/3] overflow-hidden rounded bg-paper-alt">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   {displayUrl(g) ? (
                     <img src={displayUrl(g)} alt={g.alt} className="h-full w-full object-cover" />
@@ -246,7 +246,7 @@ export function HomepagePhotos() {
                       type="button"
                       onClick={() => moveGallery(g.key, -1)}
                       disabled={i === 0}
-                      className="rounded border border-stone-200 px-2 py-1 text-stone-600 disabled:opacity-40"
+                      className="rounded border border-hairline px-2 py-1 text-body disabled:opacity-40"
                       aria-label="Move left"
                     >
                       ←
@@ -255,7 +255,7 @@ export function HomepagePhotos() {
                       type="button"
                       onClick={() => moveGallery(g.key, 1)}
                       disabled={i === gallery.length - 1}
-                      className="rounded border border-stone-200 px-2 py-1 text-stone-600 disabled:opacity-40"
+                      className="rounded border border-hairline px-2 py-1 text-body disabled:opacity-40"
                       aria-label="Move right"
                     >
                       →
@@ -279,7 +279,7 @@ export function HomepagePhotos() {
         <button onClick={save} disabled={saving} className="btn-call justify-center disabled:opacity-60">
           {saving ? 'Saving…' : 'Save & publish'}
         </button>
-        <span className="text-xs text-stone-400">Changes go live on the home page immediately.</span>
+        <span className="text-xs text-faint">Changes go live on the home page immediately.</span>
       </div>
     </div>
   );

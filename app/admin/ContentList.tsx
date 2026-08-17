@@ -109,8 +109,8 @@ export function ContentList({
     <div className="mx-auto max-w-5xl space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-navy">{label}</h1>
-          <p className="mt-1 text-sm text-stone-500">
+          <h1 className="font-display text-2xl font-bold uppercase text-ink">{label}</h1>
+          <p className="mt-1 text-sm text-muted">
             {items.length} total · {items.filter((i) => i.status === 'published').length} published
           </p>
         </div>
@@ -133,7 +133,7 @@ export function ContentList({
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative min-w-[200px] flex-1">
-          <Icon name="search" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
+          <Icon name="search" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
@@ -141,13 +141,13 @@ export function ContentList({
             className={`${inputClass} mt-0 pl-9`}
           />
         </div>
-        <div className="flex rounded-md border border-stone-200 bg-white p-0.5 text-sm">
+        <div className="flex rounded-[2px] border border-hairline bg-white p-0.5 text-sm">
           {(['all', 'published', 'draft'] as StatusFilter[]).map((s) => (
             <button
               key={s}
               onClick={() => setStatus(s)}
               className={`rounded px-3 py-1.5 font-medium capitalize ${
-                status === s ? 'bg-navy text-white' : 'text-stone-500 hover:text-navy'
+                status === s ? 'bg-ink text-white' : 'text-muted hover:text-ink'
               }`}
             >
               {s}
@@ -176,7 +176,7 @@ export function ContentList({
         </EmptyState>
       ) : (
         <Card className="overflow-hidden">
-          <div className="divide-y divide-stone-100">
+          <div className="divide-y divide-hairline">
             {visible.map((item) => (
               <div
                 key={item.id}
@@ -187,10 +187,10 @@ export function ContentList({
                   onClick={() => onOpenEditor({ mode: 'edit', type: item.type, id: item.id })}
                   className="min-w-0 flex-1 text-left"
                 >
-                  <div className="truncate font-medium text-navy hover:text-accent">{item.title}</div>
-                  <div className="truncate text-xs text-stone-400">/{item.slug}</div>
+                  <div className="truncate font-medium text-ink hover:text-maroon">{item.title}</div>
+                  <div className="truncate text-xs text-faint">/{item.slug}</div>
                 </button>
-                <div className="hidden w-28 shrink-0 text-xs text-stone-400 sm:block">
+                <div className="hidden w-28 shrink-0 text-xs text-faint sm:block">
                   {relativeTime(item.updatedAt)}
                 </div>
                 <div className="w-24 shrink-0">
@@ -208,7 +208,7 @@ export function ContentList({
                       target="_blank"
                       rel="noreferrer"
                       title="View live"
-                      className="rounded-md p-2 text-stone-500 hover:bg-stone-100 hover:text-navy"
+                      className="rounded-[2px] p-2 text-muted hover:bg-paper-alt hover:text-ink"
                     >
                       <Icon name="external" className="h-[18px] w-[18px]" />
                     </a>
@@ -265,10 +265,10 @@ function IconBtn({
       aria-label={title}
       onClick={onClick}
       disabled={disabled}
-      className={`rounded-md p-2 disabled:opacity-40 ${
+      className={`rounded-[2px] p-2 disabled:opacity-40 ${
         danger
-          ? 'text-stone-500 hover:bg-red-50 hover:text-red-600'
-          : 'text-stone-500 hover:bg-stone-100 hover:text-navy'
+          ? 'text-muted hover:bg-red-50 hover:text-red-600'
+          : 'text-muted hover:bg-paper-alt hover:text-ink'
       }`}
     >
       <Icon name={icon} className="h-[18px] w-[18px]" />
@@ -279,14 +279,14 @@ function IconBtn({
 function Thumb({ item }: { item: AdminItem }) {
   if (item.heroImageUrl) {
     return (
-      <div className="h-11 w-11 shrink-0 overflow-hidden rounded-md bg-stone-100">
+      <div className="h-11 w-11 shrink-0 overflow-hidden rounded-[2px] bg-paper-alt">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={item.heroImageUrl} alt="" className="h-full w-full object-cover" />
       </div>
     );
   }
   return (
-    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-stone-100 text-stone-300">
+    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[2px] bg-paper-alt text-faint">
       <Icon name={item.type === 'post' ? 'posts' : 'projects'} className="h-5 w-5" />
     </div>
   );

@@ -38,14 +38,14 @@ export function LoginForm() {
   return (
     <form onSubmit={onSubmit} className="mt-6 space-y-4">
       <label className="block">
-        <span className="text-sm font-medium text-navy">Password</span>
+        <span className="text-sm font-medium text-ink">Password</span>
         <input
           type="password"
           autoFocus
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 w-full rounded-md border border-stone-200 px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+          className="mt-1 w-full rounded-[2px] border border-hairline px-3 py-2 text-ink focus:border-maroon focus:outline-none focus:ring-1 focus:ring-maroon"
         />
       </label>
       {error ? <p className="text-sm text-red-600">{error}</p> : null}

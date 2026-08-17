@@ -110,29 +110,27 @@ function Shell() {
   }
 
   return (
-    <div className="min-h-screen bg-stone-50 text-ink">
+    <div className="min-h-screen bg-paper text-body">
       <div className="mx-auto flex max-w-[1400px]">
         {/* Sidebar */}
-        <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-stone-200 bg-white lg:flex">
-          <div className="flex items-center gap-2 px-5 py-5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-navy text-sm font-bold text-white">
-              MA
+        <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-cream/10 bg-ink lg:flex">
+          <div className="px-5 py-5">
+            <div className="flex items-baseline gap-2 font-display text-[19px] uppercase tracking-wordmark">
+              <span className="font-bold text-cream">Mark Allan</span>
+              <span className="font-medium text-faint">Contracting</span>
             </div>
-            <div>
-              <div className="text-sm font-bold leading-tight text-navy">Mark Allan</div>
-              <div className="text-[11px] leading-tight text-stone-400">Content console</div>
-            </div>
+            <div className="mt-1 text-[11px] uppercase tracking-label text-faint">Content console</div>
           </div>
 
-          <nav className="flex-1 space-y-1 px-3 py-2">
+          <nav className="flex-1 space-y-0.5 px-3 py-2">
             {NAV.map((item) => (
               <button
                 key={`${item.id}-${item.label}`}
                 onClick={() => onNav(item)}
-                className={`flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                className={`flex w-full items-center gap-3 border-l-2 px-3 py-2 text-[15px] font-medium transition-colors ${
                   isActive(item)
-                    ? 'bg-navy text-white'
-                    : 'text-stone-600 hover:bg-stone-100 hover:text-navy'
+                    ? 'border-maroon bg-white/5 text-cream'
+                    : 'border-transparent text-cream-muted hover:bg-white/5 hover:text-cream'
                 }`}
               >
                 <Icon name={item.icon} className="h-[18px] w-[18px]" />
@@ -141,10 +139,10 @@ function Shell() {
             ))}
           </nav>
 
-          <div className="border-t border-stone-200 p-3">
+          <div className="border-t border-cream/10 p-3">
             <button
               onClick={logout}
-              className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-stone-600 hover:bg-stone-100 hover:text-navy"
+              className="flex w-full items-center gap-3 px-3 py-2 text-[15px] font-medium text-cream-muted hover:text-cream"
             >
               <Icon name="signout" className="h-[18px] w-[18px]" />
               Sign out
@@ -155,24 +153,21 @@ function Shell() {
         {/* Main column */}
         <div className="flex min-w-0 flex-1 flex-col">
           {/* Mobile top nav */}
-          <header className="flex items-center justify-between border-b border-stone-200 bg-white px-4 py-3 lg:hidden">
-            <div className="flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-md bg-navy text-xs font-bold text-white">
-                MA
-              </div>
-              <span className="text-sm font-bold text-navy">Content console</span>
-            </div>
-            <button onClick={logout} className="text-stone-500 hover:text-navy">
+          <header className="flex items-center justify-between border-b border-cream/10 bg-ink px-4 py-3 lg:hidden">
+            <span className="font-display text-[16px] uppercase tracking-wordmark">
+              <span className="font-bold text-cream">Mark Allan</span> <span className="font-medium text-faint">Contracting</span>
+            </span>
+            <button onClick={logout} className="text-cream-muted hover:text-cream">
               <Icon name="signout" className="h-5 w-5" />
             </button>
           </header>
-          <div className="flex gap-1 overflow-x-auto border-b border-stone-200 bg-white px-2 py-2 lg:hidden">
+          <div className="flex gap-1 overflow-x-auto border-b border-hairline bg-[#FFFFFF] px-2 py-2 lg:hidden">
             {NAV.map((item) => (
               <button
                 key={`m-${item.id}-${item.label}`}
                 onClick={() => onNav(item)}
-                className={`flex shrink-0 items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium ${
-                  isActive(item) ? 'bg-navy text-white' : 'text-stone-600'
+                className={`flex shrink-0 items-center gap-2 rounded-[2px] px-3 py-1.5 text-sm font-medium ${
+                  isActive(item) ? 'bg-ink text-paper' : 'text-muted hover:text-ink'
                 }`}
               >
                 <Icon name={item.icon} className="h-4 w-4" />
@@ -183,7 +178,7 @@ function Shell() {
 
           <main className="flex-1 px-5 py-6 sm:px-8 sm:py-8">
             {loading ? (
-              <div className="flex items-center justify-center py-24 text-stone-400">
+              <div className="flex items-center justify-center py-24 text-faint">
                 <Spinner />
               </div>
             ) : view === 'dashboard' ? (
@@ -223,13 +218,13 @@ function Shell() {
             ) : view === 'homepage' ? (
               <div className="mx-auto max-w-4xl space-y-12">
                 <div>
-                  <h1 className="mb-1 text-2xl font-bold text-navy">Home page photos</h1>
-                  <p className="mb-6 text-sm text-stone-500">Hero, about, and the “on the job” gallery.</p>
+                  <h1 className="mb-1 font-display text-2xl font-bold uppercase text-ink">Home page photos</h1>
+                  <p className="mb-6 text-sm text-muted">Hero, about, and the “on the job” gallery.</p>
                   <HomepagePhotos />
                 </div>
-                <div className="border-t border-stone-200 pt-10">
-                  <h2 className="mb-1 text-2xl font-bold text-navy">About page photos</h2>
-                  <p className="mb-6 text-sm text-stone-500">The three photo slots on the /about story page.</p>
+                <div className="border-t border-hairline pt-10">
+                  <h2 className="mb-1 font-display text-2xl font-bold uppercase text-ink">About page photos</h2>
+                  <p className="mb-6 text-sm text-muted">The three photo slots on the /about story page.</p>
                   <AboutPhotos />
                 </div>
               </div>

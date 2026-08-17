@@ -139,14 +139,14 @@ export function LinksManager() {
 
   if (loading) {
     return (
-      <div className="flex justify-center py-24 text-stone-400">
+      <div className="flex justify-center py-24 text-faint">
         <Spinner />
       </div>
     );
   }
   if (!configured) {
     return (
-      <Card className="p-6 text-sm text-stone-500">
+      <Card className="p-6 text-sm text-muted">
         The CMS database isn&apos;t configured, so the Links page can&apos;t be managed here yet.
       </Card>
     );
@@ -162,21 +162,21 @@ export function LinksManager() {
   return (
     <div className="mx-auto max-w-4xl">
       <div className="mb-1 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold text-navy">Links page</h1>
-        <a href="/links" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:text-accent-700">
+        <h1 className="font-display text-2xl font-bold uppercase text-ink">Links page</h1>
+        <a href="/links" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-sm font-semibold text-maroon hover:text-maroon-dark">
           View live page <Icon name="external" className="h-4 w-4" />
         </a>
       </div>
-      <p className="mb-5 text-sm text-stone-500">macont.com/links — your link-in-bio page. Changes save immediately and go live.</p>
+      <p className="mb-5 text-sm text-muted">macont.com/links — your link-in-bio page. Changes save immediately and go live.</p>
 
       {/* Tabs */}
-      <div className="mb-6 flex gap-1 border-b border-stone-200">
+      <div className="mb-6 flex gap-1 border-b border-hairline">
         {TABS.map(([id, label]) => (
           <button
             key={id}
             onClick={() => setTab(id)}
             className={`-mb-px border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
-              tab === id ? 'border-accent text-navy' : 'border-transparent text-stone-500 hover:text-navy'
+              tab === id ? 'border-maroon text-ink' : 'border-transparent text-muted hover:text-ink'
             }`}
           >
             {label}
@@ -284,33 +284,33 @@ function LinksTab({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold text-navy">Buttons</h2>
-        <span className="text-xs text-stone-400">Reorder with the arrows · toggle the eye to hide</span>
+        <h2 className="text-lg font-bold text-ink">Buttons</h2>
+        <span className="text-xs text-faint">Reorder with the arrows · toggle the eye to hide</span>
       </div>
 
-      <Card className="divide-y divide-stone-100 p-0">
+      <Card className="divide-y divide-hairline p-0">
         {buttons.map((b, i) => (
           <div key={b.id} className={`flex items-center gap-3 px-4 py-3 ${b.visible ? '' : 'opacity-55'}`}>
             <div className="flex flex-col">
-              <button aria-label="Move up" disabled={i === 0} onClick={() => move(i, -1)} className="text-stone-400 hover:text-navy disabled:opacity-30">
+              <button aria-label="Move up" disabled={i === 0} onClick={() => move(i, -1)} className="text-faint hover:text-ink disabled:opacity-30">
                 <Icon name="chevron" className="h-4 w-4 -rotate-90" />
               </button>
-              <button aria-label="Move down" disabled={i === buttons.length - 1} onClick={() => move(i, 1)} className="text-stone-400 hover:text-navy disabled:opacity-30">
+              <button aria-label="Move down" disabled={i === buttons.length - 1} onClick={() => move(i, 1)} className="text-faint hover:text-ink disabled:opacity-30">
                 <Icon name="chevron" className="h-4 w-4 rotate-90" />
               </button>
             </div>
             <div className="min-w-0 flex-1">
-              <div className="truncate text-sm font-medium text-navy">{b.label}</div>
-              <div className="truncate text-xs text-stone-400">{b.href}</div>
+              <div className="truncate text-sm font-medium text-ink">{b.label}</div>
+              <div className="truncate text-xs text-faint">{b.href}</div>
             </div>
-            <span className="hidden items-center gap-1 text-xs text-stone-400 sm:flex" title="Clicks">
+            <span className="hidden items-center gap-1 text-xs text-faint sm:flex" title="Clicks">
               <Icon name="external" className="h-3.5 w-3.5" />
               {b.clickCount}
             </span>
-            <button aria-label={b.visible ? 'Hide' : 'Show'} onClick={() => toggleVisible(b)} className="text-stone-500 hover:text-navy">
+            <button aria-label={b.visible ? 'Hide' : 'Show'} onClick={() => toggleVisible(b)} className="text-muted hover:text-ink">
               <Icon name="eye" className="h-4 w-4" />
             </button>
-            <button aria-label="Edit" onClick={() => setEditing({ ...b })} className="text-stone-500 hover:text-navy">
+            <button aria-label="Edit" onClick={() => setEditing({ ...b })} className="text-muted hover:text-ink">
               <Icon name="edit" className="h-4 w-4" />
             </button>
             <button aria-label="Delete" onClick={() => remove(b)} className="text-red-500 hover:text-red-600">
@@ -318,12 +318,12 @@ function LinksTab({
             </button>
           </div>
         ))}
-        {buttons.length === 0 && <div className="px-4 py-6 text-sm text-stone-400">No buttons yet.</div>}
+        {buttons.length === 0 && <div className="px-4 py-6 text-sm text-faint">No buttons yet.</div>}
       </Card>
 
       {editing ? (
         <Card className="space-y-4 p-4">
-          <div className="text-sm font-semibold text-navy">{editing.id ? 'Edit button' : 'New button'}</div>
+          <div className="text-sm font-semibold text-ink">{editing.id ? 'Edit button' : 'New button'}</div>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Label">
               <input className={inputClass} value={editing.label} onChange={(e) => setEditing({ ...editing, label: e.target.value })} />
@@ -344,7 +344,7 @@ function LinksTab({
           <Field label="URL" hint="tel:…, mailto:…, or https://…">
             <input className={inputClass} value={editing.href} onChange={(e) => setEditing({ ...editing, href: e.target.value })} />
           </Field>
-          <label className="flex items-center gap-2 text-sm text-stone-600">
+          <label className="flex items-center gap-2 text-sm text-body">
             <input type="checkbox" checked={editing.visible} onChange={(e) => setEditing({ ...editing, visible: e.target.checked })} />
             Visible on the page
           </label>
@@ -442,7 +442,7 @@ function UpdatesTab({ updates, reload, toast }: { updates: LinkUpdate[]; reload:
   return (
     <div className="space-y-5">
       <Card className="space-y-3 border-dashed p-4">
-        <div className="text-sm font-semibold text-navy">{id ? 'Edit update' : 'New update'}</div>
+        <div className="text-sm font-semibold text-ink">{id ? 'Edit update' : 'New update'}</div>
         <textarea
           rows={3}
           className={inputClass}
@@ -451,7 +451,7 @@ function UpdatesTab({ updates, reload, toast }: { updates: LinkUpdate[]; reload:
           onChange={(e) => setBody(e.target.value)}
         />
         {imageUrl && (
-          <div className="relative w-40 overflow-hidden rounded-md border border-stone-200">
+          <div className="relative w-40 overflow-hidden rounded-[2px] border border-hairline">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={imageUrl} alt="" className="h-24 w-full object-cover" />
             <button onClick={() => setImageUrl(null)} className="absolute right-1 top-1 rounded bg-black/60 px-1.5 py-0.5 text-xs text-white">
@@ -460,7 +460,7 @@ function UpdatesTab({ updates, reload, toast }: { updates: LinkUpdate[]; reload:
           </div>
         )}
         <div className="flex flex-wrap items-center gap-3">
-          <label className="cursor-pointer text-sm font-medium text-accent hover:text-accent-700">
+          <label className="cursor-pointer text-sm font-medium text-maroon hover:text-maroon-dark">
             <span className="inline-flex items-center gap-1.5">
               <Icon name="image" className="h-4 w-4" />
               {uploading ? 'Uploading…' : imageUrl ? 'Replace photo' : 'Add photo'}
@@ -482,26 +482,26 @@ function UpdatesTab({ updates, reload, toast }: { updates: LinkUpdate[]; reload:
         </div>
       </Card>
 
-      <Card className="divide-y divide-stone-100 p-0">
+      <Card className="divide-y divide-hairline p-0">
         {updates.map((u) => (
           <div key={u.id} className="flex items-start gap-3 px-4 py-3">
-            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-md bg-stone-100">
+            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-[2px] bg-paper-alt">
               {u.imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={u.imageUrl} alt="" className="h-full w-full object-cover" />
               ) : (
-                <div className="flex h-full w-full items-center justify-center text-stone-300">
+                <div className="flex h-full w-full items-center justify-center text-faint">
                   <Icon name="image" className="h-5 w-5" />
                 </div>
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2 text-xs text-stone-400">
+              <div className="flex items-center gap-2 text-xs text-faint">
                 {fmt(u.postedAt)} <StatusBadge status={u.status} />
               </div>
               <div className="mt-0.5 line-clamp-2 text-sm text-ink">{u.body}</div>
             </div>
-            <button aria-label="Edit" onClick={() => edit(u)} className="text-stone-500 hover:text-navy">
+            <button aria-label="Edit" onClick={() => edit(u)} className="text-muted hover:text-ink">
               <Icon name="edit" className="h-4 w-4" />
             </button>
             <button aria-label="Delete" onClick={() => remove(u)} className="text-red-500 hover:text-red-600">
@@ -509,7 +509,7 @@ function UpdatesTab({ updates, reload, toast }: { updates: LinkUpdate[]; reload:
             </button>
           </div>
         ))}
-        {updates.length === 0 && <div className="px-4 py-6 text-sm text-stone-400">No updates yet.</div>}
+        {updates.length === 0 && <div className="px-4 py-6 text-sm text-faint">No updates yet.</div>}
       </Card>
     </div>
   );
@@ -580,19 +580,19 @@ function ProfileTab({ profile, setProfile, toast }: { profile: Profile; setProfi
       <Card className="space-y-4 p-4">
         {/* Cover photo — the banner at the very top of the links page */}
         <div>
-          <div className="mb-1.5 text-xs font-medium text-stone-500">Cover photo (top of the page)</div>
-          <div className="relative aspect-[16/6] overflow-hidden rounded-lg bg-stone-100">
+          <div className="mb-1.5 text-xs font-medium text-muted">Cover photo (top of the page)</div>
+          <div className="relative aspect-[16/6] overflow-hidden rounded-[2px] bg-paper-alt">
             {draft.coverUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={draft.coverUrl} alt="" className="h-full w-full object-cover" />
             ) : (
-              <div className="flex h-full items-center justify-center text-stone-300">
+              <div className="flex h-full items-center justify-center text-faint">
                 <Icon name="image" className="h-6 w-6" />
               </div>
             )}
           </div>
           <div className="mt-2 flex items-center gap-4">
-            <label className="cursor-pointer text-sm font-medium text-accent hover:text-accent-700">
+            <label className="cursor-pointer text-sm font-medium text-maroon hover:text-maroon-dark">
               {uploadingCover ? 'Uploading…' : draft.coverUrl ? 'Replace cover' : 'Upload cover'}
               <input type="file" accept="image/*" className="hidden" disabled={uploadingCover} onChange={(e) => onCover(e.target.files?.[0] || null)} />
             </label>
@@ -604,16 +604,16 @@ function ProfileTab({ profile, setProfile, toast }: { profile: Profile; setProfi
           </div>
         </div>
 
-        <div className="flex items-center gap-4 border-t border-stone-100 pt-4">
-          <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-stone-200 bg-stone-50">
+        <div className="flex items-center gap-4 border-t border-hairline pt-4">
+          <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-hairline bg-paper">
             {draft.avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={draft.avatarUrl} alt="" className="h-full w-full object-cover" />
             ) : (
-              <span className="text-sm font-semibold text-stone-400">MAC</span>
+              <span className="text-sm font-semibold text-faint">MAC</span>
             )}
           </div>
-          <label className="cursor-pointer text-sm font-medium text-accent hover:text-accent-700">
+          <label className="cursor-pointer text-sm font-medium text-maroon hover:text-maroon-dark">
             {uploading ? 'Uploading…' : draft.avatarUrl ? 'Replace logo' : 'Upload logo'}
             <input type="file" accept="image/*" className="hidden" disabled={uploading} onChange={(e) => onLogo(e.target.files?.[0] || null)} />
           </label>
@@ -633,10 +633,10 @@ function ProfileTab({ profile, setProfile, toast }: { profile: Profile; setProfi
       </Card>
 
       <Card className="space-y-3 p-4">
-        <div className="text-sm font-semibold text-navy">Sections shown on the page</div>
+        <div className="text-sm font-semibold text-ink">Sections shown on the page</div>
         <div className="grid gap-2 sm:grid-cols-2">
           {SECTION_LABELS.map(([key, label]) => (
-            <label key={key} className="flex items-center gap-2 text-sm text-stone-600">
+            <label key={key} className="flex items-center gap-2 text-sm text-body">
               <input
                 type="checkbox"
                 checked={draft.sections[key]}
@@ -652,10 +652,10 @@ function ProfileTab({ profile, setProfile, toast }: { profile: Profile; setProfi
       </Card>
 
       <Card className="space-y-3 p-4">
-        <div className="text-sm font-semibold text-navy">Social links</div>
+        <div className="text-sm font-semibold text-ink">Social links</div>
         {draft.socials.map((s, i) => (
           <div key={s.icon} className="grid grid-cols-[90px_1fr] items-center gap-3">
-            <span className="text-sm capitalize text-stone-500">{s.label}</span>
+            <span className="text-sm capitalize text-muted">{s.label}</span>
             <input
               className={inputClass}
               placeholder="https://…  (leave blank to hide)"
@@ -672,14 +672,14 @@ function ProfileTab({ profile, setProfile, toast }: { profile: Profile; setProfi
 
       <Card className="space-y-3 p-4">
         <div className="flex items-center justify-between">
-          <div className="text-sm font-semibold text-navy">Testimonials</div>
+          <div className="text-sm font-semibold text-ink">Testimonials</div>
           <Button variant="ghost" size="sm" icon="plus" onClick={() => set('testimonials', [...testimonials, { quote: '', name: '', role: '' }])}>
             Add
           </Button>
         </div>
-        {testimonials.length === 0 && <p className="text-xs text-stone-400">None yet. Only ship real quotes.</p>}
+        {testimonials.length === 0 && <p className="text-xs text-faint">None yet. Only ship real quotes.</p>}
         {testimonials.map((t, i) => (
-          <div key={i} className="space-y-2 rounded-md border border-stone-200 p-3">
+          <div key={i} className="space-y-2 rounded-[2px] border border-hairline p-3">
             <textarea
               rows={2}
               className={inputClass}
@@ -720,7 +720,7 @@ function ProfileTab({ profile, setProfile, toast }: { profile: Profile; setProfi
         ))}
       </Card>
 
-      <div className="sticky bottom-0 -mx-1 flex justify-end border-t border-stone-200 bg-stone-50/90 px-1 py-3 backdrop-blur">
+      <div className="sticky bottom-0 -mx-1 flex justify-end border-t border-hairline bg-paper/90 px-1 py-3 backdrop-blur">
         <Button variant="primary" loading={saving} onClick={save}>
           Save profile
         </Button>
@@ -763,19 +763,19 @@ function LeadsTab({ leads, reload, toast }: { leads: LinkLead[]; reload: () => P
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold text-navy">Leads</h2>
-        <a href="/api/admin/links/leads?format=csv" className="inline-flex items-center gap-1.5 text-sm font-medium text-stone-600 hover:text-navy">
+        <h2 className="text-lg font-bold text-ink">Leads</h2>
+        <a href="/api/admin/links/leads?format=csv" className="inline-flex items-center gap-1.5 text-sm font-medium text-body hover:text-ink">
           <Icon name="download" className="h-4 w-4" /> Export CSV
         </a>
       </div>
 
       {leads.length === 0 ? (
-        <Card className="p-6 text-sm text-stone-400">No leads yet. Submissions from the /links contact form land here.</Card>
+        <Card className="p-6 text-sm text-faint">No leads yet. Submissions from the /links contact form land here.</Card>
       ) : (
         <Card className="overflow-x-auto p-0">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-stone-200 text-left text-xs uppercase tracking-wide text-stone-400">
+              <tr className="border-b border-hairline text-left text-xs uppercase tracking-wide text-faint">
                 <th className="px-4 py-2 font-medium">Name</th>
                 <th className="px-4 py-2 font-medium">Phone</th>
                 <th className="px-4 py-2 font-medium">Project</th>
@@ -784,27 +784,27 @@ function LeadsTab({ leads, reload, toast }: { leads: LinkLead[]; reload: () => P
                 <th className="px-4 py-2" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-stone-100">
+            <tbody className="divide-y divide-hairline">
               {leads.map((l) => (
                 <Fragment key={l.id}>
                   <tr className="align-top">
-                    <td className="px-4 py-2.5 font-medium text-navy">
-                      <button onClick={() => setOpen(open === l.id ? null : l.id)} className="hover:text-accent">
+                    <td className="px-4 py-2.5 font-medium text-ink">
+                      <button onClick={() => setOpen(open === l.id ? null : l.id)} className="hover:text-maroon">
                         {l.name || '—'}
                       </button>
                     </td>
                     <td className="px-4 py-2.5">
-                      <a href={`tel:${l.phone}`} className="text-stone-600 hover:text-accent">
+                      <a href={`tel:${l.phone}`} className="text-body hover:text-maroon">
                         {l.phone}
                       </a>
                     </td>
-                    <td className="px-4 py-2.5 text-stone-600">{l.projectType || '—'}</td>
-                    <td className="px-4 py-2.5 text-stone-400">{fmt(l.createdAt)}</td>
+                    <td className="px-4 py-2.5 text-body">{l.projectType || '—'}</td>
+                    <td className="px-4 py-2.5 text-faint">{fmt(l.createdAt)}</td>
                     <td className="px-4 py-2.5">
                       <select
                         value={l.status}
                         onChange={(e) => setStatus(l.id, e.target.value)}
-                        className="rounded-md border border-stone-200 bg-white px-2 py-1 text-xs"
+                        className="rounded-[2px] border border-hairline bg-white px-2 py-1 text-xs"
                       >
                         {LEAD_STATUSES.map((s) => (
                           <option key={s} value={s}>
@@ -821,8 +821,8 @@ function LeadsTab({ leads, reload, toast }: { leads: LinkLead[]; reload: () => P
                   </tr>
                   {open === l.id && l.notes && (
                     <tr>
-                      <td colSpan={6} className="bg-stone-50 px-4 py-3 text-sm text-stone-600">
-                        <span className="font-medium text-stone-500">Notes:</span> {l.notes}
+                      <td colSpan={6} className="bg-paper px-4 py-3 text-sm text-body">
+                        <span className="font-medium text-muted">Notes:</span> {l.notes}
                       </td>
                     </tr>
                   )}
@@ -832,7 +832,7 @@ function LeadsTab({ leads, reload, toast }: { leads: LinkLead[]; reload: () => P
           </table>
         </Card>
       )}
-      <p className="text-xs text-stone-400">
+      <p className="text-xs text-faint">
         Leads are stored here and never lost. Email/SMS forwarding to hello@macont.com needs an email provider wired up (not yet
         configured) — until then, check this tab or export the CSV.
       </p>

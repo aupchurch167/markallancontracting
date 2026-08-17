@@ -88,7 +88,7 @@ export function ClientLogos() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-24 text-stone-400">
+      <div className="flex items-center justify-center py-24 text-faint">
         <Spinner />
       </div>
     );
@@ -98,8 +98,8 @@ export function ClientLogos() {
     <div className="mx-auto max-w-5xl space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-navy">Client logos</h1>
-          <p className="mt-1 text-sm text-stone-500">
+          <h1 className="font-display text-2xl font-bold uppercase text-ink">Client logos</h1>
+          <p className="mt-1 text-sm text-muted">
             Logos of clients you&apos;ve worked with. They show as a strip on the home page. Use
             transparent PNGs where you can. Nothing shows until at least one is added.
           </p>
@@ -129,14 +129,14 @@ export function ClientLogos() {
       ) : null}
 
       {logos.length === 0 ? (
-        <Card className="p-8 text-center text-sm text-stone-500">
-          No logos yet. Use <span className="font-medium text-navy">Add logos</span> above, then Save.
+        <Card className="p-8 text-center text-sm text-muted">
+          No logos yet. Use <span className="font-medium text-ink">Add logos</span> above, then Save.
         </Card>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {logos.map((logo, i) => (
             <Card key={`${logo.url}-${i}`} className="p-3">
-              <div className="flex h-24 items-center justify-center rounded bg-stone-50 p-4">
+              <div className="flex h-24 items-center justify-center rounded bg-paper p-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={logo.url} alt={logo.name} className="max-h-full max-w-full object-contain" />
               </div>
@@ -151,7 +151,7 @@ export function ClientLogos() {
                   <button
                     onClick={() => move(i, -1)}
                     disabled={i === 0}
-                    className="rounded border border-stone-200 px-2 py-1 text-stone-600 disabled:opacity-40"
+                    className="rounded border border-hairline px-2 py-1 text-body disabled:opacity-40"
                     aria-label="Move earlier"
                   >
                     ←
@@ -159,7 +159,7 @@ export function ClientLogos() {
                   <button
                     onClick={() => move(i, 1)}
                     disabled={i === logos.length - 1}
-                    className="rounded border border-stone-200 px-2 py-1 text-stone-600 disabled:opacity-40"
+                    className="rounded border border-hairline px-2 py-1 text-body disabled:opacity-40"
                     aria-label="Move later"
                   >
                     →
@@ -178,7 +178,7 @@ export function ClientLogos() {
         <Button variant="primary" icon="check" loading={saving} onClick={save}>
           Save
         </Button>
-        <span className="text-xs text-stone-400">
+        <span className="text-xs text-faint">
           <Icon name="info" className="mr-1 inline h-3.5 w-3.5" />
           Changes go live immediately after saving.
         </span>

@@ -354,7 +354,7 @@ export function ContentEditor({
   // ---- Loading / create-brief screens ----
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-24 text-stone-400">
+      <div className="flex items-center justify-center py-24 text-faint">
         <Spinner />
       </div>
     );
@@ -366,10 +366,10 @@ export function ContentEditor({
       <div className="mx-auto max-w-2xl space-y-5">
         <BackLink onBack={onBack} label={`Back to ${contentType === 'post' ? 'posts' : 'projects'}`} />
         <div>
-          <h1 className="text-2xl font-bold text-navy">
+          <h1 className="font-display text-2xl font-bold uppercase text-ink">
             New {contentType === 'post' ? 'blog post' : 'project'}
           </h1>
-          <p className="mt-1 text-sm text-stone-500">
+          <p className="mt-1 text-sm text-muted">
             Give Claude a brief and any real facts. You&apos;ll review and edit everything before it
             goes live.
           </p>
@@ -391,8 +391,8 @@ export function ContentEditor({
           </Field>
 
           {contentType === 'post' && (
-            <div className="space-y-4 rounded-lg border border-stone-200 bg-stone-50 p-3">
-              <div className="text-xs font-semibold uppercase tracking-wide text-stone-500">
+            <div className="space-y-4 rounded-[2px] border border-hairline bg-paper p-3">
+              <div className="text-xs font-semibold uppercase tracking-wide text-muted">
                 SEO &amp; targeting{' '}
                 <span className="font-normal normal-case">(optional — blank lets Claude choose)</span>
               </div>
@@ -478,14 +478,14 @@ export function ContentEditor({
         onCancel={() => setPhotoModalOpen(false)}
       />
       {/* Sticky action bar */}
-      <div className="sticky top-0 z-30 -mx-5 mb-6 flex items-center gap-3 border-b border-stone-200 bg-stone-50/90 px-5 py-3 backdrop-blur sm:-mx-8 sm:px-8">
-        <button onClick={onBack} className="flex items-center gap-1.5 text-sm font-medium text-stone-500 hover:text-navy">
+      <div className="sticky top-0 z-30 -mx-5 mb-6 flex items-center gap-3 border-b border-hairline bg-paper/90 px-5 py-3 backdrop-blur sm:-mx-8 sm:px-8">
+        <button onClick={onBack} className="flex items-center gap-1.5 text-sm font-medium text-muted hover:text-ink">
           <Icon name="arrowLeft" className="h-4 w-4" />
           Back
         </button>
         <div className="ml-1 hidden items-center gap-2 sm:flex">
           {editingId ? <StatusBadge status={content.status || 'draft'} /> : (
-            <span className="text-xs font-medium text-stone-400">New {contentType}</span>
+            <span className="text-xs font-medium text-faint">New {contentType}</span>
           )}
         </div>
         <div className="ml-auto flex items-center gap-2">
@@ -533,11 +533,11 @@ export function ContentEditor({
           {/* Body photos */}
           <Card className="space-y-3 p-5">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-navy">
+              <span className="text-sm font-medium text-ink">
                 Body photos — reference as{' '}
-                <code className="rounded bg-stone-100 px-1 text-xs">![caption](photo:0)</code>
+                <code className="rounded bg-paper-alt px-1 text-xs">![caption](photo:0)</code>
               </span>
-              <label className="flex cursor-pointer items-center gap-1 text-sm font-semibold text-accent hover:text-accent-700">
+              <label className="flex cursor-pointer items-center gap-1 text-sm font-semibold text-maroon hover:text-maroon-dark">
                 <Icon name="plus" className="h-4 w-4" /> Add photos
                 <input
                   type="file"
@@ -552,17 +552,17 @@ export function ContentEditor({
               <div className="flex flex-wrap gap-2">
                 {imagePreviews.map((src, i) => (
                   <div key={i} className="w-20">
-                    <div className="relative aspect-[4/3] overflow-hidden rounded bg-stone-100">
+                    <div className="relative aspect-[4/3] overflow-hidden rounded bg-paper-alt">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={src} alt="" className="h-full w-full object-cover" />
                     </div>
-                    <div className="mt-0.5 text-center text-[10px] text-stone-500">photo:{i}</div>
+                    <div className="mt-0.5 text-center text-[10px] text-muted">photo:{i}</div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-stone-400">
-                Attach photos, then drop <code className="rounded bg-stone-100 px-1">![](photo:0)</code>{' '}
+              <p className="text-xs text-faint">
+                Attach photos, then drop <code className="rounded bg-paper-alt px-1">![](photo:0)</code>{' '}
                 where you want each one in the body below.
               </p>
             )}
@@ -582,8 +582,8 @@ export function ContentEditor({
           {contentType === 'project' && (
             <Card className="space-y-3 p-5">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-navy">Gallery</span>
-                <label className="flex cursor-pointer items-center gap-1 text-sm font-semibold text-accent hover:text-accent-700">
+                <span className="text-sm font-medium text-ink">Gallery</span>
+                <label className="flex cursor-pointer items-center gap-1 text-sm font-semibold text-maroon hover:text-maroon-dark">
                   <Icon name="plus" className="h-4 w-4" /> Add photo
                   <input
                     type="file"
@@ -600,8 +600,8 @@ export function ContentEditor({
               {content.imageUrls && content.imageUrls.length > 0 ? (
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                   {content.imageUrls.map((img, i) => (
-                    <div key={`${img.url}-${i}`} className="overflow-hidden rounded-md border border-stone-200">
-                      <div className="relative aspect-[4/3] bg-stone-100">
+                    <div key={`${img.url}-${i}`} className="overflow-hidden rounded-[2px] border border-hairline">
+                      <div className="relative aspect-[4/3] bg-paper-alt">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={img.url} alt={img.alt || ''} className="h-full w-full object-cover" />
                       </div>
@@ -609,7 +609,7 @@ export function ContentEditor({
                         <button
                           onClick={() => editGalleryPhoto(i, img.url)}
                           disabled={photoBusy}
-                          className="font-medium text-navy hover:text-accent disabled:opacity-50"
+                          className="font-medium text-ink hover:text-maroon disabled:opacity-50"
                         >
                           Edit / crop
                         </button>
@@ -621,7 +621,7 @@ export function ContentEditor({
                   ))}
                 </div>
               ) : (
-                <p className="text-xs text-stone-400">
+                <p className="text-xs text-faint">
                   No gallery photos yet. Add photos — each is auto-cropped and can be AI-enhanced
                   before it&apos;s saved.
                 </p>
@@ -630,9 +630,9 @@ export function ContentEditor({
           )}
 
           {/* Refine with Claude */}
-          <Card className="space-y-2 bg-stone-50 p-4">
-            <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-stone-500">
-              <Icon name="sparkles" className="h-4 w-4 text-accent" /> Refine with Claude
+          <Card className="space-y-2 bg-paper p-4">
+            <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted">
+              <Icon name="sparkles" className="h-4 w-4 text-maroon" /> Refine with Claude
             </div>
             <textarea
               rows={2}
@@ -650,7 +650,7 @@ export function ContentEditor({
         {/* Right rail */}
         <div className="space-y-5">
           {verifyCount > 0 ? (
-            <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+            <div className="rounded-[2px] border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
               <span className="font-semibold">
                 {verifyCount} [VERIFY:] item{verifyCount === 1 ? '' : 's'} in the body.
               </span>{' '}
@@ -661,17 +661,17 @@ export function ContentEditor({
 
           {/* Cover / header image */}
           <Card className="space-y-3 p-4">
-            <div className="text-xs font-semibold uppercase tracking-wide text-stone-500">
+            <div className="text-xs font-semibold uppercase tracking-wide text-muted">
               {contentType === 'post' ? 'Header image' : 'Cover photo'}
             </div>
             {content.coverImageUrl ? (
-              <div className="relative aspect-[16/9] overflow-hidden rounded-md bg-stone-100">
+              <div className="relative aspect-[16/9] overflow-hidden rounded-[2px] bg-paper-alt">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={content.coverImageUrl} alt="Cover" className="h-full w-full object-cover" />
                 <button
                   onClick={editCover}
                   disabled={coverBusy || photoBusy}
-                  className="absolute left-2 top-2 rounded bg-white/90 px-2 py-1 text-xs font-medium text-navy hover:bg-white disabled:opacity-50"
+                  className="absolute left-2 top-2 rounded bg-white/90 px-2 py-1 text-xs font-medium text-ink hover:bg-white disabled:opacity-50"
                 >
                   Edit / crop
                 </button>
@@ -686,24 +686,24 @@ export function ContentEditor({
                 </button>
               </div>
             ) : (
-              <div className="flex aspect-[16/9] items-center justify-center rounded-md bg-stone-100 text-stone-300">
+              <div className="flex aspect-[16/9] items-center justify-center rounded-[2px] bg-paper-alt text-faint">
                 <Icon name="image" className="h-8 w-8" />
               </div>
             )}
             <label className="block">
-              <span className="text-xs font-medium text-stone-500">
+              <span className="text-xs font-medium text-muted">
                 Upload a photo{content.coverImageUrl ? ' (replaces current)' : ''}
               </span>
               <input
                 type="file"
                 accept="image/*"
                 disabled={coverBusy || photoBusy}
-                className="mt-1 block w-full text-xs text-stone-600 file:mr-3 file:rounded-md file:border-0 file:bg-stone-100 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-navy hover:file:bg-stone-200"
+                className="mt-1 block w-full text-xs text-body file:mr-3 file:rounded-[2px] file:border-0 file:bg-paper-alt file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-ink hover:file:bg-paper-alt"
                 onChange={(e) => uploadCover(e.target.files?.[0] || null)}
               />
             </label>
-            <div className="border-t border-stone-200 pt-3">
-              <span className="text-xs font-medium text-stone-500">Or generate one with AI</span>
+            <div className="border-t border-hairline pt-3">
+              <span className="text-xs font-medium text-muted">Or generate one with AI</span>
               <textarea
                 rows={2}
                 className={inputClass}
@@ -773,7 +773,7 @@ export function ContentEditor({
 
           {/* SEO */}
           <Card className="space-y-4 p-4">
-            <div className="text-xs font-semibold uppercase tracking-wide text-stone-500">SEO</div>
+            <div className="text-xs font-semibold uppercase tracking-wide text-muted">SEO</div>
             <Field label="Meta title">
               <input className={inputClass} value={content.metaTitle} onChange={(e) => patch({ metaTitle: e.target.value })} />
             </Field>
@@ -861,12 +861,12 @@ function GbpPostCard({
   return (
     <Card className="space-y-3 p-4">
       <div className="flex items-center justify-between">
-        <div className="text-xs font-semibold uppercase tracking-wide text-stone-500">Google Business Profile post</div>
+        <div className="text-xs font-semibold uppercase tracking-wide text-muted">Google Business Profile post</div>
         <Button variant="ghost" size="sm" icon={copied ? 'check' : 'copy'} onClick={copy} disabled={!value.trim()}>
           {copied ? 'Copied' : 'Copy'}
         </Button>
       </div>
-      <p className="text-xs text-stone-500">
+      <p className="text-xs text-muted">
         A ready-to-paste update for your Google Business Profile. Let Claude draft it from this post, tweak the wording, then
         copy. Only about the first {GBP_VISIBLE} characters show before “Read more,” so lead with the key point.
       </p>
@@ -881,10 +881,10 @@ function GbpPostCard({
         onChange={(e) => onChange(e.target.value)}
       />
       <div className="flex items-center justify-between text-xs">
-        <span className={len > GBP_VISIBLE ? 'text-stone-400' : 'text-green-600'}>
+        <span className={len > GBP_VISIBLE ? 'text-faint' : 'text-green-600'}>
           {len <= GBP_VISIBLE ? `${GBP_VISIBLE - len} left before “Read more”` : 'Past the visible preview length'}
         </span>
-        <span className={over ? 'font-semibold text-red-600' : 'text-stone-400'}>
+        <span className={over ? 'font-semibold text-red-600' : 'text-faint'}>
           {len.toLocaleString()} / {GBP_LIMIT.toLocaleString()}
         </span>
       </div>
@@ -909,21 +909,21 @@ function MarkdownField({
   return (
     <div>
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-sm font-medium text-navy">Body (Markdown)</span>
+        <span className="text-sm font-medium text-ink">Body (Markdown)</span>
         <div className="flex items-center gap-3">
-          <span className="text-xs text-stone-400">{wordCount} words</span>
+          <span className="text-xs text-faint">{wordCount} words</span>
           <div className="flex gap-1 text-xs">
             <button
               type="button"
               onClick={() => setPreview(false)}
-              className={`rounded px-2 py-1 font-medium ${!preview ? 'bg-navy text-white' : 'text-stone-500'}`}
+              className={`rounded px-2 py-1 font-medium ${!preview ? 'bg-ink text-white' : 'text-muted'}`}
             >
               Write
             </button>
             <button
               type="button"
               onClick={() => setPreview(true)}
-              className={`rounded px-2 py-1 font-medium ${preview ? 'bg-navy text-white' : 'text-stone-500'}`}
+              className={`rounded px-2 py-1 font-medium ${preview ? 'bg-ink text-white' : 'text-muted'}`}
             >
               Preview
             </button>
@@ -931,7 +931,7 @@ function MarkdownField({
         </div>
       </div>
       {preview ? (
-        <div className="min-h-[420px] rounded-md border border-stone-200 bg-white p-5">
+        <div className="min-h-[420px] rounded-[2px] border border-hairline bg-white p-5">
           <MarkdownBody>{previewMarkdown}</MarkdownBody>
         </div>
       ) : (
@@ -939,7 +939,7 @@ function MarkdownField({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           spellCheck
-          className="min-h-[420px] w-full rounded-md border border-stone-200 px-3 py-2 font-mono text-sm leading-relaxed text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+          className="min-h-[420px] w-full rounded-[2px] border border-hairline px-3 py-2 font-mono text-sm leading-relaxed text-ink focus:border-maroon focus:outline-none focus:ring-1 focus:ring-maroon"
         />
       )}
     </div>
@@ -948,7 +948,7 @@ function MarkdownField({
 
 function BackLink({ onBack, label }: { onBack: () => void; label: string }) {
   return (
-    <button onClick={onBack} className="flex items-center gap-1.5 text-sm font-medium text-stone-500 hover:text-navy">
+    <button onClick={onBack} className="flex items-center gap-1.5 text-sm font-medium text-muted hover:text-ink">
       <Icon name="arrowLeft" className="h-4 w-4" />
       {label}
     </button>
@@ -972,19 +972,19 @@ function FileInput({
 }) {
   return (
     <div>
-      <span className="text-sm font-medium text-navy">{label}</span>
+      <span className="text-sm font-medium text-ink">{label}</span>
       <input
         type="file"
         multiple
         accept={accept}
-        className="mt-1 block w-full text-sm text-stone-600 file:mr-3 file:rounded-md file:border-0 file:bg-stone-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-navy hover:file:bg-stone-200"
+        className="mt-1 block w-full text-sm text-body file:mr-3 file:rounded-[2px] file:border-0 file:bg-paper-alt file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-ink hover:file:bg-paper-alt"
         onChange={(e) => onAdd(e.target.files)}
       />
-      <p className="mt-1 text-xs text-stone-400">{hint}</p>
+      <p className="mt-1 text-xs text-faint">{hint}</p>
       {files.length > 0 ? (
         <ul className="mt-2 space-y-1">
           {files.map((f, i) => (
-            <li key={i} className="flex items-center justify-between rounded bg-stone-50 px-2 py-1 text-xs text-stone-600">
+            <li key={i} className="flex items-center justify-between rounded bg-paper px-2 py-1 text-xs text-body">
               <span className="truncate">{f.name}</span>
               <button onClick={() => onRemove(i)} className="ml-2 text-red-600 hover:underline">
                 remove

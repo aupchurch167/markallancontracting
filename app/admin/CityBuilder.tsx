@@ -146,8 +146,8 @@ export function CityBuilder() {
   return (
     <div className="mx-auto max-w-4xl space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-navy">City page builder</h1>
-        <p className="mt-1 max-w-2xl text-sm text-stone-500">
+        <h1 className="font-display text-2xl font-bold uppercase text-ink">City page builder</h1>
+        <p className="mt-1 max-w-2xl text-sm text-muted">
           Facts in, copy out. Fill in a real project and its county permitting reality, and Claude drafts one
           service×city page in the MAC voice. It saves as a <strong>draft</strong> — you review and publish below.
           No project, no page.
@@ -182,8 +182,8 @@ export function CityBuilder() {
           </div>
         </div>
 
-        <div className="rounded-md border border-stone-200 bg-stone-50 p-4">
-          <label className="flex items-center gap-2 text-sm font-medium text-navy">
+        <div className="rounded-[2px] border border-hairline bg-paper p-4">
+          <label className="flex items-center gap-2 text-sm font-medium text-ink">
             <input type="checkbox" checked={f.clientNameable} onChange={(e) => set('clientNameable', e.target.checked)} />
             Client can be named on the page
           </label>
@@ -224,7 +224,7 @@ export function CityBuilder() {
             onChange={(e) => set('jurisdictionNotes', e.target.value)}
             placeholder="Permitted through Cobb County Community Development. Plan review ran about three weeks. Health-adjacent occupancy triggered an extra fire marshal walkthrough before CO."
           />
-          <div className={`mt-1 text-xs ${notesLen >= 120 ? 'text-green-600' : 'text-stone-400'}`}>
+          <div className={`mt-1 text-xs ${notesLen >= 120 ? 'text-green-600' : 'text-faint'}`}>
             {notesLen} / 120 minimum
           </div>
         </Field>
@@ -234,21 +234,21 @@ export function CityBuilder() {
             <input
               type="file"
               accept="image/*"
-              className="mt-1 block w-full text-xs text-stone-600 file:mr-3 file:rounded-md file:border-0 file:bg-stone-100 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-navy hover:file:bg-stone-200"
+              className="mt-1 block w-full text-xs text-body file:mr-3 file:rounded-[2px] file:border-0 file:bg-paper-alt file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-ink hover:file:bg-paper-alt"
               onChange={(e) => setPhoto(e.target.files?.[0] || null)}
             />
-            {photo && <div className="mt-1 text-xs text-stone-500">{photo.name}</div>}
+            {photo && <div className="mt-1 text-xs text-muted">{photo.name}</div>}
           </Field>
           <Field label="Photo alt text">
             <input className={inputClass} value={f.photoAlt} onChange={(e) => set('photoAlt', e.target.value)} placeholder="Completed treatment room corridor, Austell GA clinic buildout" />
           </Field>
         </div>
 
-        <div className="flex flex-wrap items-center gap-4 border-t border-stone-200 pt-4">
+        <div className="flex flex-wrap items-center gap-4 border-t border-hairline pt-4">
           <Button variant="primary" icon="sparkles" loading={busy} onClick={generate}>
             {busy ? 'Drafting…' : 'Generate draft'}
           </Button>
-          <label className="flex items-center gap-2 text-xs text-stone-500">
+          <label className="flex items-center gap-2 text-xs text-muted">
             <input type="checkbox" checked={f.forceDraft} onChange={(e) => set('forceDraft', e.target.checked)} />
             Create revision draft even if a published page exists
           </label>
@@ -298,15 +298,15 @@ export function CityBuilder() {
               href={result.data.path}
               target="_blank"
               rel="noreferrer"
-              className="text-sm font-semibold text-accent hover:text-accent-700"
+              className="text-sm font-semibold text-maroon hover:text-maroon-dark"
             >
               Preview page →
             </a>
           </div>
-          <div className="space-y-3 rounded-md bg-white p-4">
+          <div className="space-y-3 rounded-[2px] bg-white p-4">
             {Object.entries(result.data.draft).map(([k, v]) => (
               <div key={k}>
-                <div className="text-xs font-semibold uppercase tracking-wide text-stone-400">{k}</div>
+                <div className="text-xs font-semibold uppercase tracking-wide text-faint">{k}</div>
                 <div className="mt-0.5 whitespace-pre-wrap text-sm text-ink">{v}</div>
               </div>
             ))}
@@ -324,22 +324,22 @@ export function CityBuilder() {
 
       {/* Existing pages */}
       <div>
-        <h2 className="mb-3 text-lg font-bold text-navy">City pages</h2>
+        <h2 className="mb-3 text-lg font-bold text-ink">City pages</h2>
         {loadingList ? (
-          <div className="flex justify-center py-10 text-stone-400">
+          <div className="flex justify-center py-10 text-faint">
             <Spinner />
           </div>
         ) : items.length === 0 ? (
-          <Card className="p-6 text-sm text-stone-500">No city pages yet. Generate one above.</Card>
+          <Card className="p-6 text-sm text-muted">No city pages yet. Generate one above.</Card>
         ) : (
-          <Card className="divide-y divide-stone-100 p-0">
+          <Card className="divide-y divide-hairline p-0">
             {items.map((it) => (
               <div key={it.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-sm font-medium text-navy">
+                  <div className="truncate text-sm font-medium text-ink">
                     {it.cityName}, {it.cityState}
                   </div>
-                  <div className="truncate text-xs text-stone-400">
+                  <div className="truncate text-xs text-faint">
                     /project-types/{it.serviceSlug}/{it.citySlug}
                   </div>
                 </div>
@@ -349,7 +349,7 @@ export function CityBuilder() {
                     href={`/project-types/${it.serviceSlug}/${it.citySlug}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="rounded-md px-2 py-1 text-xs font-medium text-stone-600 hover:bg-stone-100 hover:text-navy"
+                    className="rounded-[2px] px-2 py-1 text-xs font-medium text-body hover:bg-paper-alt hover:text-ink"
                   >
                     Preview
                   </a>

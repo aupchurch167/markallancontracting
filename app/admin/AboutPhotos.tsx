@@ -90,13 +90,13 @@ export function AboutPhotos() {
 
   if (loading) {
     return (
-      <div className="flex justify-center py-10 text-stone-400">
+      <div className="flex justify-center py-10 text-faint">
         <Spinner />
       </div>
     );
   }
   if (!configured) {
-    return <Card className="p-5 text-sm text-stone-500">The database isn&apos;t configured, so About photos can&apos;t be managed yet.</Card>;
+    return <Card className="p-5 text-sm text-muted">The database isn&apos;t configured, so About photos can&apos;t be managed yet.</Card>;
   }
 
   return (
@@ -107,20 +107,20 @@ export function AboutPhotos() {
           return (
             <Card key={key} className="space-y-3 p-4">
               <div>
-                <div className="text-sm font-semibold text-navy">{label}</div>
-                <div className="mt-0.5 text-xs text-stone-400">{hint}</div>
+                <div className="text-sm font-semibold text-ink">{label}</div>
+                <div className="mt-0.5 text-xs text-faint">{hint}</div>
               </div>
-              <div className="relative aspect-[16/10] overflow-hidden rounded-lg bg-stone-100">
+              <div className="relative aspect-[16/10] overflow-hidden rounded-[2px] bg-paper-alt">
                 {slot.url ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={slot.url} alt={slot.alt} className="h-full w-full object-cover" />
                 ) : (
-                  <div className="flex h-full items-center justify-center text-stone-300">
+                  <div className="flex h-full items-center justify-center text-faint">
                     <Icon name="image" className="h-6 w-6" />
                   </div>
                 )}
               </div>
-              <label className="block cursor-pointer text-sm font-medium text-accent hover:text-accent-700">
+              <label className="block cursor-pointer text-sm font-medium text-maroon hover:text-maroon-dark">
                 <span className="inline-flex items-center gap-1.5">
                   <Icon name="upload" className="h-4 w-4" />
                   {uploading === key ? 'Uploading…' : slot.url ? 'Replace' : 'Upload'}

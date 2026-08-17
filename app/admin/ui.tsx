@@ -41,8 +41,8 @@ export interface EditorTarget {
 // Inputs
 // ---------------------------------------------------------------------------
 export const inputClass =
-  'mt-1 w-full rounded-md border border-stone-200 bg-white px-3 py-2 text-sm text-ink ' +
-  'placeholder:text-stone-400 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent';
+  'mt-1 w-full rounded-[2px] border border-hairline bg-paper px-3 py-2.5 text-sm text-ink ' +
+  'placeholder:text-faint focus:border-maroon focus:outline-none';
 
 export function Field({
   label,
@@ -55,8 +55,8 @@ export function Field({
 }) {
   return (
     <label className="block">
-      <span className="text-sm font-medium text-navy">{label}</span>
-      {hint ? <span className="ml-2 text-xs font-normal text-stone-400">{hint}</span> : null}
+      <span className="text-[13px] font-semibold uppercase tracking-[0.06em] text-muted">{label}</span>
+      {hint ? <span className="ml-2 text-xs font-normal normal-case text-faint">{hint}</span> : null}
       {children}
     </label>
   );
@@ -69,15 +69,15 @@ type ButtonVariant = 'primary' | 'navy' | 'ghost' | 'danger' | 'subtle';
 type ButtonSize = 'sm' | 'md';
 
 const BUTTON_BASE =
-  'inline-flex items-center justify-center gap-2 rounded-md font-semibold transition-colors ' +
-  'focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-60';
+  'inline-flex items-center justify-center gap-2 rounded-[2px] font-semibold transition-colors ' +
+  'focus:outline-none focus:ring-2 focus:ring-maroon focus:ring-offset-1 focus:ring-offset-paper disabled:cursor-not-allowed disabled:opacity-60';
 
 const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
-  primary: 'bg-accent text-white shadow-sm hover:bg-accent-700',
-  navy: 'bg-navy text-white shadow-sm hover:bg-navy-600',
-  ghost: 'border border-stone-200 bg-white text-navy hover:bg-stone-50',
-  danger: 'border border-red-200 bg-white text-red-600 hover:bg-red-50',
-  subtle: 'text-stone-600 hover:bg-stone-100 hover:text-navy',
+  primary: 'bg-maroon text-paper hover:bg-maroon-dark',
+  navy: 'bg-ink text-paper hover:bg-maroon',
+  ghost: 'border border-hairline bg-[#FFFFFF] text-ink hover:border-maroon hover:text-maroon',
+  danger: 'border border-red-300 bg-[#FFFFFF] text-red-700 hover:bg-red-50',
+  subtle: 'text-muted hover:bg-paper-alt hover:text-ink',
 };
 
 const BUTTON_SIZES: Record<ButtonSize, string> = {
@@ -120,14 +120,10 @@ export function StatusBadge({ status }: { status: string }) {
   const published = status === 'published';
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-        published ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+      className={`inline-flex items-center rounded-[2px] border px-2.5 py-1 text-[12px] font-semibold uppercase tracking-[0.06em] ${
+        published ? 'border-maroon bg-maroon/10 text-maroon' : 'border-hairline text-muted'
       }`}
     >
-      <span
-        className={`h-1.5 w-1.5 rounded-full ${published ? 'bg-green-500' : 'bg-amber-500'}`}
-        aria-hidden
-      />
       {published ? 'Published' : 'Draft'}
     </span>
   );
@@ -138,7 +134,7 @@ export function StatusBadge({ status }: { status: string }) {
 // ---------------------------------------------------------------------------
 export function Card({ className = '', children }: { className?: string; children: ReactNode }) {
   return (
-    <div className={`rounded-xl border border-stone-200 bg-white shadow-sm ${className}`}>
+    <div className={`rounded-[2px] border border-hairline bg-[#FFFFFF] ${className}`}>
       {children}
     </div>
   );
@@ -154,12 +150,12 @@ export function EmptyState({
   children?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-stone-200 bg-white px-6 py-16 text-center">
-      <div className="rounded-full bg-stone-100 p-3 text-stone-400">
+    <div className="flex flex-col items-center justify-center rounded-[2px] border border-dashed border-hairline bg-[#FFFFFF] px-6 py-16 text-center">
+      <div className="text-faint">
         <Icon name={icon} className="h-6 w-6" />
       </div>
-      <h3 className="mt-4 font-semibold text-navy">{title}</h3>
-      {children ? <p className="mt-1 max-w-sm text-sm text-stone-500">{children}</p> : null}
+      <h3 className="mt-4 font-display text-lg font-bold uppercase text-ink">{title}</h3>
+      {children ? <p className="mt-1 max-w-sm text-sm text-muted">{children}</p> : null}
     </div>
   );
 }
@@ -199,10 +195,10 @@ export function ConfirmDialog({
 }) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy-900/40 p-4">
-      <Card className="w-full max-w-sm p-5">
-        <h3 className="font-bold text-navy">{title}</h3>
-        {body ? <div className="mt-2 text-sm text-stone-600">{body}</div> : null}
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4">
+      <Card className="w-full max-w-sm p-5 shadow-[0_16px_40px_rgba(29,21,23,0.06)]">
+        <h3 className="font-display text-lg font-bold uppercase text-ink">{title}</h3>
+        {body ? <div className="mt-2 text-sm text-body">{body}</div> : null}
         <div className="mt-5 flex justify-end gap-2">
           <Button variant="subtle" onClick={onCancel} disabled={busy}>
             Cancel
@@ -276,21 +272,19 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   );
 }
 
-const TOAST_STYLES: Record<ToastKind, { bar: string; icon: IconName; iconColor: string }> = {
-  success: { bar: 'border-green-200', icon: 'check', iconColor: 'text-green-600' },
-  error: { bar: 'border-red-200', icon: 'alert', iconColor: 'text-red-600' },
-  info: { bar: 'border-stone-200', icon: 'info', iconColor: 'text-accent' },
+const TOAST_STYLES: Record<ToastKind, { icon: IconName; iconColor: string }> = {
+  success: { icon: 'check', iconColor: 'text-maroon' },
+  error: { icon: 'alert', iconColor: 'text-red-700' },
+  info: { icon: 'info', iconColor: 'text-maroon' },
 };
 
 function ToastItem({ toast, onClose }: { toast: Toast; onClose: () => void }) {
   const s = TOAST_STYLES[toast.kind];
   return (
-    <div
-      className={`pointer-events-auto flex items-start gap-3 rounded-lg border bg-white px-4 py-3 shadow-lg ${s.bar}`}
-    >
+    <div className="pointer-events-auto flex items-start gap-3 rounded-[2px] border border-hairline border-l-2 border-l-maroon bg-[#FFFFFF] px-4 py-3 shadow-[0_16px_40px_rgba(29,21,23,0.06)]">
       <Icon name={s.icon} className={`mt-0.5 h-5 w-5 shrink-0 ${s.iconColor}`} />
       <p className="flex-1 text-sm text-ink">{toast.message}</p>
-      <button onClick={onClose} className="text-stone-400 hover:text-navy" aria-label="Dismiss">
+      <button onClick={onClose} className="text-faint hover:text-ink" aria-label="Dismiss">
         <Icon name="close" className="h-4 w-4" />
       </button>
     </div>
