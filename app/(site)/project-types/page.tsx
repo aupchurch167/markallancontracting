@@ -25,15 +25,15 @@ export default async function ProjectTypesHub() {
 
   return (
     <>
-      <section className="bg-navy text-white">
+      <section className="bg-ink text-white">
         <div className="container-page py-16 sm:py-20">
-          <p className="text-sm font-semibold uppercase tracking-widest text-accent">
+          <p className="text-sm font-semibold uppercase tracking-widest text-maroon">
             Project types
           </p>
           <h1 className="mt-3 max-w-3xl text-4xl font-bold text-white sm:text-5xl">
             The kinds of space we build
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-stone-100/90">
+          <p className="mt-4 max-w-2xl text-lg text-cream-muted">
             Commercial interiors and repairs across Georgia, Tennessee, Alabama,
             and South Carolina. Projects from $50K to $500K.
           </p>
@@ -49,10 +49,10 @@ export default async function ProjectTypesHub() {
               <Link
                 key={s.slug}
                 href={`/project-types/${s.slug}`}
-                className="group block border-2 border-brass/40 bg-bone transition-colors hover:border-brass"
+                className="group block border-2 border-hairline bg-paper transition-colors hover:border-hairline"
               >
                 {cover ? (
-                  <div className="relative aspect-[16/9] overflow-hidden bg-stone-100">
+                  <div className="relative aspect-[16/9] overflow-hidden bg-paper-alt">
                     <Image
                       src={cover}
                       alt={s.name}
@@ -63,11 +63,11 @@ export default async function ProjectTypesHub() {
                   </div>
                 ) : null}
                 <div className="p-5 sm:p-7">
-                  <div className="text-lg font-bold uppercase tracking-heading text-oxblood group-hover:text-brass sm:text-xl">
+                  <div className="text-lg font-bold uppercase tracking-heading text-ink group-hover:text-maroon sm:text-xl">
                     {s.name}
                   </div>
-                  <p className="mt-2 line-clamp-2 text-sm text-oxblood/65 sm:text-base">{c.problem}</p>
-                  <div className="mt-4 text-[10px] font-medium uppercase tracking-label text-brass">
+                  <p className="mt-2 line-clamp-2 text-sm text-body sm:text-base">{c.problem}</p>
+                  <div className="mt-4 text-[10px] font-medium uppercase tracking-label text-maroon">
                     Typical range {c.typicalRange}
                   </div>
                 </div>
@@ -82,33 +82,33 @@ export default async function ProjectTypesHub() {
         <div className="grid gap-6 sm:grid-cols-2">
           <Link
             href="/services"
-            className="group rounded-xl border border-stone-200 bg-paper p-7 transition-colors hover:border-accent"
+            className="group rounded-[2px] border border-hairline bg-paper p-7 transition-colors hover:border-maroon"
           >
             <Eyebrow>How we engage</Eyebrow>
-            <div className="mt-2 text-xl font-bold text-navy group-hover:text-accent">
+            <div className="mt-2 text-xl font-bold text-ink group-hover:text-maroon">
               Our services
             </div>
-            <p className="mt-2 text-stone-600">
+            <p className="mt-2 text-body">
               Pre-construction, general contracting, remodeling, and new
               construction — the ways we take a project on.
             </p>
-            <span className="mt-4 inline-block text-sm font-semibold text-accent">
+            <span className="mt-4 inline-block text-sm font-semibold text-maroon">
               See our services →
             </span>
           </Link>
           <Link
             href="/markets"
-            className="group rounded-xl border border-stone-200 bg-paper p-7 transition-colors hover:border-accent"
+            className="group rounded-[2px] border border-hairline bg-paper p-7 transition-colors hover:border-maroon"
           >
             <Eyebrow>Who we work for</Eyebrow>
-            <div className="mt-2 text-xl font-bold text-navy group-hover:text-accent">
+            <div className="mt-2 text-xl font-bold text-ink group-hover:text-maroon">
               Built for your side of the deal
             </div>
-            <p className="mt-2 text-stone-600">
+            <p className="mt-2 text-body">
               Brokers, property managers, franchise and restaurant operators,
               multifamily, and facility managers.
             </p>
-            <span className="mt-4 inline-block text-sm font-semibold text-accent">
+            <span className="mt-4 inline-block text-sm font-semibold text-maroon">
               Who we work for →
             </span>
           </Link>

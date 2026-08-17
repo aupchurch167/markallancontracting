@@ -65,15 +65,15 @@ export default async function GeneralContractingPage() {
         })}
       />
 
-      <section className="bg-navy text-white">
+      <section className="bg-ink text-white">
         <div className="container-page py-16 sm:py-20">
-          <p className="text-sm font-semibold uppercase tracking-widest text-accent">
+          <p className="text-sm font-semibold uppercase tracking-widest text-maroon">
             General contracting
           </p>
           <h1 className="mt-3 max-w-3xl text-4xl font-bold text-white sm:text-5xl">
             We run the whole build
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-stone-100/90">
+          <p className="mt-4 max-w-2xl text-lg text-cream-muted">
             Your commercial general contractor from the first walk to the
             certificate of occupancy. Family-owned since 1999, self-performing the
             interior trades, across Georgia, Tennessee, Alabama, and South Carolina.
@@ -87,19 +87,19 @@ export default async function GeneralContractingPage() {
       {/* Value */}
       <Section>
         <Eyebrow>Why us</Eyebrow>
-        <h2 className="mt-2 text-2xl font-bold text-navy sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-bold text-ink sm:text-3xl">
           What you get with a GC like us
         </h2>
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {VALUE.map((v) => (
-            <div key={v.name} className="rounded-lg border border-stone-200 bg-paper p-6">
-              <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-navy/5 text-navy">
+            <div key={v.name} className="rounded-[2px] border border-hairline bg-paper p-6">
+              <span className="flex h-11 w-11 items-center justify-center rounded-[2px] bg-ink/5 text-ink">
                 <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={1.6}>
                   {v.icon}
                 </svg>
               </span>
-              <h3 className="mt-4 font-bold text-navy">{v.name}</h3>
-              <p className="mt-1 text-sm leading-relaxed text-stone-600">{v.body}</p>
+              <h3 className="mt-4 font-bold text-ink">{v.name}</h3>
+              <p className="mt-1 text-sm leading-relaxed text-body">{v.body}</p>
             </div>
           ))}
         </div>
@@ -108,32 +108,32 @@ export default async function GeneralContractingPage() {
       {/* Self-perform vs. manage */}
       <Section muted>
         <Eyebrow>How the work gets done</Eyebrow>
-        <h2 className="mt-2 text-2xl font-bold text-navy sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-bold text-ink sm:text-3xl">
           What we self-perform, and what we manage
         </h2>
-        <p className="mt-3 max-w-2xl text-stone-600">
+        <p className="mt-3 max-w-2xl text-body">
           Running the interior trades in-house means fewer subs to chase and one
           party accountable for the finish. Licensed specialty trades are scheduled
           and supervised the same way.
         </p>
         <div className="mt-8 grid gap-6 lg:grid-cols-2">
-          <div className="rounded-xl border border-accent bg-paper p-7 ring-1 ring-accent/20">
-            <h3 className="text-lg font-bold text-navy">We self-perform</h3>
+          <div className="rounded-[2px] border border-maroon bg-paper p-7 ring-1 ring-accent/20">
+            <h3 className="text-lg font-bold text-ink">We self-perform</h3>
             <ul className="mt-4 grid gap-2 sm:grid-cols-2">
               {SELF_PERFORM.map((t) => (
-                <li key={t} className="flex items-start gap-2 text-stone-600">
-                  <span aria-hidden className="mt-1 text-accent">✓</span>
+                <li key={t} className="flex items-start gap-2 text-body">
+                  <span aria-hidden className="mt-1 text-maroon">✓</span>
                   {t}
                 </li>
               ))}
             </ul>
           </div>
-          <div className="rounded-xl border border-stone-200 bg-paper p-7">
-            <h3 className="text-lg font-bold text-navy">We manage & supervise</h3>
+          <div className="rounded-[2px] border border-hairline bg-paper p-7">
+            <h3 className="text-lg font-bold text-ink">We manage & supervise</h3>
             <ul className="mt-4 grid gap-2 sm:grid-cols-2">
               {MANAGED.map((t) => (
-                <li key={t} className="flex items-start gap-2 text-stone-600">
-                  <span aria-hidden className="mt-1 text-stone-400">•</span>
+                <li key={t} className="flex items-start gap-2 text-body">
+                  <span aria-hidden className="mt-1 text-faint">•</span>
                   {t}
                 </li>
               ))}
@@ -145,7 +145,7 @@ export default async function GeneralContractingPage() {
       {/* Project types we take on */}
       <Section>
         <Eyebrow>What we build</Eyebrow>
-        <h2 className="mt-2 text-2xl font-bold text-navy sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-bold text-ink sm:text-3xl">
           The kinds of space we take on
         </h2>
         <div className="mt-6 flex flex-wrap gap-3">
@@ -153,7 +153,7 @@ export default async function GeneralContractingPage() {
             <Link
               key={s.slug}
               href={`/project-types/${s.slug}`}
-              className="rounded-full border border-stone-200 bg-stone-50 px-4 py-2 text-sm font-medium text-navy hover:border-accent hover:text-accent"
+              className="rounded-full border border-hairline bg-paper px-4 py-2 text-sm font-medium text-ink hover:border-maroon hover:text-maroon"
             >
               {s.name}
             </Link>
@@ -164,7 +164,7 @@ export default async function GeneralContractingPage() {
       {/* How a job runs */}
       <Section muted>
         <Eyebrow>How it works</Eyebrow>
-        <p className="mt-2 max-w-2xl text-stone-600">
+        <p className="mt-2 max-w-2xl text-body">
           Same three steps on every job — what changes is the scope, not the process.
         </p>
         <div className="mt-8">
@@ -172,7 +172,7 @@ export default async function GeneralContractingPage() {
         </div>
         <Link
           href="/construction-process"
-          className="mt-8 inline-block font-semibold text-accent hover:text-accent-700"
+          className="mt-8 inline-block font-semibold text-maroon hover:text-maroon-dark"
         >
           See how a job runs day to day →
         </Link>
@@ -180,14 +180,14 @@ export default async function GeneralContractingPage() {
 
       {/* Range */}
       <Section>
-        <div className="mx-auto max-w-3xl rounded-xl border border-navy/15 bg-navy/[0.03] p-8 text-center">
-          <div className="text-sm font-semibold uppercase tracking-wider text-stone-400">
+        <div className="mx-auto max-w-3xl rounded-[2px] border border-navy/15 bg-ink/[0.03] p-8 text-center">
+          <div className="text-sm font-semibold uppercase tracking-wider text-faint">
             Project range
           </div>
-          <div className="mt-2 text-3xl font-bold text-navy sm:text-4xl">
+          <div className="mt-2 text-3xl font-bold text-ink sm:text-4xl">
             {SITE.projectRange}
           </div>
-          <p className="mt-3 text-stone-600">
+          <p className="mt-3 text-body">
             Commercial interiors, repairs, and shell work across the Southeast.
           </p>
         </div>

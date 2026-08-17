@@ -125,15 +125,15 @@ export default async function PreConstructionPage() {
         ]}
       />
 
-      <section className="bg-navy text-white">
+      <section className="bg-ink text-white">
         <div className="container-page py-16 sm:py-20">
-          <p className="text-sm font-semibold uppercase tracking-widest text-accent">
+          <p className="text-sm font-semibold uppercase tracking-widest text-maroon">
             A pre-construction engagement
           </p>
           <h1 className="mt-3 max-w-3xl text-4xl font-bold text-white sm:text-5xl">
             Get the number before you commit
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-stone-100/90">
+          <p className="mt-4 max-w-2xl text-lg text-cream-muted">
             A defined, paid engagement that gets you a defensible budget and a real
             schedule before construction starts — and if we build the project, the
             fee comes off your construction cost.
@@ -148,10 +148,10 @@ export default async function PreConstructionPage() {
       <Section>
         <div className="max-w-3xl">
           <Eyebrow>The problem</Eyebrow>
-          <p className="mt-3 text-2xl font-semibold text-navy sm:text-3xl">
+          <p className="mt-3 text-2xl font-semibold text-ink sm:text-3xl">
             You&apos;re being asked for a number before anyone knows the scope.
           </p>
-          <p className="mt-5 text-lg leading-relaxed text-stone-600">
+          <p className="mt-5 text-lg leading-relaxed text-body">
             An owner or a lender wants a figure. The drawings are half-done, the use
             is not fully settled, and the existing conditions are a question mark.
             Guess low and you eat the change orders. Guess high and you lose the
@@ -164,25 +164,25 @@ export default async function PreConstructionPage() {
       {/* Two tiers */}
       <Section muted>
         <Eyebrow>Two ways to start</Eyebrow>
-        <h2 className="mt-2 text-2xl font-bold text-navy sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-bold text-ink sm:text-3xl">
           Pick the depth your project needs
         </h2>
         <div className="mt-8 grid gap-6 lg:grid-cols-2">
           {TIERS.map((tier) => (
             <div
               key={tier.name}
-              className={`flex flex-col rounded-xl border bg-paper p-7 ${
-                tier.flagship ? 'border-accent shadow-sm ring-1 ring-accent/20' : 'border-stone-200'
+              className={`flex flex-col rounded-[2px] border bg-paper p-7 ${
+                tier.flagship ? 'border-maroon ring-1 ring-accent/20' : 'border-hairline'
               }`}
             >
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-navy/5 text-navy">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-[2px] bg-ink/5 text-ink">
                     <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={1.7}>
                       {tier.icon}
                     </svg>
                   </span>
-                  <h3 className="text-xl font-bold text-navy">{tier.name}</h3>
+                  <h3 className="text-xl font-bold text-ink">{tier.name}</h3>
                 </div>
                 {tier.flagship && (
                   <span className="shrink-0 rounded-full bg-accent px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
@@ -190,21 +190,21 @@ export default async function PreConstructionPage() {
                   </span>
                 )}
               </div>
-              <p className="mt-3 font-medium text-accent">{tier.tagline}</p>
-              <p className="mt-2 text-sm text-stone-600">{tier.forWho}</p>
+              <p className="mt-3 font-medium text-maroon">{tier.tagline}</p>
+              <p className="mt-2 text-sm text-body">{tier.forWho}</p>
               <ul className="mt-5 space-y-2">
                 {tier.includes.map((item) => (
-                  <li key={item} className="flex items-start gap-2 text-stone-600">
-                    <span aria-hidden className="mt-1 text-accent">✓</span>
+                  <li key={item} className="flex items-start gap-2 text-body">
+                    <span aria-hidden className="mt-1 text-maroon">✓</span>
                     {item}
                   </li>
                 ))}
               </ul>
-              <div className="mt-6 border-t border-stone-200 pt-4">
-                <div className="text-xs font-semibold uppercase tracking-wider text-stone-400">
+              <div className="mt-6 border-t border-hairline pt-4">
+                <div className="text-xs font-semibold uppercase tracking-wider text-faint">
                   You walk away with
                 </div>
-                <p className="mt-1 text-sm font-medium text-navy">{tier.deliverable}</p>
+                <p className="mt-1 text-sm font-medium text-ink">{tier.deliverable}</p>
               </div>
             </div>
           ))}
@@ -214,19 +214,19 @@ export default async function PreConstructionPage() {
       {/* What you walk away with — deliverables */}
       <Section>
         <Eyebrow>What you walk away with</Eyebrow>
-        <h2 className="mt-2 text-2xl font-bold text-navy sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-bold text-ink sm:text-3xl">
           Real deliverables, not a verbal estimate
         </h2>
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {DELIVERABLES.map((d) => (
-            <div key={d.name} className="rounded-lg border border-stone-200 bg-paper p-6">
-              <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-accent/10 text-accent">
+            <div key={d.name} className="rounded-[2px] border border-hairline bg-paper p-6">
+              <span className="flex h-11 w-11 items-center justify-center rounded-[2px] bg-accent/10 text-maroon">
                 <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={1.7}>
                   {d.icon}
                 </svg>
               </span>
-              <h3 className="mt-4 font-bold text-navy">{d.name}</h3>
-              <p className="mt-1 text-sm leading-relaxed text-stone-600">{d.body}</p>
+              <h3 className="mt-4 font-bold text-ink">{d.name}</h3>
+              <p className="mt-1 text-sm leading-relaxed text-body">{d.body}</p>
             </div>
           ))}
         </div>
@@ -234,13 +234,13 @@ export default async function PreConstructionPage() {
 
       {/* Fee model */}
       <Section muted>
-        <div className="mx-auto max-w-3xl rounded-xl border border-navy/15 bg-paper p-8">
+        <div className="mx-auto max-w-3xl rounded-[2px] border border-navy/15 bg-paper p-8">
           <Eyebrow>How the fee works</Eyebrow>
-          <p className="mt-3 text-xl font-semibold text-navy">
+          <p className="mt-3 text-xl font-semibold text-ink">
             A fixed fee, agreed up front. If we build the project, it comes off your
             construction cost.
           </p>
-          <p className="mt-4 text-lg leading-relaxed text-stone-600">
+          <p className="mt-4 text-lg leading-relaxed text-body">
             No open meter and no surprise invoice — you know the number before we
             start. You get a defensible budget and a real plan either way. And if you
             hire us for the build, the pre-construction fee is credited back against
@@ -254,19 +254,19 @@ export default async function PreConstructionPage() {
         <Eyebrow>How the engagement runs</Eyebrow>
         <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((step, i) => (
-            <li key={step.title} className="relative rounded-lg border border-stone-200 bg-paper p-6">
+            <li key={step.title} className="relative rounded-[2px] border border-hairline bg-paper p-6">
               <div className="flex items-center gap-3">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-navy text-sm font-bold text-white">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-ink text-sm font-bold text-white">
                   {i + 1}
                 </span>
-                <svg viewBox="0 0 24 24" className="h-6 w-6 text-accent" fill="none" stroke="currentColor" strokeWidth={1.7}>
+                <svg viewBox="0 0 24 24" className="h-6 w-6 text-maroon" fill="none" stroke="currentColor" strokeWidth={1.7}>
                   {step.icon}
                 </svg>
               </div>
-              <h3 className="mt-3 font-bold text-navy">{step.title}</h3>
-              <p className="mt-1 text-sm text-stone-600">{step.body}</p>
+              <h3 className="mt-3 font-bold text-ink">{step.title}</h3>
+              <p className="mt-1 text-sm text-body">{step.body}</p>
               {i < STEPS.length - 1 && (
-                <span aria-hidden className="absolute -right-3 top-1/2 hidden -translate-y-1/2 text-2xl text-stone-300 lg:block">
+                <span aria-hidden className="absolute -right-3 top-1/2 hidden -translate-y-1/2 text-2xl text-faint lg:block">
                   →
                 </span>
               )}
@@ -280,16 +280,16 @@ export default async function PreConstructionPage() {
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
             <Eyebrow>Why bring us in early</Eyebrow>
-            <h2 className="mt-2 text-2xl font-bold text-navy sm:text-3xl">
+            <h2 className="mt-2 text-2xl font-bold text-ink sm:text-3xl">
               Early, your decisions are cheap. Later, they’re expensive.
             </h2>
-            <p className="mt-4 text-lg leading-relaxed text-stone-600">
+            <p className="mt-4 text-lg leading-relaxed text-body">
               At the start of a project you can still influence the cost for almost
               nothing — it’s a redline, not a demolition. Once it’s built, the same
               change costs the most it ever will. Pre-construction is how you spend
               your influence while it’s still cheap.
             </p>
-            <p className="mt-4 text-lg leading-relaxed text-stone-600">
+            <p className="mt-4 text-lg leading-relaxed text-body">
               A GC in the room during budgeting catches the conditions, the code
               triggers, and the long-lead items early — while they’re redlines, not
               change orders.
@@ -297,7 +297,7 @@ export default async function PreConstructionPage() {
           </div>
 
           {/* Illustrative influence vs. cost-to-change curves */}
-          <figure className="rounded-xl border border-stone-200 bg-paper p-6">
+          <figure className="rounded-[2px] border border-hairline bg-paper p-6">
             <svg
               viewBox="0 0 480 260"
               className="h-auto w-full"
@@ -332,7 +332,7 @@ export default async function PreConstructionPage() {
                 the sweet spot
               </text>
             </svg>
-            <figcaption className="mt-3 text-center text-xs italic text-stone-400">
+            <figcaption className="mt-3 text-center text-xs italic text-faint">
               Illustrative — the classic reason to bring a builder in before the
               drawings are done.
             </figcaption>

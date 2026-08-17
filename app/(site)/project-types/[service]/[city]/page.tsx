@@ -73,7 +73,7 @@ export default async function ServiceCityPage({
       />
 
       {/* H1 — unique */}
-      <section className="bg-navy text-white">
+      <section className="bg-ink text-white">
         <div className="container-page py-14 sm:py-20">
           <h1 className="max-w-3xl text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
             {sc.h1}
@@ -86,7 +86,7 @@ export default async function ServiceCityPage({
 
       {/* Intro — generated, unique to this city */}
       <Section>
-        <div className="max-w-3xl text-lg leading-relaxed text-stone-600">
+        <div className="max-w-3xl text-lg leading-relaxed text-body">
           {sc.intro ? (
             <MarkdownBody>{sc.intro}</MarkdownBody>
           ) : (
@@ -102,7 +102,7 @@ export default async function ServiceCityPage({
       <Section muted>
         <Eyebrow>On the ground in {sc.cityName}</Eyebrow>
         <div className="mt-6 grid items-start gap-8 lg:grid-cols-2">
-          <div className="relative aspect-[10/7] overflow-hidden rounded-lg bg-stone-200">
+          <div className="relative aspect-[10/7] overflow-hidden rounded-[2px] bg-paper-alt">
             {sc.photoUrl ? (
               <Image
                 src={sc.photoUrl}
@@ -112,20 +112,20 @@ export default async function ServiceCityPage({
                 className="object-cover"
               />
             ) : (
-              <div className="flex h-full items-center justify-center text-sm text-stone-400">
+              <div className="flex h-full items-center justify-center text-sm text-faint">
                 CompanyCam photo
               </div>
             )}
           </div>
           <div className="text-lg">
             {sc.projectTitle && (
-              <h2 className="mb-3 text-2xl font-bold text-navy">{sc.projectTitle}</h2>
+              <h2 className="mb-3 text-2xl font-bold text-ink">{sc.projectTitle}</h2>
             )}
             {sc.projectBody && <MarkdownBody>{sc.projectBody}</MarkdownBody>}
             {sc.projectRefSlug && (
               <Link
                 href={`/projects/${sc.projectRefSlug}`}
-                className="mt-2 inline-block text-sm font-semibold text-accent hover:text-accent-700"
+                className="mt-2 inline-block text-sm font-semibold text-maroon hover:text-maroon-dark"
               >
                 See the full project →
               </Link>
@@ -151,8 +151,8 @@ export default async function ServiceCityPage({
         <Eyebrow>What&apos;s included</Eyebrow>
         <ul className="mt-6 grid gap-x-8 gap-y-2 sm:grid-cols-2">
           {c.scope.map((item) => (
-            <li key={item} className="flex items-start gap-2 text-stone-600">
-              <span aria-hidden className="mt-1 text-accent">✓</span>
+            <li key={item} className="flex items-start gap-2 text-body">
+              <span aria-hidden className="mt-1 text-maroon">✓</span>
               {item}
             </li>
           ))}
@@ -172,13 +172,13 @@ export default async function ServiceCityPage({
         <div className="flex flex-wrap gap-3">
           <Link
             href={`/project-types/${service}`}
-            className="rounded-md border border-stone-200 bg-paper px-4 py-2 text-sm font-medium text-navy hover:border-accent hover:text-accent"
+            className="rounded-[2px] border border-hairline bg-paper px-4 py-2 text-sm font-medium text-ink hover:border-maroon hover:text-maroon"
           >
             ← All {def.name}
           </Link>
           <Link
             href={`/locations/${city}`}
-            className="rounded-md border border-stone-200 bg-paper px-4 py-2 text-sm font-medium text-navy hover:border-accent hover:text-accent"
+            className="rounded-[2px] border border-hairline bg-paper px-4 py-2 text-sm font-medium text-ink hover:border-maroon hover:text-maroon"
           >
             Everything we do in {sc.cityName} →
           </Link>

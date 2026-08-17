@@ -19,15 +19,15 @@ export default async function MarketsHub() {
 
   return (
     <>
-      <section className="bg-navy text-white">
+      <section className="bg-ink text-white">
         <div className="container-page py-16 sm:py-20">
-          <p className="text-sm font-semibold uppercase tracking-widest text-accent">
+          <p className="text-sm font-semibold uppercase tracking-widest text-maroon">
             Who we work for
           </p>
           <h1 className="mt-3 max-w-3xl text-4xl font-bold text-white sm:text-5xl">
             Built for whoever’s on the hook for the date
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-stone-100/90">
+          <p className="mt-4 max-w-2xl text-lg text-cream-muted">
             Construction is the tax you pay to get the space open and producing. We
             build for the people who have to answer for it.
           </p>
@@ -42,13 +42,13 @@ export default async function MarketsHub() {
               <Link
                 key={m.slug}
                 href={`/markets/${m.slug}`}
-                className="group rounded-xl border border-stone-200 bg-paper p-7 transition-colors hover:border-accent hover:bg-stone-50"
+                className="group rounded-[2px] border border-hairline bg-paper p-7 transition-colors hover:border-maroon hover:bg-paper"
               >
-                <div className="text-xl font-bold text-navy group-hover:text-accent">
+                <div className="text-xl font-bold text-ink group-hover:text-maroon">
                   {m.name}
                 </div>
-                <p className="mt-2 line-clamp-3 text-stone-600">{c.problem}</p>
-                <span className="mt-4 inline-block text-sm font-semibold text-accent">
+                <p className="mt-2 line-clamp-3 text-body">{c.problem}</p>
+                <span className="mt-4 inline-block text-sm font-semibold text-maroon">
                   How we help →
                 </span>
               </Link>

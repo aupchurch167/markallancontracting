@@ -24,15 +24,15 @@ export default async function ServicesHub() {
 
   return (
     <>
-      <section className="bg-navy text-white">
+      <section className="bg-ink text-white">
         <div className="container-page py-16 sm:py-20">
-          <p className="text-sm font-semibold uppercase tracking-widest text-accent">
+          <p className="text-sm font-semibold uppercase tracking-widest text-maroon">
             Services
           </p>
           <h1 className="mt-3 max-w-3xl text-4xl font-bold text-white sm:text-5xl">
             How we take a project on
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-stone-100/90">
+          <p className="mt-4 max-w-2xl text-lg text-cream-muted">
             Four ways we engage — from a number before you commit, through the whole
             build. Family-owned commercial general contractor since 1999.
           </p>
@@ -47,10 +47,10 @@ export default async function ServicesHub() {
               <Link
                 key={line.slug}
                 href={line.href}
-                className="group block border-2 border-brass/40 bg-bone transition-colors hover:border-brass"
+                className="group block border-2 border-hairline bg-paper transition-colors hover:border-hairline"
               >
                 {cover ? (
-                  <div className="relative aspect-[16/9] overflow-hidden bg-stone-100">
+                  <div className="relative aspect-[16/9] overflow-hidden bg-paper-alt">
                     <Image
                       src={cover}
                       alt={line.name}
@@ -62,15 +62,15 @@ export default async function ServicesHub() {
                 ) : null}
                 <div className="p-5 sm:p-7">
                   <div className="flex items-baseline gap-3">
-                    <span className="text-sm font-bold text-brass">
+                    <span className="text-sm font-bold text-maroon">
                       {String(i + 1).padStart(2, '0')}
                     </span>
-                    <div className="text-xl font-bold uppercase tracking-heading text-oxblood group-hover:text-brass">
+                    <div className="text-xl font-bold uppercase tracking-heading text-ink group-hover:text-maroon">
                       {line.name}
                     </div>
                   </div>
-                  <p className="mt-3 text-oxblood/65">{line.blurb}</p>
-                  <span className="mt-4 inline-block text-[10px] font-medium uppercase tracking-label text-brass">
+                  <p className="mt-3 text-body">{line.blurb}</p>
+                  <span className="mt-4 inline-block text-[10px] font-medium uppercase tracking-label text-maroon">
                     Learn more →
                   </span>
                 </div>
@@ -82,10 +82,10 @@ export default async function ServicesHub() {
 
       {/* Cross-link to project types */}
       <Section muted>
-        <div className="flex flex-col items-start justify-between gap-4 rounded-xl border border-stone-200 bg-paper p-7 sm:flex-row sm:items-center">
+        <div className="flex flex-col items-start justify-between gap-4 rounded-[2px] border border-hairline bg-paper p-7 sm:flex-row sm:items-center">
           <div>
             <Eyebrow>Looking for a specific kind of space?</Eyebrow>
-            <p className="mt-2 max-w-2xl text-stone-600">
+            <p className="mt-2 max-w-2xl text-body">
               Tenant improvements, restaurant and retail buildouts, office
               renovation, warehouse conversion, building repair, and interior
               trades.

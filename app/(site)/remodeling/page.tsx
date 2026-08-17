@@ -48,15 +48,15 @@ export default async function RemodelingPage() {
         })}
       />
 
-      <section className="bg-navy text-white">
+      <section className="bg-ink text-white">
         <div className="container-page py-16 sm:py-20">
-          <p className="text-sm font-semibold uppercase tracking-widest text-accent">
+          <p className="text-sm font-semibold uppercase tracking-widest text-maroon">
             Remodeling
           </p>
           <h1 className="mt-3 max-w-3xl text-4xl font-bold text-white sm:text-5xl">
             Remodels that work around your operation
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-stone-100/90">
+          <p className="mt-4 max-w-2xl text-lg text-cream-muted">
             Refreshing an office, reworking a retail space, updating a restaurant, or
             repairing a building — commercial remodeling, phased so the space keeps
             running while we work.
@@ -71,10 +71,10 @@ export default async function RemodelingPage() {
       <Section>
         <div className="max-w-3xl">
           <Eyebrow>The problem</Eyebrow>
-          <p className="mt-3 text-2xl font-semibold text-navy sm:text-3xl">
+          <p className="mt-3 text-2xl font-semibold text-ink sm:text-3xl">
             The space still has to work while you remodel it.
           </p>
-          <p className="mt-5 text-lg leading-relaxed text-stone-600">
+          <p className="mt-5 text-lg leading-relaxed text-body">
             A remodel isn’t a fresh box — it’s a space with tenants, staff, or
             customers still in it, and a business that can’t stop. The hard part isn’t
             the drywall; it’s sequencing the work so the remodel doesn’t become a
@@ -86,7 +86,7 @@ export default async function RemodelingPage() {
       {/* What we remodel — related project types */}
       <Section muted>
         <Eyebrow>What we remodel</Eyebrow>
-        <h2 className="mt-2 text-2xl font-bold text-navy sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-bold text-ink sm:text-3xl">
           Where remodeling usually lands
         </h2>
         <div className="mt-8 grid gap-6 sm:grid-cols-2">
@@ -98,13 +98,13 @@ export default async function RemodelingPage() {
               <Link
                 key={slug}
                 href={`/project-types/${slug}`}
-                className="group rounded-lg border border-stone-200 bg-paper p-7 transition-colors hover:border-accent hover:bg-stone-50"
+                className="group rounded-[2px] border border-hairline bg-paper p-7 transition-colors hover:border-maroon hover:bg-paper"
               >
-                <div className="text-xl font-bold text-navy group-hover:text-accent">
+                <div className="text-xl font-bold text-ink group-hover:text-maroon">
                   {def.name}
                 </div>
-                <p className="mt-2 line-clamp-2 text-stone-600">{c.problem}</p>
-                <span className="mt-4 inline-block text-sm font-semibold text-accent">
+                <p className="mt-2 line-clamp-2 text-body">{c.problem}</p>
+                <span className="mt-4 inline-block text-sm font-semibold text-maroon">
                   See {def.name.toLowerCase()} →
                 </span>
               </Link>
@@ -116,14 +116,14 @@ export default async function RemodelingPage() {
       {/* Approach */}
       <Section>
         <Eyebrow>How we keep you running</Eyebrow>
-        <h2 className="mt-2 text-2xl font-bold text-navy sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-bold text-ink sm:text-3xl">
           A remodel your business barely feels
         </h2>
         <div className="mt-8 grid gap-6 md:grid-cols-3">
           {APPROACH.map((a) => (
-            <div key={a.title} className="rounded-lg border border-stone-200 bg-paper p-6">
-              <h3 className="font-bold text-navy">{a.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-stone-600">{a.body}</p>
+            <div key={a.title} className="rounded-[2px] border border-hairline bg-paper p-6">
+              <h3 className="font-bold text-ink">{a.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-body">{a.body}</p>
             </div>
           ))}
         </div>
@@ -132,7 +132,7 @@ export default async function RemodelingPage() {
       {/* Plan */}
       <Section muted>
         <Eyebrow>How it works</Eyebrow>
-        <p className="mt-2 max-w-2xl text-stone-600">
+        <p className="mt-2 max-w-2xl text-body">
           We scope the phasing before the price, so there are no surprises once work
           starts.
         </p>

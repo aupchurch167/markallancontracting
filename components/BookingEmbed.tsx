@@ -12,12 +12,12 @@ export function BookingEmbed() {
   return (
     <div>
       <Eyebrow>Prefer to book a time?</Eyebrow>
-      <h2 className="mt-2 text-2xl font-bold text-navy">Schedule a site walk</h2>
-      <p className="mt-2 text-stone-600">
+      <h2 className="mt-2 text-2xl font-bold text-ink">Schedule a site walk</h2>
+      <p className="mt-2 text-body">
         Pick a time that works and we&apos;ll come look at the space.
       </p>
       <div
-        className="calendly-inline-widget mt-6 overflow-hidden rounded-xl border border-stone-200"
+        className="calendly-inline-widget mt-6 overflow-hidden rounded-[2px] border border-hairline"
         data-url={BOOKING.calendlyUrl}
         style={{ minWidth: 320, height: 660 }}
       />

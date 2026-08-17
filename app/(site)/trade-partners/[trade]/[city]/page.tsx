@@ -62,7 +62,7 @@ export default async function TradeCityPage({
         ]}
       />
 
-      <section className="bg-navy text-white">
+      <section className="bg-ink text-white">
         <div className="container-page py-14 sm:py-16">
           <h1 className="max-w-3xl text-3xl font-bold text-white sm:text-4xl">
             {def.name} in {cityLabel}
@@ -75,7 +75,7 @@ export default async function TradeCityPage({
 
       <Section>
         <Eyebrow>What PMs screen for</Eyebrow>
-        <p className="mt-2 max-w-2xl text-sm text-stone-500">
+        <p className="mt-2 max-w-2xl text-sm text-muted">
           Gated (noindex). Capability values pending.
         </p>
         <div className="mt-6">

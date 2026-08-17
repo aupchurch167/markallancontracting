@@ -51,12 +51,12 @@ export default async function TradePage({
         ]}
       />
 
-      <section className="bg-navy text-white">
+      <section className="bg-ink text-white">
         <div className="container-page py-14 sm:py-16">
           <h1 className="max-w-3xl text-3xl font-bold text-white sm:text-4xl">
             {def.name}
           </h1>
-          <p className="mt-3 max-w-2xl text-lg text-stone-100/90">{def.blurb}</p>
+          <p className="mt-3 max-w-2xl text-lg text-cream-muted">{def.blurb}</p>
           <div className="mt-6">
             <CallButton phone={phone} phoneRaw={phoneRaw} />
           </div>
@@ -67,7 +67,7 @@ export default async function TradePage({
       <Section>
         <Eyebrow>What PMs screen for</Eyebrow>
         {!FEATURES.tradePartnersPublished && (
-          <p className="mt-2 max-w-2xl text-sm text-stone-500">
+          <p className="mt-2 max-w-2xl text-sm text-muted">
             These values are unsupplied and shown as placeholders. This page is
             gated (noindex) until they are provided and the schedule-reliability
             question is resolved.
@@ -80,7 +80,7 @@ export default async function TradePage({
 
       <Section muted>
         <Eyebrow>How it works</Eyebrow>
-        <ol className="mt-4 max-w-2xl space-y-3 text-lg text-stone-600">
+        <ol className="mt-4 max-w-2xl space-y-3 text-lg text-body">
           <li>1. Send us the scope and the dates.</li>
           <li>2. We confirm crew size and mobilization.</li>
           <li>3. We&apos;re on site when we said.</li>

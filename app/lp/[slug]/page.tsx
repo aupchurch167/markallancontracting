@@ -55,16 +55,16 @@ export default async function LandingPage({
   return (
     <div className="mx-auto flex min-h-screen max-w-2xl flex-col justify-center px-5 py-16">
       {/* Minimal wordmark — no nav */}
-      <div className="text-sm font-bold uppercase tracking-wider text-navy">
+      <div className="text-sm font-bold uppercase tracking-wider text-ink">
         {SITE.name}
       </div>
 
       {/* Headline */}
-      <h1 className="mt-6 text-4xl font-bold text-navy sm:text-5xl">{headline}</h1>
-      {subhead && <p className="mt-4 text-lg text-stone-600">{subhead}</p>}
+      <h1 className="mt-6 text-4xl font-bold text-ink sm:text-5xl">{headline}</h1>
+      {subhead && <p className="mt-4 text-lg text-body">{subhead}</p>}
 
       {/* Two-sentence problem */}
-      <div className="mt-6 text-lg text-stone-600">
+      <div className="mt-6 text-lg text-body">
         {doc?.problemCopy?.length ? (
           <PortableText value={doc.problemCopy} />
         ) : (
@@ -76,7 +76,7 @@ export default async function LandingPage({
       {plan.length > 0 && (
         <ol className="mt-8 space-y-2">
           {plan.map((step, i) => (
-            <li key={i} className="flex items-center gap-3 text-navy">
+            <li key={i} className="flex items-center gap-3 text-ink">
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-bold text-white">
                 {i + 1}
               </span>
@@ -107,7 +107,7 @@ export default async function LandingPage({
           })}
         </div>
       ) : fallback?.proofLine ? (
-        <p className="mt-10 text-sm font-medium text-stone-400">{fallback.proofLine}</p>
+        <p className="mt-10 text-sm font-medium text-faint">{fallback.proofLine}</p>
       ) : null}
     </div>
   );

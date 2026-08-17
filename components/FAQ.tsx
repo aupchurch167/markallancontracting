@@ -10,11 +10,11 @@ export function FAQ({ faqs }: { faqs: { q: string; a: string }[] }) {
   return (
     <div>
       <JsonLd data={faqSchema(faqs)} />
-      <dl className="divide-y divide-stone-200">
+      <dl className="divide-y divide-hairline">
         {faqs.map((f) => (
           <div key={f.q} className="py-5">
-            <dt className="text-lg font-semibold text-navy">{f.q}</dt>
-            <dd className="mt-2 leading-relaxed text-stone-600">{f.a}</dd>
+            <dt className="text-lg font-semibold text-ink">{f.q}</dt>
+            <dd className="mt-2 leading-relaxed text-body">{f.a}</dd>
           </div>
         ))}
       </dl>

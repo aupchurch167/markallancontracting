@@ -19,8 +19,8 @@ export function PlanSteps({ steps }: { steps?: PlanStep[] }) {
           <div className="flex h-11 w-11 items-center justify-center rounded-full bg-accent text-lg font-bold text-white">
             {step.n}
           </div>
-          <h3 className="mt-4 text-xl font-bold text-navy">{step.title}</h3>
-          <p className="mt-2 text-stone-600">{step.body}</p>
+          <h3 className="mt-4 text-xl font-bold text-ink">{step.title}</h3>
+          <p className="mt-2 text-body">{step.body}</p>
         </div>
       ))}
     </div>

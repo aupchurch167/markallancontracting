@@ -11,7 +11,7 @@ export function CapabilityTable({
   values?: Record<string, string | boolean | null | undefined>;
 }) {
   return (
-    <dl className="grid gap-px overflow-hidden rounded-lg border border-stone-200 bg-stone-200 sm:grid-cols-2">
+    <dl className="grid gap-px overflow-hidden rounded-[2px] border border-hairline bg-paper-alt sm:grid-cols-2">
       {CAPABILITY_LABELS.map(({ key, label }) => {
         const raw = values?.[key];
         const display =
@@ -24,12 +24,12 @@ export function CapabilityTable({
               : raw;
         return (
           <div key={key} className="bg-paper p-4">
-            <dt className="text-xs font-semibold uppercase tracking-wider text-stone-400">
+            <dt className="text-xs font-semibold uppercase tracking-wider text-faint">
               {label}
             </dt>
-            <dd className="mt-1 font-medium text-navy">
+            <dd className="mt-1 font-medium text-ink">
               {display ?? (
-                <span className="italic text-stone-400">Pending — value not supplied</span>
+                <span className="italic text-faint">Pending — value not supplied</span>
               )}
             </dd>
           </div>

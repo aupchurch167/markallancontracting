@@ -63,7 +63,7 @@ export default async function MarketPage({
         ]}
       />
 
-      <section className="bg-navy text-white">
+      <section className="bg-ink text-white">
         <div className="container-page py-16 sm:py-20">
           <Eyebrow>{def.name}</Eyebrow>
           <h1 className="mt-3 max-w-3xl text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
@@ -83,7 +83,7 @@ export default async function MarketPage({
               <PortableText value={doc.audienceProblem} />
             </div>
           ) : (
-            <p className="mt-3 text-lg leading-relaxed text-stone-600">{c.problem}</p>
+            <p className="mt-3 text-lg leading-relaxed text-body">{c.problem}</p>
           )}
         </div>
       </Section>
@@ -96,13 +96,13 @@ export default async function MarketPage({
       </Section>
 
       <Section>
-        <h2 className="text-2xl font-bold text-navy sm:text-3xl">What we build for you</h2>
+        <h2 className="text-2xl font-bold text-ink sm:text-3xl">What we build for you</h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {relevantServices.map((s) => (
             <Link
               key={s.slug}
               href={`/project-types/${s.slug}`}
-              className="rounded-lg border border-stone-200 bg-paper p-5 font-semibold text-navy transition-colors hover:border-accent hover:text-accent"
+              className="rounded-[2px] border border-hairline bg-paper p-5 font-semibold text-ink transition-colors hover:border-maroon hover:text-maroon"
             >
               {s.title}
             </Link>
@@ -112,7 +112,7 @@ export default async function MarketPage({
 
       {doc?.relatedProjects?.length ? (
         <Section muted>
-          <h2 className="text-2xl font-bold text-navy sm:text-3xl">Work in this space</h2>
+          <h2 className="text-2xl font-bold text-ink sm:text-3xl">Work in this space</h2>
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {summariesFromSanityCards(doc.relatedProjects).map((p) => (
               <ProjectCard key={p.id} project={p} />

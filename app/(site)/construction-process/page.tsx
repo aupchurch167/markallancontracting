@@ -21,9 +21,9 @@ export const metadata: Metadata = pageMetadata({
 
 // Illustrative schedule shares (relative durations, not precise data).
 const SCHEDULE = [
-  { name: 'Permitting & long-lead', pct: 22, note: 'Often starts before the build — and usually what moves a date', color: 'bg-navy-900' },
-  { name: 'Mobilize', pct: 12, note: 'Permits in hand, crews scheduled, long-lead items ordered', color: 'bg-navy-700' },
-  { name: 'Rough-in', pct: 30, note: 'The work behind the walls — framing and MEP', color: 'bg-navy-600' },
+  { name: 'Permitting & long-lead', pct: 22, note: 'Often starts before the build — and usually what moves a date', color: 'bg-ink-900' },
+  { name: 'Mobilize', pct: 12, note: 'Permits in hand, crews scheduled, long-lead items ordered', color: 'bg-ink-700' },
+  { name: 'Rough-in', pct: 30, note: 'The work behind the walls — framing and MEP', color: 'bg-ink-600' },
   { name: 'Finishes', pct: 26, note: 'Drywall, paint, ceilings, flooring, fixtures', color: 'bg-accent-700' },
   { name: 'Punch & closeout', pct: 10, note: 'Final list, inspections, and the CO', color: 'bg-accent' },
 ];
@@ -109,15 +109,15 @@ export default async function ConstructionProcessPage() {
       />
 
       {/* Hero */}
-      <section className="bg-navy text-white">
+      <section className="bg-ink text-white">
         <div className="container-page py-16 sm:py-20">
-          <p className="text-sm font-semibold uppercase tracking-widest text-accent">
+          <p className="text-sm font-semibold uppercase tracking-widest text-maroon">
             What to expect
           </p>
           <h1 className="mt-3 max-w-3xl text-4xl font-bold text-white sm:text-5xl">
             What a job actually looks like
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-stone-100/90">
+          <p className="mt-4 max-w-2xl text-lg text-cream-muted">
             Straight talk about how a commercial buildout runs — the order things
             happen, who’s on site, how changes and money get handled, and what you
             walk away with. No jargon left unexplained.
@@ -131,10 +131,10 @@ export default async function ConstructionProcessPage() {
       {/* The shape of a job — schedule visual */}
       <Section>
         <Eyebrow>The shape of a job</Eyebrow>
-        <h2 className="mt-2 text-2xl font-bold text-navy sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-bold text-ink sm:text-3xl">
           The order things happen — and where the time goes
         </h2>
-        <p className="mt-3 max-w-2xl text-stone-600">
+        <p className="mt-3 max-w-2xl text-body">
           A commercial interior, start to finish. The construction is the
           predictable part; permitting and long-lead items are usually what move a
           date.
@@ -143,7 +143,7 @@ export default async function ConstructionProcessPage() {
         <div className="mt-8 overflow-x-auto">
           <div className="min-w-[640px]">
             {/* Bar */}
-            <div className="flex h-14 overflow-hidden rounded-lg" role="img" aria-label="Relative duration of each phase of a commercial buildout">
+            <div className="flex h-14 overflow-hidden rounded-[2px]" role="img" aria-label="Relative duration of each phase of a commercial buildout">
               {SCHEDULE.map((s) => (
                 <div
                   key={s.name}
@@ -160,13 +160,13 @@ export default async function ConstructionProcessPage() {
             <div className="mt-3 flex">
               {SCHEDULE.map((s) => (
                 <div key={s.name} className="px-2" style={{ width: `${s.pct}%` }}>
-                  <p className="text-xs leading-snug text-stone-500">{s.note}</p>
+                  <p className="text-xs leading-snug text-muted">{s.note}</p>
                 </div>
               ))}
             </div>
           </div>
         </div>
-        <p className="mt-4 text-sm italic text-stone-400">
+        <p className="mt-4 text-sm italic text-faint">
           Illustrative — actual durations vary by scope. See each service page for
           typical ranges.
         </p>
@@ -175,20 +175,20 @@ export default async function ConstructionProcessPage() {
       {/* Who's on your job */}
       <Section muted>
         <Eyebrow>Who’s on your job</Eyebrow>
-        <h2 className="mt-2 text-2xl font-bold text-navy sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-bold text-ink sm:text-3xl">
           The people running the work
         </h2>
         <div className="mt-8 grid gap-6 sm:grid-cols-2">
           {ROLES.map((role) => (
-            <div key={role.name} className="flex gap-4 rounded-lg border border-stone-200 bg-paper p-6">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-navy/5 text-navy">
+            <div key={role.name} className="flex gap-4 rounded-[2px] border border-hairline bg-paper p-6">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[2px] bg-ink/5 text-ink">
                 <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={1.7}>
                   {role.icon}
                 </svg>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-navy">{role.name}</h3>
-                <p className="mt-1 text-sm leading-relaxed text-stone-600">{role.body}</p>
+                <h3 className="text-lg font-bold text-ink">{role.name}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-body">{role.body}</p>
               </div>
             </div>
           ))}
@@ -198,23 +198,23 @@ export default async function ConstructionProcessPage() {
       {/* How change orders work — flow */}
       <Section>
         <Eyebrow>How change orders work</Eyebrow>
-        <h2 className="mt-2 text-2xl font-bold text-navy sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-bold text-ink sm:text-3xl">
           No surprises on the final invoice
         </h2>
-        <p className="mt-3 max-w-2xl text-stone-600">
+        <p className="mt-3 max-w-2xl text-body">
           A change order is a change in scope — priced and approved before the work
           happens, not discovered when the bill arrives.
         </p>
         <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {CO_STEPS.map((step, i) => (
-            <li key={step.title} className="relative rounded-lg border border-stone-200 bg-paper p-5">
+            <li key={step.title} className="relative rounded-[2px] border border-hairline bg-paper p-5">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-accent text-sm font-bold text-white">
                 {i + 1}
               </div>
-              <h3 className="mt-3 font-bold text-navy">{step.title}</h3>
-              <p className="mt-1 text-sm text-stone-600">{step.body}</p>
+              <h3 className="mt-3 font-bold text-ink">{step.title}</h3>
+              <p className="mt-1 text-sm text-body">{step.body}</p>
               {i < CO_STEPS.length - 1 && (
-                <span aria-hidden className="absolute -right-3 top-1/2 hidden -translate-y-1/2 text-2xl text-stone-300 lg:block">
+                <span aria-hidden className="absolute -right-3 top-1/2 hidden -translate-y-1/2 text-2xl text-faint lg:block">
                   →
                 </span>
               )}
@@ -226,16 +226,16 @@ export default async function ConstructionProcessPage() {
       {/* How you stay in the loop */}
       <Section muted>
         <Eyebrow>How you stay in the loop</Eyebrow>
-        <h2 className="mt-2 text-2xl font-bold text-navy sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-bold text-ink sm:text-3xl">
           The points where you’ll hear from us
         </h2>
         <div className="mt-8 max-w-3xl">
-          <ol className="relative space-y-6 border-l-2 border-stone-200 pl-6">
+          <ol className="relative space-y-6 border-l-2 border-hairline pl-6">
             {TOUCHPOINTS.map((t) => (
               <li key={t.when} className="relative">
-                <span className="absolute -left-[31px] top-1 h-4 w-4 rounded-full border-2 border-accent bg-paper" />
-                <div className="font-bold text-navy">{t.when}</div>
-                <p className="mt-1 text-stone-600">{t.what}</p>
+                <span className="absolute -left-[31px] top-1 h-4 w-4 rounded-full border-2 border-maroon bg-paper" />
+                <div className="font-bold text-ink">{t.when}</div>
+                <p className="mt-1 text-body">{t.what}</p>
               </li>
             ))}
           </ol>
@@ -247,21 +247,21 @@ export default async function ConstructionProcessPage() {
         <div className="grid gap-8 lg:grid-cols-[1fr,1.4fr] lg:items-start">
           <div>
             <Eyebrow>What you get at closeout</Eyebrow>
-            <h2 className="mt-2 text-2xl font-bold text-navy sm:text-3xl">
+            <h2 className="mt-2 text-2xl font-bold text-ink sm:text-3xl">
               The handoff, in writing
             </h2>
-            <p className="mt-3 text-stone-600">
+            <p className="mt-3 text-body">
               A job isn’t done when the work stops — it’s done when you have what you
               need to occupy and operate the space.
             </p>
           </div>
           <ul className="grid gap-3 sm:grid-cols-2">
             {CLOSEOUT.map((item) => (
-              <li key={item} className="flex items-start gap-3 rounded-lg border border-stone-200 bg-paper p-4">
-                <svg viewBox="0 0 24 24" className="mt-0.5 h-5 w-5 shrink-0 text-accent" fill="none" stroke="currentColor" strokeWidth={2}>
+              <li key={item} className="flex items-start gap-3 rounded-[2px] border border-hairline bg-paper p-4">
+                <svg viewBox="0 0 24 24" className="mt-0.5 h-5 w-5 shrink-0 text-maroon" fill="none" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="text-sm text-stone-600">{item}</span>
+                <span className="text-sm text-body">{item}</span>
               </li>
             ))}
           </ul>
@@ -271,18 +271,18 @@ export default async function ConstructionProcessPage() {
       {/* Jargon buster */}
       <Section muted>
         <Eyebrow>Jargon buster</Eyebrow>
-        <h2 className="mt-2 text-2xl font-bold text-navy sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-bold text-ink sm:text-3xl">
           The words that show up on your job
         </h2>
-        <p className="mt-3 max-w-2xl text-stone-600">
+        <p className="mt-3 max-w-2xl text-body">
           Every trade has its shorthand. Here’s the plain-language version of the
           terms you’ll hear.
         </p>
         <dl className="mt-8 grid gap-x-10 gap-y-6 sm:grid-cols-2">
           {GLOSSARY.map(([term, def]) => (
-            <div key={term} className="border-l-2 border-accent pl-4">
-              <dt className="font-bold text-navy">{term}</dt>
-              <dd className="mt-1 text-sm leading-relaxed text-stone-600">{def}</dd>
+            <div key={term} className="border-l-2 border-maroon pl-4">
+              <dt className="font-bold text-ink">{term}</dt>
+              <dd className="mt-1 text-sm leading-relaxed text-body">{def}</dd>
             </div>
           ))}
         </dl>

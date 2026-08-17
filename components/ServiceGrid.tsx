@@ -16,10 +16,10 @@ export async function ServiceGrid() {
           <Link
             key={s.slug}
             href={`/project-types/${s.slug}`}
-            className="group block border-2 border-brass/40 bg-bone transition-colors hover:border-brass"
+            className="group block border-2 border-hairline bg-paper transition-colors hover:border-hairline"
           >
             {cover ? (
-              <div className="relative aspect-[16/9] overflow-hidden bg-stone-100">
+              <div className="relative aspect-[16/9] overflow-hidden bg-paper-alt">
                 <Image
                   src={cover}
                   alt={s.name}
@@ -30,13 +30,13 @@ export async function ServiceGrid() {
               </div>
             ) : null}
             <div className="p-5 sm:p-6">
-              <div className="text-base font-bold uppercase tracking-heading text-oxblood group-hover:text-brass sm:text-lg">
+              <div className="text-base font-bold uppercase tracking-heading text-ink group-hover:text-maroon sm:text-lg">
                 {s.name}
               </div>
               {problem ? (
-                <p className="mt-1.5 line-clamp-1 text-sm text-oxblood/65">{problem}</p>
+                <p className="mt-1.5 line-clamp-1 text-sm text-body">{problem}</p>
               ) : null}
-              <div className="mt-3 flex items-center gap-2 text-[10px] font-medium uppercase tracking-label text-brass">
+              <div className="mt-3 flex items-center gap-2 text-[10px] font-medium uppercase tracking-label text-maroon">
                 Learn more
                 <span aria-hidden>→</span>
               </div>

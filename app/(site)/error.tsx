@@ -22,9 +22,9 @@ export default function SiteError({
 
   return (
     <div className="mx-auto flex min-h-[60vh] max-w-xl flex-col items-center justify-center px-6 py-20 text-center">
-      <div className="text-sm font-bold uppercase tracking-widest text-accent">Something broke</div>
-      <h1 className="mt-3 text-3xl font-bold text-navy">This one&apos;s on us</h1>
-      <p className="mt-3 text-stone-600">
+      <div className="text-sm font-bold uppercase tracking-widest text-maroon">Something broke</div>
+      <h1 className="mt-3 text-3xl font-bold text-ink">This one&apos;s on us</h1>
+      <p className="mt-3 text-body">
         The page hit an error. Try again, or just call us — that&apos;s the fastest
         way to reach the team anyway.
       </p>

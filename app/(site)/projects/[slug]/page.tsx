@@ -104,9 +104,9 @@ export default async function ProjectPage({
         ]}
       />
 
-      <section className="bg-navy text-white">
+      <section className="bg-ink text-white">
         <div className="container-page py-14 sm:py-16">
-          <div className="flex flex-wrap items-center gap-2 text-sm text-stone-200/80">
+          <div className="flex flex-wrap items-center gap-2 text-sm text-cream-muted">
             {clientType && <span>{clientType}</span>}
             {location && <span>· {location}</span>}
           </div>
@@ -117,19 +117,19 @@ export default async function ProjectPage({
       </section>
 
       {hero && (
-        <div className="relative aspect-video w-full bg-stone-200">
+        <div className="relative aspect-video w-full bg-paper-alt">
           <Image src={hero.url} alt={hero.alt} fill priority sizes="100vw" className="object-cover" />
         </div>
       )}
 
       {/* Highlights stat row */}
       {highlights && highlights.length > 0 && (
-        <div className="border-b border-stone-200 bg-stone-50">
+        <div className="border-b border-hairline bg-paper">
           <div className="container-page grid grid-cols-2 gap-6 py-8 sm:grid-cols-4">
             {highlights.map((h) => (
               <div key={h.label}>
-                <div className="text-2xl font-bold text-navy sm:text-3xl">{h.value}</div>
-                <div className="text-xs font-semibold uppercase tracking-wider text-stone-400">{h.label}</div>
+                <div className="text-2xl font-bold text-ink sm:text-3xl">{h.value}</div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-faint">{h.label}</div>
               </div>
             ))}
           </div>
@@ -153,7 +153,7 @@ export default async function ProjectPage({
                         <PortableText value={project.challenge} />
                       ) : (
                         fb?.challenge.map((p, i) => (
-                          <p key={i} className="mb-4 leading-relaxed text-stone-600">{p}</p>
+                          <p key={i} className="mb-4 leading-relaxed text-body">{p}</p>
                         ))
                       )}
                     </div>
@@ -167,7 +167,7 @@ export default async function ProjectPage({
                         <PortableText value={project.solution} />
                       ) : (
                         fb?.solution.map((p, i) => (
-                          <p key={i} className="mb-4 leading-relaxed text-stone-600">{p}</p>
+                          <p key={i} className="mb-4 leading-relaxed text-body">{p}</p>
                         ))
                       )}
                     </div>
@@ -176,35 +176,35 @@ export default async function ProjectPage({
               </>
             )}
           </div>
-          <aside className="space-y-4 rounded-lg border border-stone-200 bg-stone-50 p-6">
+          <aside className="space-y-4 rounded-[2px] border border-hairline bg-paper p-6">
             {scopeSummary && (
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wider text-stone-400">Scope</div>
-                <div className="mt-1 text-stone-600">{scopeSummary}</div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-faint">Scope</div>
+                <div className="mt-1 text-body">{scopeSummary}</div>
               </div>
             )}
             {timeline && (
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wider text-stone-400">Timeline</div>
-                <div className="mt-1 text-stone-600">{timeline}</div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-faint">Timeline</div>
+                <div className="mt-1 text-body">{timeline}</div>
               </div>
             )}
             {location && (
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wider text-stone-400">Location</div>
-                <div className="mt-1 text-stone-600">{location}</div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-faint">Location</div>
+                <div className="mt-1 text-body">{location}</div>
               </div>
             )}
             {squareFootage && (
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wider text-stone-400">Size</div>
-                <div className="mt-1 text-stone-600">{squareFootage}</div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-faint">Size</div>
+                <div className="mt-1 text-body">{squareFootage}</div>
               </div>
             )}
             {completed && (
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wider text-stone-400">Completed</div>
-                <div className="mt-1 text-stone-600">{completed}</div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-faint">Completed</div>
+                <div className="mt-1 text-body">{completed}</div>
               </div>
             )}
           </aside>
@@ -212,14 +212,14 @@ export default async function ProjectPage({
 
         {/* Testimonial */}
         {testimonial?.quote && (
-          <figure className="mt-12 rounded-xl border-l-4 border-accent bg-stone-50 p-8">
-            <blockquote className="text-xl font-medium leading-relaxed text-navy">
+          <figure className="mt-12 rounded-[2px] border-l-4 border-maroon bg-paper p-8">
+            <blockquote className="text-xl font-medium leading-relaxed text-ink">
               “{testimonial.quote}”
             </blockquote>
             {(testimonial.attribution || testimonial.role) && (
-              <figcaption className="mt-4 text-sm text-stone-500">
+              <figcaption className="mt-4 text-sm text-muted">
                 {testimonial.attribution && (
-                  <span className="font-semibold text-navy">{testimonial.attribution}</span>
+                  <span className="font-semibold text-ink">{testimonial.attribution}</span>
                 )}
                 {testimonial.role && <span> · {testimonial.role}</span>}
               </figcaption>
@@ -231,7 +231,7 @@ export default async function ProjectPage({
         {galleryImages.length > 0 && (
           <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {galleryImages.map((image, i) => (
-              <div key={i} className="relative aspect-[4/3] overflow-hidden rounded-lg bg-stone-100">
+              <div key={i} className="relative aspect-[4/3] overflow-hidden rounded-[2px] bg-paper-alt">
                 <Image
                   src={image.url}
                   alt={image.alt}
@@ -247,7 +247,7 @@ export default async function ProjectPage({
         {/* Attachments (PDFs, spec sheets) */}
         {docs.length > 0 && (
           <div className="mt-12">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-stone-400">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-faint">
               Documents
             </h2>
             <ul className="mt-3 space-y-2">
@@ -257,7 +257,7 @@ export default async function ProjectPage({
                     href={doc.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-2 text-navy hover:text-accent"
+                    className="inline-flex items-center gap-2 text-ink hover:text-maroon"
                   >
                     <span aria-hidden="true">📄</span>
                     {doc.label || `Document ${i + 1}`}

@@ -2,7 +2,7 @@ import { CallButton } from './PhoneLink';
 
 /**
  * Closing call CTA. Every page ends with one — no exceptions. A full-bleed
- * oxblood band with bone text, left-aligned.
+ * ink band with cream text, left-aligned.
  */
 export function CallCTA({
   phone,
@@ -16,12 +16,12 @@ export function CallCTA({
   body?: string;
 }) {
   return (
-    <section className="bg-oxblood py-24 text-bone sm:py-28">
+    <section className="bg-ink py-24 text-cream sm:py-28">
       <div className="container-page">
-        <h2 className="max-w-3xl text-3xl font-bold uppercase tracking-heading text-bone sm:text-4xl">
+        <h2 className="max-w-3xl text-3xl font-bold uppercase tracking-heading text-cream sm:text-4xl">
           {heading}
         </h2>
-        <p className="mt-5 max-w-2xl text-lg text-bone/60">{body}</p>
+        <p className="mt-5 max-w-2xl text-lg text-cream-muted">{body}</p>
         <div className="mt-10">
           <CallButton phone={phone} phoneRaw={phoneRaw} className="btn-call-ondark" />
         </div>

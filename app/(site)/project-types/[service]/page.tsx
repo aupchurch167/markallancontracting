@@ -85,7 +85,7 @@ export default async function ServiceHubPage({
       />
 
       {/* Hook */}
-      <section className="bg-navy text-white">
+      <section className="bg-ink text-white">
         <div className="container-page py-16 sm:py-20">
           <h1 className="max-w-3xl text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
             {h1}
@@ -105,7 +105,7 @@ export default async function ServiceHubPage({
               <PortableText value={doc.problemStatement} />
             </div>
           ) : (
-            <p className="mt-3 text-lg leading-relaxed text-stone-600">{c.problem}</p>
+            <p className="mt-3 text-lg leading-relaxed text-body">{c.problem}</p>
           )}
         </div>
       </Section>
@@ -113,13 +113,13 @@ export default async function ServiceHubPage({
       {/* What's included */}
       <Section muted>
         <Eyebrow>What&apos;s included</Eyebrow>
-        <h2 className="mt-3 text-2xl font-bold text-navy sm:text-3xl">
+        <h2 className="mt-3 text-2xl font-bold text-ink sm:text-3xl">
           Real scope, trade by trade
         </h2>
         <ul className="mt-6 grid gap-x-8 gap-y-2 sm:grid-cols-2">
           {scope.map((item) => (
-            <li key={item} className="flex items-start gap-2 text-stone-600">
-              <span aria-hidden className="mt-1 text-accent">
+            <li key={item} className="flex items-start gap-2 text-body">
+              <span aria-hidden className="mt-1 text-maroon">
                 ✓
               </span>
               {item}
@@ -131,13 +131,13 @@ export default async function ServiceHubPage({
       {/* Plan */}
       <Section>
         <Eyebrow>How it works</Eyebrow>
-        <p className="mt-2 max-w-2xl text-stone-600">{c.planIntro}</p>
+        <p className="mt-2 max-w-2xl text-body">{c.planIntro}</p>
         <div className="mt-8">
           <PlanSteps steps={doc?.planSteps} />
         </div>
         <Link
           href="/construction-process"
-          className="mt-8 inline-block font-semibold text-accent hover:text-accent-700"
+          className="mt-8 inline-block font-semibold text-maroon hover:text-maroon-dark"
         >
           See how a job runs day to day →
         </Link>
@@ -146,7 +146,7 @@ export default async function ServiceHubPage({
       {/* Project examples */}
       {projects.length > 0 ? (
         <Section muted>
-          <h2 className="text-2xl font-bold text-navy sm:text-3xl">Recent work</h2>
+          <h2 className="text-2xl font-bold text-ink sm:text-3xl">Recent work</h2>
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {projects.map((p) => (
               <ProjectCard key={p.id} project={p} />
@@ -158,17 +158,17 @@ export default async function ServiceHubPage({
       {/* Typical range and timeline */}
       <Section muted={projects.length === 0}>
         <div className="grid gap-6 sm:grid-cols-2">
-          <div className="rounded-lg border border-stone-200 bg-paper p-7">
-            <div className="text-sm font-semibold uppercase tracking-wider text-stone-400">
+          <div className="rounded-[2px] border border-hairline bg-paper p-7">
+            <div className="text-sm font-semibold uppercase tracking-wider text-faint">
               Typical range
             </div>
-            <div className="mt-2 text-3xl font-bold text-navy">{range}</div>
+            <div className="mt-2 text-3xl font-bold text-ink">{range}</div>
           </div>
-          <div className="rounded-lg border border-stone-200 bg-paper p-7">
-            <div className="text-sm font-semibold uppercase tracking-wider text-stone-400">
+          <div className="rounded-[2px] border border-hairline bg-paper p-7">
+            <div className="text-sm font-semibold uppercase tracking-wider text-faint">
               Typical timeline
             </div>
-            <div className="mt-2 text-xl font-semibold text-navy">{timeline}</div>
+            <div className="mt-2 text-xl font-semibold text-ink">{timeline}</div>
           </div>
         </div>
       </Section>
@@ -177,7 +177,7 @@ export default async function ServiceHubPage({
       {c.faqs.length > 0 && (
         <Section>
           <div className="max-w-3xl">
-            <h2 className="text-2xl font-bold text-navy sm:text-3xl">Common questions</h2>
+            <h2 className="text-2xl font-bold text-ink sm:text-3xl">Common questions</h2>
             <div className="mt-6">
               <FAQ faqs={c.faqs} />
             </div>
@@ -188,13 +188,13 @@ export default async function ServiceHubPage({
       {/* City links — hub links down to every matrix page for this service */}
       {cities.length > 0 && (
         <Section>
-          <h2 className="text-2xl font-bold text-navy">{def.name} by city</h2>
+          <h2 className="text-2xl font-bold text-ink">{def.name} by city</h2>
           <div className="mt-6 flex flex-wrap gap-3">
             {cities.map((city) => (
               <Link
                 key={city.slug}
                 href={`/project-types/${service}/${city.slug}`}
-                className="rounded-full border border-stone-200 bg-stone-50 px-4 py-2 text-sm font-medium text-navy hover:border-accent hover:text-accent"
+                className="rounded-full border border-hairline bg-paper px-4 py-2 text-sm font-medium text-ink hover:border-maroon hover:text-maroon"
               >
                 {city.name}, {city.state.toUpperCase()}
               </Link>

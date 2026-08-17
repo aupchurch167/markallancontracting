@@ -11,7 +11,7 @@ export function Section({
   muted?: boolean;
 }) {
   return (
-    <section className={`${muted ? 'bg-bone-light' : ''} py-24 sm:py-32 ${className}`}>
+    <section className={`${muted ? 'bg-paper-alt' : ''} py-24 sm:py-32 ${className}`}>
       <div className="container-page">{children}</div>
     </section>
   );

@@ -64,12 +64,12 @@ export default async function HowWeBuildPage() {
 
   return (
     <>
-      <section className="bg-navy text-white">
+      <section className="bg-ink text-white">
         <div className="container-page py-16 sm:py-20">
           <h1 className="max-w-3xl text-4xl font-bold text-white sm:text-5xl">
             How we build
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-stone-100/90">
+          <p className="mt-4 max-w-2xl text-lg text-cream-muted">
             The whole job, start to finish, in plain language. What we do, what you
             do, and roughly how long each part takes.
           </p>
@@ -80,7 +80,7 @@ export default async function HowWeBuildPage() {
       <Section>
         <div className="max-w-3xl">
           <Eyebrow>Who you&apos;re working with</Eyebrow>
-          <p className="mt-3 text-lg leading-relaxed text-stone-600">
+          <p className="mt-3 text-lg leading-relaxed text-body">
             {SITE.name} has been building out commercial space since {SITE.established}.
             Family-owned, working across Georgia, Tennessee, Alabama, and South
             Carolina, on projects from {SITE.projectRange}. We started with over a
@@ -92,7 +92,7 @@ export default async function HowWeBuildPage() {
           </p>
           <Link
             href="/team"
-            className="mt-4 inline-block font-semibold text-accent hover:text-accent-700"
+            className="mt-4 inline-block font-semibold text-maroon hover:text-maroon-dark"
           >
             Meet the team →
           </Link>
@@ -105,25 +105,25 @@ export default async function HowWeBuildPage() {
           {PHASES.map((p, i) => (
             <div
               key={p.name}
-              className="grid gap-4 rounded-lg border border-stone-200 bg-paper p-6 sm:grid-cols-[auto,1fr]"
+              className="grid gap-4 rounded-[2px] border border-hairline bg-paper p-6 sm:grid-cols-[auto,1fr]"
             >
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-navy text-lg font-bold text-white">
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-ink text-lg font-bold text-white">
                 {i + 1}
               </div>
               <div>
-                <h2 className="text-xl font-bold text-navy">{p.name}</h2>
+                <h2 className="text-xl font-bold text-ink">{p.name}</h2>
                 <dl className="mt-3 grid gap-3 sm:grid-cols-3">
                   <div>
-                    <dt className="text-xs font-semibold uppercase tracking-wider text-accent">We do</dt>
-                    <dd className="mt-1 text-sm text-stone-600">{p.we}</dd>
+                    <dt className="text-xs font-semibold uppercase tracking-wider text-maroon">We do</dt>
+                    <dd className="mt-1 text-sm text-body">{p.we}</dd>
                   </div>
                   <div>
-                    <dt className="text-xs font-semibold uppercase tracking-wider text-accent">You do</dt>
-                    <dd className="mt-1 text-sm text-stone-600">{p.you}</dd>
+                    <dt className="text-xs font-semibold uppercase tracking-wider text-maroon">You do</dt>
+                    <dd className="mt-1 text-sm text-body">{p.you}</dd>
                   </div>
                   <div>
-                    <dt className="text-xs font-semibold uppercase tracking-wider text-accent">How long</dt>
-                    <dd className="mt-1 text-sm text-stone-600">{p.time}</dd>
+                    <dt className="text-xs font-semibold uppercase tracking-wider text-maroon">How long</dt>
+                    <dd className="mt-1 text-sm text-body">{p.time}</dd>
                   </div>
                 </dl>
               </div>
@@ -143,10 +143,10 @@ export default async function HowWeBuildPage() {
             <Link
               key={l.href}
               href={l.href}
-              className="group rounded-lg border border-stone-200 p-6 transition-colors hover:border-accent hover:bg-stone-50"
+              className="group rounded-[2px] border border-hairline p-6 transition-colors hover:border-maroon hover:bg-paper"
             >
-              <div className="text-lg font-bold text-navy group-hover:text-accent">{l.title}</div>
-              <p className="mt-2 text-sm text-stone-600">{l.body}</p>
+              <div className="text-lg font-bold text-ink group-hover:text-maroon">{l.title}</div>
+              <p className="mt-2 text-sm text-body">{l.body}</p>
             </Link>
           ))}
         </div>

@@ -7,9 +7,9 @@ export function ProjectCard({ project }: { project: ProjectSummary }) {
   return (
     <Link
       href={`/projects/${project.slug}`}
-      className="group block border-2 border-brass/40 bg-bone transition-colors hover:border-brass"
+      className="group block border-2 border-hairline bg-paper transition-colors hover:border-hairline"
     >
-      <div className="relative aspect-[4/3] overflow-hidden bg-stone-100">
+      <div className="relative aspect-[4/3] overflow-hidden bg-paper-alt">
         {project.imageUrl ? (
           <Image
             src={project.imageUrl}
@@ -19,24 +19,24 @@ export function ProjectCard({ project }: { project: ProjectSummary }) {
             className="object-cover"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-sm text-stone-400">
+          <div className="flex h-full items-center justify-center text-sm text-faint">
             Project photo
           </div>
         )}
       </div>
       <div className="p-6">
-        <div className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-label text-brass">
+        <div className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-label text-maroon">
           {project.clientType && <span>{project.clientType}</span>}
           {project.location && <span>· {project.location}</span>}
         </div>
-        <div className="mt-2 text-base font-bold uppercase tracking-heading text-oxblood group-hover:text-brass">
+        <div className="mt-2 text-base font-bold uppercase tracking-heading text-ink group-hover:text-maroon">
           {project.title}
         </div>
         {project.scopeSummary && (
-          <p className="mt-2 line-clamp-2 text-sm text-oxblood/65">{project.scopeSummary}</p>
+          <p className="mt-2 line-clamp-2 text-sm text-body">{project.scopeSummary}</p>
         )}
         {project.quote && (
-          <p className="mt-4 border-l-2 border-brass pl-3.5 text-sm italic leading-snug text-oxblood">
+          <p className="mt-4 border-l-2 border-hairline pl-3.5 text-sm italic leading-snug text-ink">
             “{project.quote}”
           </p>
         )}

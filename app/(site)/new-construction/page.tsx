@@ -101,15 +101,15 @@ export default async function NewConstructionPage() {
         ]}
       />
 
-      <section className="bg-navy text-white">
+      <section className="bg-ink text-white">
         <div className="container-page py-16 sm:py-20">
-          <p className="text-sm font-semibold uppercase tracking-widest text-accent">
+          <p className="text-sm font-semibold uppercase tracking-widest text-maroon">
             Ground-up commercial
           </p>
           <h1 className="mt-3 max-w-3xl text-4xl font-bold text-white sm:text-5xl">
             Ground-up, from the owner&apos;s side
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-stone-100/90">
+          <p className="mt-4 max-w-2xl text-lg text-cream-muted">
             We&apos;ve spent 25 years building commercial interiors for national
             brands — and we&apos;ve been the owner developing and operating our own
             commercial property. That combination is what we bring to a ground-up
@@ -124,19 +124,19 @@ export default async function NewConstructionPage() {
       {/* What's true — lead with it */}
       <Section>
         <Eyebrow>What&apos;s true today</Eyebrow>
-        <h2 className="mt-2 text-2xl font-bold text-navy sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-bold text-ink sm:text-3xl">
           The proof we lead with
         </h2>
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {TRUE_TODAY.map((item) => (
-            <div key={item.name} className="rounded-lg border border-stone-200 bg-paper p-6">
-              <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-navy/5 text-navy">
+            <div key={item.name} className="rounded-[2px] border border-hairline bg-paper p-6">
+              <span className="flex h-11 w-11 items-center justify-center rounded-[2px] bg-ink/5 text-ink">
                 <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={1.6}>
                   {item.icon}
                 </svg>
               </span>
-              <h3 className="mt-4 font-bold text-navy">{item.name}</h3>
-              <p className="mt-1 text-sm leading-relaxed text-stone-600">{item.body}</p>
+              <h3 className="mt-4 font-bold text-ink">{item.name}</h3>
+              <p className="mt-1 text-sm leading-relaxed text-body">{item.body}</p>
             </div>
           ))}
         </div>
@@ -146,7 +146,7 @@ export default async function NewConstructionPage() {
       <Section muted>
         <div className="max-w-3xl">
           <Eyebrow>What we take on today</Eyebrow>
-          <p className="mt-3 text-lg leading-relaxed text-stone-600">
+          <p className="mt-3 text-lg leading-relaxed text-body">
             Our proof base is commercial interior work from {SITE.projectRange} —
             tenant improvements, restaurant and retail buildouts, office and
             warehouse conversions, self-performed across framing, drywall, paint,
@@ -155,7 +155,7 @@ export default async function NewConstructionPage() {
             before the first shovel. We will tell you plainly what fits that and what
             does not.
           </p>
-          <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-navy/15 bg-paper px-4 py-2 text-sm font-semibold text-navy">
+          <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-navy/15 bg-paper px-4 py-2 text-sm font-semibold text-ink">
             <span className="h-2 w-2 rounded-full bg-accent" />
             Projects from {SITE.projectRange}
           </div>
@@ -165,10 +165,10 @@ export default async function NewConstructionPage() {
       {/* Where we're strongest on a ground-up project — honest timeline */}
       <Section>
         <Eyebrow>Where we fit on a ground-up project</Eyebrow>
-        <h2 className="mt-2 text-2xl font-bold text-navy sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-bold text-ink sm:text-3xl">
           On home ground at the shell and the fit-out
         </h2>
-        <p className="mt-3 max-w-2xl text-stone-600">
+        <p className="mt-3 max-w-2xl text-body">
           Ground-up is a growth direction for us, and we&apos;re straight about it.
           Here&apos;s where we self-perform and lead, and where we coordinate and
           partner.
@@ -179,18 +179,18 @@ export default async function NewConstructionPage() {
             {GROUNDUP.map((s) => (
               <div key={s.stage} className="text-center">
                 <div
-                  className={`flex h-16 items-center justify-center rounded-lg px-2 text-sm font-semibold ${
+                  className={`flex h-16 items-center justify-center rounded-[2px] px-2 text-sm font-semibold ${
                     s.role === 'strong'
-                      ? 'bg-navy text-white'
-                      : 'border border-dashed border-stone-300 bg-stone-50 text-stone-500'
+                      ? 'bg-ink text-white'
+                      : 'border border-dashed border-hairline bg-paper text-muted'
                   }`}
                 >
                   {s.stage}
                 </div>
-                <p className="mt-2 text-xs text-stone-500">{s.note}</p>
+                <p className="mt-2 text-xs text-muted">{s.note}</p>
                 <p
                   className={`mt-1 text-xs font-semibold ${
-                    s.role === 'strong' ? 'text-accent' : 'text-stone-400'
+                    s.role === 'strong' ? 'text-maroon' : 'text-faint'
                   }`}
                 >
                   {s.role === 'strong' ? '✓ We lead' : 'We coordinate'}
@@ -199,7 +199,7 @@ export default async function NewConstructionPage() {
             ))}
           </div>
         </div>
-        <p className="mt-5 max-w-2xl text-sm text-stone-500">
+        <p className="mt-5 max-w-2xl text-sm text-muted">
           Pre-construction runs across the front end — it&apos;s where we add the
           most before the first shovel, whatever the delivery method.
         </p>
@@ -208,27 +208,27 @@ export default async function NewConstructionPage() {
       {/* Why a smaller GC — honest comparison */}
       <Section muted>
         <Eyebrow>Why a smaller GC for ground-up</Eyebrow>
-        <h2 className="mt-2 text-2xl font-bold text-navy sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-bold text-ink sm:text-3xl">
           On a project this size, who you hire is who shows up
         </h2>
         <div className="mt-8 grid gap-6 lg:grid-cols-2">
           {COMPARE.map((col) => (
             <div
               key={col.heading}
-              className={`rounded-xl border bg-paper p-7 ${
-                col.fit ? 'border-accent shadow-sm ring-1 ring-accent/20' : 'border-stone-200'
+              className={`rounded-[2px] border bg-paper p-7 ${
+                col.fit ? 'border-maroon ring-1 ring-accent/20' : 'border-hairline'
               }`}
             >
-              <h3 className="text-lg font-bold text-navy">{col.heading}</h3>
+              <h3 className="text-lg font-bold text-ink">{col.heading}</h3>
               <ul className="mt-4 space-y-3">
                 {col.points.map((p) => (
-                  <li key={p} className="flex items-start gap-3 text-stone-600">
+                  <li key={p} className="flex items-start gap-3 text-body">
                     {col.fit ? (
-                      <svg viewBox="0 0 24 24" className="mt-0.5 h-5 w-5 shrink-0 text-accent" fill="none" stroke="currentColor" strokeWidth={2}>
+                      <svg viewBox="0 0 24 24" className="mt-0.5 h-5 w-5 shrink-0 text-maroon" fill="none" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                       </svg>
                     ) : (
-                      <svg viewBox="0 0 24 24" className="mt-0.5 h-5 w-5 shrink-0 text-stone-300" fill="none" stroke="currentColor" strokeWidth={2}>
+                      <svg viewBox="0 0 24 24" className="mt-0.5 h-5 w-5 shrink-0 text-faint" fill="none" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                       </svg>
                     )}
@@ -245,7 +245,7 @@ export default async function NewConstructionPage() {
       <Section>
         <div className="max-w-3xl">
           <Eyebrow>Where it starts</Eyebrow>
-          <p className="mt-3 text-lg leading-relaxed text-stone-600">
+          <p className="mt-3 text-lg leading-relaxed text-body">
             The right entry point for a ground-up conversation is pre-construction —
             budgeting, feasibility, and scope development before anything is locked.
             That is where we add the most value early, and where the decisions that
@@ -253,7 +253,7 @@ export default async function NewConstructionPage() {
           </p>
           <Link
             href="/pre-construction"
-            className="mt-4 inline-block font-semibold text-accent hover:text-accent-700"
+            className="mt-4 inline-block font-semibold text-maroon hover:text-maroon-dark"
           >
             See what pre-construction covers →
           </Link>
@@ -269,12 +269,12 @@ export default async function NewConstructionPage() {
               <Link
                 key={p.slug}
                 href={`/insights/${p.slug}`}
-                className="group rounded-lg border border-stone-200 bg-paper p-6 transition-colors hover:border-accent"
+                className="group rounded-[2px] border border-hairline bg-paper p-6 transition-colors hover:border-maroon"
               >
-                <div className="text-lg font-semibold text-navy group-hover:text-accent">
+                <div className="text-lg font-semibold text-ink group-hover:text-maroon">
                   {p.title}
                 </div>
-                {p.excerpt && <p className="mt-2 text-sm text-stone-600">{p.excerpt}</p>}
+                {p.excerpt && <p className="mt-2 text-sm text-body">{p.excerpt}</p>}
               </Link>
             ))}
           </div>

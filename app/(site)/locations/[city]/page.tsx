@@ -71,7 +71,7 @@ export default async function CityHubPage({
         ]}
       />
 
-      <section className="bg-navy text-white">
+      <section className="bg-ink text-white">
         <div className="container-page py-16 sm:py-20">
           <h1 className="max-w-3xl text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
             Commercial General Contractor in {label}
@@ -88,7 +88,7 @@ export default async function CityHubPage({
           {doc?.intro?.length ? (
             <PortableText value={doc.intro} />
           ) : fb ? (
-            <p className="leading-relaxed text-stone-600">{fb.intro}</p>
+            <p className="leading-relaxed text-body">{fb.intro}</p>
           ) : null}
         </div>
       </Section>
@@ -102,7 +102,7 @@ export default async function CityHubPage({
                 <Link
                   key={s.slug}
                   href={`/project-types/${s.slug}/${city}`}
-                  className="rounded-lg border border-stone-200 bg-paper p-5 font-semibold text-navy transition-colors hover:border-accent hover:text-accent"
+                  className="rounded-[2px] border border-hairline bg-paper p-5 font-semibold text-ink transition-colors hover:border-maroon hover:text-maroon"
                 >
                   {s.title}
                 </Link>
@@ -111,7 +111,7 @@ export default async function CityHubPage({
                 <Link
                   key={s.slug}
                   href={`/project-types/${s.slug}`}
-                  className="rounded-lg border border-stone-200 bg-paper p-5 font-semibold text-navy transition-colors hover:border-accent hover:text-accent"
+                  className="rounded-[2px] border border-hairline bg-paper p-5 font-semibold text-ink transition-colors hover:border-maroon hover:text-maroon"
                 >
                   {s.name}
                 </Link>
@@ -129,7 +129,7 @@ export default async function CityHubPage({
                 <PortableText value={doc.jurisdictionNote} />
               ) : (
                 fb?.jurisdiction.map((p, i) => (
-                  <p key={i} className="mb-4 leading-relaxed text-stone-600">
+                  <p key={i} className="mb-4 leading-relaxed text-body">
                     {p}
                   </p>
                 ))

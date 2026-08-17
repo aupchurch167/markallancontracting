@@ -14,7 +14,7 @@ const components: PortableTextComponents = {
       if (!url) return null;
       return (
         <figure className="my-8">
-          <div className="overflow-hidden rounded-lg border border-stone-200">
+          <div className="overflow-hidden rounded-[2px] border border-hairline">
             <Image
               src={url}
               alt={value.alt || ''}
@@ -25,7 +25,7 @@ const components: PortableTextComponents = {
             />
           </div>
           {value.caption && (
-            <figcaption className="mt-2 text-center text-sm text-stone-400">
+            <figcaption className="mt-2 text-center text-sm text-faint">
               {value.caption}
             </figcaption>
           )}
@@ -37,7 +37,7 @@ const components: PortableTextComponents = {
       if (!value?.url) return null;
       return (
         <figure className="my-8">
-          <div className="overflow-hidden rounded-lg border border-stone-200">
+          <div className="overflow-hidden rounded-[2px] border border-hairline">
             <Image
               src={value.url}
               alt={value.alt || ''}
@@ -48,7 +48,7 @@ const components: PortableTextComponents = {
             />
           </div>
           {value.caption && (
-            <figcaption className="mt-2 text-center text-sm text-stone-400">
+            <figcaption className="mt-2 text-center text-sm text-faint">
               {value.caption}
             </figcaption>
           )}
@@ -57,23 +57,23 @@ const components: PortableTextComponents = {
     },
   },
   block: {
-    h2: ({ children }) => <h2 className="mt-10 text-2xl font-bold text-navy">{children}</h2>,
-    h3: ({ children }) => <h3 className="mt-8 text-xl font-bold text-navy">{children}</h3>,
-    normal: ({ children }) => <p className="mb-4 leading-relaxed text-stone-600">{children}</p>,
+    h2: ({ children }) => <h2 className="mt-10 text-2xl font-bold text-ink">{children}</h2>,
+    h3: ({ children }) => <h3 className="mt-8 text-xl font-bold text-ink">{children}</h3>,
+    normal: ({ children }) => <p className="mb-4 leading-relaxed text-body">{children}</p>,
     blockquote: ({ children }) => (
-      <blockquote className="my-6 border-l-4 border-accent pl-4 italic text-stone-600">
+      <blockquote className="my-6 border-l-4 border-maroon pl-4 italic text-body">
         {children}
       </blockquote>
     ),
   },
   list: {
-    bullet: ({ children }) => <ul className="mb-4 list-disc space-y-1 pl-5 text-stone-600">{children}</ul>,
-    number: ({ children }) => <ol className="mb-4 list-decimal space-y-1 pl-5 text-stone-600">{children}</ol>,
+    bullet: ({ children }) => <ul className="mb-4 list-disc space-y-1 pl-5 text-body">{children}</ul>,
+    number: ({ children }) => <ol className="mb-4 list-decimal space-y-1 pl-5 text-body">{children}</ol>,
   },
   marks: {
-    strong: ({ children }) => <strong className="font-semibold text-navy">{children}</strong>,
+    strong: ({ children }) => <strong className="font-semibold text-ink">{children}</strong>,
     link: ({ children, value }) => (
-      <Link href={value?.href ?? '#'} className="text-accent underline hover:text-accent-700">
+      <Link href={value?.href ?? '#'} className="text-maroon underline hover:text-maroon-dark">
         {children}
       </Link>
     ),
