@@ -3,7 +3,6 @@ import Image from 'next/image';
 import { CalendarBlank, ArrowRight, PhoneCall } from '@phosphor-icons/react/dist/ssr';
 import { CONTACT, telHref } from '@/lib/constants';
 import { getLinksProfile, getPublicButtons, getPublicUpdates } from '@/lib/links';
-import { Eyebrow } from '@/components/Section';
 import { LinkButtons, SocialRow, ContactForm, SignupForm } from './client';
 
 export const dynamic = 'force-dynamic';
@@ -40,61 +39,42 @@ function fmtDate(iso: string): string {
 }
 
 export default async function LinksPage() {
-  const [profile, buttons, updates] = await Promise.all([
-    getLinksProfile(),
-    getPublicButtons(),
-    getPublicUpdates(3),
-  ]);
+  const [profile, buttons, updates] = await Promise.all([getLinksProfile(), getPublicButtons(), getPublicUpdates(3)]);
   const { sections } = profile;
 
   return (
-    <main className="min-h-screen bg-bone pb-28">
-      <div className="mx-auto flex max-w-xl flex-col gap-12 px-5 py-10 sm:py-14">
-        {/* Hero card */}
-        <section className="overflow-hidden rounded-3xl bg-oxblood text-center text-bone shadow-sm">
+    <main className="min-h-screen bg-paper pb-24">
+      <div className="mx-auto flex max-w-[560px] flex-col gap-12 px-5 py-10 sm:py-14">
+        {/* Hero — ink card */}
+        <section className="overflow-hidden rounded-[2px] bg-ink text-cream">
           {profile.coverUrl && (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={profile.coverUrl} alt="" className="h-40 w-full object-cover sm:h-52" />
           )}
-          <div className="flex flex-col items-center px-8 py-10">
+          <div className="flex flex-col items-center px-8 py-10 text-center">
             {profile.avatarUrl ? (
-              // Logo sits on a bone plate so a dark mark still reads on the oxblood hero.
-              <div className="flex h-28 w-28 items-center justify-center rounded-full bg-bone p-4 shadow-sm">
-                <Image
-                  src={profile.avatarUrl}
-                  alt={profile.name}
-                  width={96}
-                  height={96}
-                  className="h-full w-full rounded-full object-contain"
-                />
+              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-paper p-3">
+                <Image src={profile.avatarUrl} alt={profile.name} width={80} height={80} className="h-full w-full rounded-full object-contain" />
               </div>
             ) : (
-              <div className="flex h-24 w-24 items-center justify-center rounded-full border border-bone/40 text-2xl font-bold uppercase tracking-wordmark text-bone">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full border border-cream/40 font-display text-xl font-bold uppercase tracking-wordmark text-cream">
                 MAC
               </div>
             )}
-            <h1 className="mt-6 text-3xl font-bold uppercase leading-[1.15] tracking-wordmark text-bone sm:text-4xl">
+            <h1 className="mt-6 font-display text-[34px] font-bold uppercase leading-[0.95] tracking-wordmark text-cream sm:text-[40px]">
               {profile.name}
             </h1>
-            <p className="mt-3 text-xs font-semibold uppercase tracking-label text-bone-light">{profile.tagline}</p>
-            <p className="mt-4 max-w-md text-[15px] leading-relaxed text-bone">{profile.blurb}</p>
-            <div className="mt-6 text-[11px] font-semibold uppercase tracking-label text-bone/90">
-              Licensed &amp; insured&nbsp;&nbsp;·&nbsp;&nbsp;Metro Atlanta
-              {profile.since ? <>&nbsp;&nbsp;·&nbsp;&nbsp;{profile.since}</> : null}
+            <p className="mt-3 text-[12px] font-semibold uppercase tracking-label text-rose">{profile.tagline}</p>
+            <p className="mt-4 max-w-sm text-[15px] leading-relaxed text-cream-muted">{profile.blurb}</p>
+            <div className="mt-6 text-[11px] font-semibold uppercase tracking-label text-cream-muted">
+              Licensed &amp; insured&nbsp;&nbsp;·&nbsp;&nbsp;Metro Atlanta{profile.since ? <>&nbsp;&nbsp;·&nbsp;&nbsp;{profile.since}</> : null}
             </div>
           </div>
         </section>
 
         {/* Link buttons */}
         <LinkButtons
-          buttons={buttons.map((b, i) => ({
-            id: b.id,
-            label: b.label,
-            sublabel: b.sublabel,
-            href: b.href,
-            icon: b.icon,
-            primary: i === 0,
-          }))}
+          buttons={buttons.map((b, i) => ({ id: b.id, label: b.label, sublabel: b.sublabel, href: b.href, icon: b.icon, primary: i === 0 }))}
         />
 
         {/* Social row */}
@@ -104,31 +84,28 @@ export default async function LinksPage() {
         {sections.updates && updates.length > 0 && (
           <section>
             <div className="flex items-baseline justify-between">
-              <h2 className="text-xl font-bold uppercase tracking-heading text-oxblood">Updates</h2>
-              <Eyebrow>From the jobsite</Eyebrow>
+              <h2 className="font-display text-[24px] font-bold uppercase text-ink">Updates</h2>
+              <span className="text-[11px] font-semibold uppercase tracking-label text-faint">From the jobsite</span>
             </div>
-            <div className="mt-5 flex flex-col gap-4">
+            <div className="mt-5 flex flex-col gap-3">
               {updates.map((u) => (
-                <article key={u.id} className="rounded-2xl border border-brass/30 bg-bone-light p-5 shadow-sm">
-                  <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-label text-brass">
+                <article key={u.id} className="border border-hairline bg-[#FFFFFF] p-5">
+                  <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-label text-maroon">
                     <CalendarBlank size={14} /> {fmtDate(u.postedAt)}
                   </div>
                   {u.imageUrl && (
-                    <div className="mt-3 overflow-hidden rounded-xl">
+                    <div className="mt-3 overflow-hidden border border-hairline">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={u.imageUrl} alt="" className="h-56 w-full object-cover" />
+                      <img src={u.imageUrl} alt="" className="h-52 w-full object-cover" />
                     </div>
                   )}
-                  <p className="mt-3 text-[15px] leading-relaxed text-oxblood/80" style={{ textWrap: 'pretty' }}>
+                  <p className="mt-3 text-[15px] leading-relaxed text-body" style={{ textWrap: 'pretty' }}>
                     {u.body}
                   </p>
                 </article>
               ))}
             </div>
-            <a
-              href="https://www.instagram.com/markallancontracting/"
-              className="mt-4 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-label text-brass hover:underline"
-            >
+            <a href="https://www.instagram.com/markallancontracting/" className="mt-4 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-label text-maroon hover:text-maroon-dark">
               More updates on Instagram <ArrowRight size={14} />
             </a>
           </section>
@@ -137,14 +114,14 @@ export default async function LinksPage() {
         {/* Testimonials */}
         {sections.testimonials && profile.testimonials.length > 0 && (
           <section>
-            <h2 className="text-xl font-bold uppercase tracking-heading text-oxblood">What owners say</h2>
+            <h2 className="font-display text-[24px] font-bold uppercase text-ink">What owners say</h2>
             <div className="mt-5 flex flex-col gap-4">
               {profile.testimonials.map((t, i) => (
-                <blockquote key={i} className="rounded-2xl border-l-2 border-brass bg-bone-light py-4 pl-5 pr-5 shadow-sm">
-                  <p className="text-lg leading-relaxed text-oxblood" style={{ textWrap: 'pretty' }}>
+                <blockquote key={i} className="border-l-2 border-maroon bg-[#FFFFFF] py-4 pl-5 pr-5">
+                  <p className="text-[17px] leading-relaxed text-ink" style={{ textWrap: 'pretty' }}>
                     “{t.quote}”
                   </p>
-                  <footer className="mt-2 text-[11px] font-medium uppercase tracking-label text-brass">
+                  <footer className="mt-2 text-[11px] font-semibold uppercase tracking-label text-faint">
                     {t.name}
                     {t.role ? ` — ${t.role}` : ''}
                   </footer>
@@ -157,23 +134,23 @@ export default async function LinksPage() {
         {/* Service-area map */}
         {sections.map && (
           <section>
-            <h2 className="text-xl font-bold uppercase tracking-heading text-oxblood">Where we work</h2>
-            <div className="mt-5 overflow-hidden rounded-2xl border border-brass/30 shadow-sm">
+            <h2 className="font-display text-[24px] font-bold uppercase text-ink">Where we work</h2>
+            <div className="mt-5 overflow-hidden border border-hairline">
               <iframe
                 title="Metro Atlanta service area"
                 src={`https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(profile.area.bbox)}&layer=mapnik`}
                 className="block h-60 w-full border-0"
               />
             </div>
-            <p className="mt-3 text-sm text-oxblood/60">{profile.area.note}</p>
+            <p className="mt-3 text-[14px] text-muted">{profile.area.note}</p>
           </section>
         )}
 
         {/* Contact form */}
         {sections.contact && (
-          <section className="rounded-2xl border border-brass/30 bg-bone-light p-6 shadow-sm sm:p-8">
-            <h2 className="text-xl font-bold uppercase tracking-heading text-oxblood">Tell us about the space</h2>
-            <p className="mt-3 text-[15px] leading-relaxed text-oxblood/70">
+          <section className="border border-hairline bg-[#FFFFFF] p-6 sm:p-8">
+            <h2 className="font-display text-[24px] font-bold uppercase text-ink">Tell us about the space</h2>
+            <p className="mt-3 text-[15px] leading-relaxed text-muted">
               A few details and we&apos;ll come back with a walkthrough time. Faster still: call {CONTACT.phone}.
             </p>
             <div className="mt-6">
@@ -185,40 +162,34 @@ export default async function LinksPage() {
         {/* Email signup */}
         {sections.signup && (
           <section>
-            <h2 className="text-lg font-bold uppercase tracking-heading text-oxblood">Jobsite notes, once a month</h2>
-            <p className="mt-3 text-[15px] text-oxblood/70">
-              Buildout cost and permitting notes for owners and managers. No sales blasts.
-            </p>
+            <h2 className="font-display text-[20px] font-bold uppercase text-ink">Jobsite notes, once a month</h2>
+            <p className="mt-3 text-[15px] text-muted">Buildout cost and permitting notes for owners and managers. No sales blasts.</p>
             <div className="mt-5">
               <SignupForm />
             </div>
           </section>
         )}
 
-        {/* Minimal contact line */}
-        <p className="pt-2 text-center text-xs text-oxblood/50">
-          <a href={telHref(CONTACT.phoneRaw)} data-tracked-phone className="hover:text-brass">
+        {/* Contact line */}
+        <p className="pt-2 text-center text-[12px] text-faint">
+          <a href={telHref(CONTACT.phoneRaw)} data-tracked-phone className="hover:text-maroon">
             {CONTACT.phone}
           </a>{' '}
           ·{' '}
-          <a href={`mailto:${CONTACT.email}`} className="hover:text-brass">
+          <a href={`mailto:${CONTACT.email}`} className="hover:text-maroon">
             {CONTACT.email}
           </a>{' '}
           ·{' '}
-          <a href="https://www.macont.com" className="hover:text-brass">
+          <a href="https://www.macont.com" className="hover:text-maroon">
             macont.com
           </a>
         </p>
       </div>
 
-      {/* Floating call button */}
+      {/* Sticky call bar */}
       {sections.stickyCall && (
-        <div className="pointer-events-none fixed inset-x-0 bottom-5 z-40 flex justify-center px-5">
-          <a
-            href={telHref(CONTACT.phoneRaw)}
-            data-tracked-phone
-            className="pointer-events-auto inline-flex items-center gap-2 rounded-full bg-oxblood px-6 py-3.5 text-sm font-bold uppercase tracking-heading text-bone shadow-lg transition-colors hover:bg-brass hover:text-oxblood"
-          >
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-hairline bg-paper/95 px-5 py-3 backdrop-blur lg:hidden">
+          <a href={telHref(CONTACT.phoneRaw)} data-tracked-phone className="mx-auto flex max-w-[520px] items-center justify-center gap-2 rounded-[2px] bg-maroon py-3.5 text-[15px] font-semibold uppercase tracking-[0.04em] text-paper transition-colors hover:bg-maroon-dark">
             <PhoneCall size={18} weight="fill" /> Call {CONTACT.phone}
           </a>
         </div>

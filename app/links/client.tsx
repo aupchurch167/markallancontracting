@@ -32,8 +32,8 @@ const ICONS: Record<string, Icon> = {
   facebook: FacebookLogo,
 };
 
-const FORM_INPUT =
-  'mt-1.5 w-full rounded-lg border border-brass/40 bg-bone px-3.5 py-2.5 text-oxblood placeholder:text-oxblood/40 focus:border-brass focus:outline-none focus:ring-2 focus:ring-brass/30';
+const FIELD =
+  'mt-1.5 w-full rounded-[2px] border border-hairline bg-paper px-3.5 py-3 text-[15px] text-ink outline-none transition-colors placeholder:text-faint focus:border-maroon';
 
 export interface PublicButton {
   id: string;
@@ -59,7 +59,7 @@ function trackClick(id: string) {
 
 export function LinkButtons({ buttons }: { buttons: PublicButton[] }) {
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2.5">
       {buttons.map((b, i) => {
         const primary = b.primary ?? i === 0;
         const IconCmp = ICONS[b.icon] || LinkSimple;
@@ -74,24 +74,18 @@ export function LinkButtons({ buttons }: { buttons: PublicButton[] }) {
             rel={external ? 'noreferrer' : undefined}
             className={
               primary
-                ? 'group flex min-h-[64px] items-center gap-4 rounded-2xl bg-oxblood px-6 py-4 text-bone shadow-md transition-all hover:bg-brass hover:text-oxblood hover:shadow-lg'
-                : 'group flex min-h-[64px] items-center gap-4 rounded-2xl border border-brass/70 bg-bone-light px-6 py-4 text-oxblood shadow-md ring-1 ring-oxblood/5 transition-all hover:border-brass hover:bg-brass/5 hover:shadow-lg'
+                ? 'group flex min-h-[62px] items-center gap-4 rounded-[2px] bg-ink px-5 py-4 text-cream transition-colors hover:bg-maroon'
+                : 'group flex min-h-[62px] items-center gap-4 rounded-[2px] border border-hairline bg-[#FFFFFF] px-5 py-4 text-ink transition-colors hover:border-maroon'
             }
           >
-            <IconCmp
-              size={22}
-              weight="regular"
-              className={primary ? 'text-bone group-hover:text-oxblood' : 'text-brass'}
-            />
+            <IconCmp size={22} weight="regular" className={primary ? 'text-cream' : 'text-maroon'} />
             <span className="flex flex-1 flex-col">
-              <span className="text-[15px] font-bold uppercase tracking-heading">{b.label}</span>
+              <span className="text-[15px] font-semibold uppercase tracking-[0.02em]">{b.label}</span>
               {b.sublabel && (
-                <span className={`mt-0.5 text-xs ${primary ? 'text-bone/70 group-hover:text-oxblood/70' : 'text-oxblood/55'}`}>
-                  {b.sublabel}
-                </span>
+                <span className={`mt-0.5 text-[13px] ${primary ? 'text-cream-muted' : 'text-muted'}`}>{b.sublabel}</span>
               )}
             </span>
-            <Trailing size={18} className={primary ? 'text-bone group-hover:text-oxblood' : 'text-brass'} />
+            <Trailing size={17} className={primary ? 'text-cream-muted' : 'text-faint'} />
           </a>
         );
       })}
@@ -117,9 +111,9 @@ export function SocialRow({ socials, shareUrl }: { socials: PublicSocial[]; shar
     }
   }
   const tile =
-    'flex h-12 w-12 items-center justify-center rounded-xl border border-brass/70 bg-bone-light text-oxblood shadow-md ring-1 ring-oxblood/5 transition-all hover:border-brass hover:text-brass hover:shadow-lg';
+    'flex h-11 w-11 items-center justify-center rounded-[2px] border border-hairline bg-[#FFFFFF] text-ink transition-colors hover:border-maroon hover:text-maroon';
   return (
-    <div className="flex justify-center gap-3">
+    <div className="flex justify-center gap-2.5">
       {socials
         .filter((s) => s.href)
         .map((s) => {
@@ -131,7 +125,7 @@ export function SocialRow({ socials, shareUrl }: { socials: PublicSocial[]; shar
           );
         })}
       <button type="button" onClick={copy} aria-label="Copy link to this page" className={tile}>
-        {copied ? <Check size={20} className="text-brass" /> : <LinkSimple size={20} />}
+        {copied ? <Check size={20} className="text-maroon" /> : <LinkSimple size={20} />}
       </button>
       <span aria-live="polite" className="sr-only">
         {copied ? 'Link copied' : ''}
@@ -168,15 +162,15 @@ export function ContactForm() {
 
   if (state === 'sent') {
     return (
-      <div className="flex items-center gap-3 rounded-xl border border-brass/50 bg-brass/10 px-4 py-3 text-sm text-oxblood">
-        <Check size={20} className="text-brass" />
+      <div className="flex items-center gap-3 rounded-[2px] border border-hairline border-l-2 border-l-maroon bg-paper px-4 py-3 text-[15px] text-ink">
+        <Check size={20} className="text-maroon" />
         <span>Thanks — we&apos;ll be in touch today or tomorrow.</span>
       </div>
     );
   }
 
   const Label = ({ children }: { children: React.ReactNode }) => (
-    <span className="text-[10px] font-medium uppercase tracking-label text-brass">{children}</span>
+    <span className="text-[13px] font-semibold uppercase tracking-[0.08em] text-muted">{children}</span>
   );
 
   return (
@@ -184,27 +178,27 @@ export function ContactForm() {
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block">
           <Label>Name</Label>
-          <input name="name" type="text" required className={FORM_INPUT} />
+          <input name="name" type="text" required className={FIELD} />
         </label>
         <label className="block">
           <Label>Phone</Label>
-          <input name="phone" type="tel" required className={FORM_INPUT} />
+          <input name="phone" type="tel" required className={FIELD} />
         </label>
       </div>
       <label className="block">
         <Label>Project type</Label>
-        <input name="type" type="text" placeholder="Restaurant, retail, office, warehouse…" className={FORM_INPUT} />
+        <input name="type" type="text" placeholder="Restaurant, retail, office, warehouse…" className={FIELD} />
       </label>
       <label className="block">
         <Label>What needs doing</Label>
-        <textarea name="notes" rows={3} placeholder="Address, square footage, target open date" className={FORM_INPUT} />
+        <textarea name="notes" rows={3} placeholder="Address, square footage, target open date" className={`${FIELD} resize-y`} />
       </label>
       {/* Honeypot */}
       <input type="text" name="company" tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-px w-px opacity-0" />
       {state === 'error' && (
-        <p className="text-sm text-oxblood/70">Something went wrong. Please call (404) 724-8709 and we&apos;ll take it from there.</p>
+        <p className="text-[14px] text-muted">Something went wrong. Please call (404) 724-8709 and we&apos;ll take it from there.</p>
       )}
-      <button type="submit" disabled={state === 'submitting'} className="btn-call w-full rounded-xl disabled:opacity-60">
+      <button type="submit" disabled={state === 'submitting'} className="btn-maroon w-full disabled:opacity-60">
         {state === 'submitting' ? 'Sending…' : 'Send it over'}
       </button>
     </form>
@@ -233,8 +227,8 @@ export function SignupForm() {
 
   if (state === 'sent') {
     return (
-      <div className="flex items-center gap-2 text-sm text-oxblood">
-        <Check size={18} className="text-brass" />
+      <div className="flex items-center gap-2 text-[15px] text-ink">
+        <Check size={18} className="text-maroon" />
         You&apos;re on the list.
       </div>
     );
@@ -242,18 +236,12 @@ export function SignupForm() {
 
   return (
     <form onSubmit={onSubmit} className="flex flex-wrap gap-3">
-      <input
-        name="email"
-        type="email"
-        placeholder="you@company.com"
-        required
-        className="min-w-[200px] flex-1 rounded-lg border border-brass/40 bg-bone px-3.5 py-2.5 text-oxblood placeholder:text-oxblood/40 focus:border-brass focus:outline-none focus:ring-2 focus:ring-brass/30"
-      />
+      <input name="email" type="email" placeholder="you@company.com" required className={`${FIELD} mt-0 min-w-[200px] flex-1`} />
       <input type="text" name="company" tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-px w-px opacity-0" />
-      <button type="submit" disabled={state === 'submitting'} className="btn-ghost rounded-lg disabled:opacity-60">
+      <button type="submit" disabled={state === 'submitting'} className="btn-line disabled:opacity-60">
         {state === 'submitting' ? '…' : 'Subscribe'}
       </button>
-      {state === 'error' && <p className="w-full text-sm text-oxblood/70">Could not subscribe — try again.</p>}
+      {state === 'error' && <p className="w-full text-[14px] text-muted">Could not subscribe — try again.</p>}
     </form>
   );
 }
