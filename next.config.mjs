@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 
+import { INSIGHT_CANONICAL_REDIRECTS } from './lib/insight-redirects.mjs';
+
 /**
  * Redirect map from the existing macont.com (Webflow) site.
  *
@@ -83,21 +85,24 @@ const staticRedirects = [
   { source: '/product/estimating-and-planning', destination: '/pre-construction', statusCode: 301 },
   { source: '/product/facility-maintenance', destination: '/markets/facility-managers', statusCode: 301 },
   // Legacy blog posts — map to the closest new article where one exists.
+  // Destinations are the long-form keepers (not the thin twins that 301 away).
   {
     source: '/post/who-pays-for-tenant-improvements--landlord-or-tenant',
-    destination: '/insights/landlord-vs-tenant-scope-who-pays-for-what',
+    destination: '/insights/tenant-improvement',
     statusCode: 301,
   },
   {
     source: '/post/how-to-prevent-budget-overruns-delays-and-disputes-on-your-next-construction-project',
-    destination: '/insights/why-three-gc-bids-come-back-at-three-different-numbers',
+    destination: '/insights/comparing-commercial-construction-bids',
     statusCode: 301,
   },
   {
     source: '/post/3-things-to-look-out-for-when-choosing-a-general-contractor',
-    destination: '/insights/how-to-evaluate-contractor-bids',
+    destination: '/insights/compare-commercial-construction-bids',
     statusCode: 301,
   },
+  // Thin insight twins → long-form keepers (see lib/insight-redirects.mjs).
+  ...INSIGHT_CANONICAL_REDIRECTS,
   {
     source: '/post/what-to-expect-during-a-tenant-buildout',
     destination: '/project-types/tenant-improvements',

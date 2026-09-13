@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { getPosts, getSiteSettings } from '@/lib/queries';
 import { FALLBACK_POSTS } from '@/lib/fallback-insights';
+import { excludeRedirectedInsights } from '@/lib/insight-redirects.mjs';
 import { urlForImage } from '@/lib/image';
 import { EditorialCTA } from '@/components/EditorialCTA';
 import { clusterTitle } from '@/lib/clusters';
@@ -32,7 +33,7 @@ export default async function InsightsPage() {
   const { phone, phoneRaw, email } = settings;
 
   const sanitySlugs = new Set(sanityPosts.map((p) => p.slug));
-  const cards: Card[] = [
+  const cards: Card[] = excludeRedirectedInsights([
     ...sanityPosts.map((p) => ({
       slug: p.slug,
       title: p.title,
@@ -47,7 +48,7 @@ export default async function InsightsPage() {
       excerpt: p.excerpt,
       cluster: p.cluster,
     })),
-  ];
+  ]);
 
   const featured = cards.find((c) => c.featured) || cards[0];
   const rest = cards.filter((c) => c.slug !== featured?.slug);

@@ -1,8 +1,10 @@
 import { getPosts } from '@/lib/queries';
 import { FALLBACK_POSTS } from '@/lib/fallback-insights';
+import { excludeRedirectedInsights } from '@/lib/insight-redirects.mjs';
 import { SITE } from '@/lib/constants';
 
-export const dynamic = 'force-static';
+// Same reason as sitemap.ts: CMS posts are only reachable at request time.
+export const dynamic = 'force-dynamic';
 
 // published_at comes from Postgres (via `pg`) as a Date object, while the
 // authored fallback posts use ISO strings — so normalize to a timestamp
@@ -26,7 +28,7 @@ function esc(s = ''): string {
 export async function GET() {
   const sanity = await getPosts();
   const seen = new Set(sanity.map((p) => p.slug));
-  const items = [
+  const items = excludeRedirectedInsights([
     ...sanity.map((p) => ({
       title: p.title,
       slug: p.slug,
@@ -41,7 +43,7 @@ export async function GET() {
       author: p.author,
       publishedAt: p.publishedAt,
     })),
-  ].sort((a, b) => toTime(b.publishedAt) - toTime(a.publishedAt));
+  ]).sort((a, b) => toTime(b.publishedAt) - toTime(a.publishedAt));
 
   const body = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
