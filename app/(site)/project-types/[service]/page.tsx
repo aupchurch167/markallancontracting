@@ -210,23 +210,122 @@ export default async function ServiceHubPage({
         </div>
       </Section>
 
-      {/* What's included */}
-      <Section muted>
-        <Eyebrow>What&apos;s included</Eyebrow>
-        <h2 className="mt-3 text-2xl font-bold text-ink sm:text-3xl">
-          Real scope, trade by trade
-        </h2>
-        <ul className="mt-6 grid gap-x-8 gap-y-2 sm:grid-cols-2">
-          {scope.map((item) => (
-            <li key={item} className="flex items-start gap-2 text-body">
-              <span aria-hidden className="mt-1 text-maroon">
-                ✓
-              </span>
-              {item}
-            </li>
-          ))}
-        </ul>
-      </Section>
+      {/* What's included — kitchen-first sequence when authored, else trade list */}
+      {c.kitchenScope ? (
+        <Section muted>
+          <Eyebrow>What&apos;s included</Eyebrow>
+          <h2 className="mt-3 text-2xl font-bold text-ink sm:text-3xl">
+            {c.kitchenScope.heading}
+          </h2>
+          <p className="mt-3 max-w-3xl text-lg leading-relaxed text-body">
+            {c.kitchenScope.intro}
+          </p>
+          <ol className="mt-8 space-y-5">
+            {c.kitchenScope.items.map((item, i) => (
+              <li key={item.label} className="flex items-start gap-4 text-body">
+                <span
+                  aria-hidden
+                  className="mt-0.5 w-7 shrink-0 font-display text-lg font-semibold text-maroon"
+                >
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <div>
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <span className="font-semibold text-ink">{item.label}</span>
+                    {item.critical ? (
+                      <span className="text-xs font-semibold uppercase tracking-wider text-maroon">
+                        Schedule-critical
+                      </span>
+                    ) : null}
+                  </div>
+                  <p className="mt-1 leading-relaxed">{item.note}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </Section>
+      ) : (
+        <Section muted>
+          <Eyebrow>What&apos;s included</Eyebrow>
+          <h2 className="mt-3 text-2xl font-bold text-ink sm:text-3xl">
+            Real scope, trade by trade
+          </h2>
+          <ul className="mt-6 grid gap-x-8 gap-y-2 sm:grid-cols-2">
+            {scope.map((item) => (
+              <li key={item} className="flex items-start gap-2 text-body">
+                <span aria-hidden className="mt-1 text-maroon">
+                  ✓
+                </span>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </Section>
+      )}
+
+      {c.includesVsSwingers && (
+        <Section>
+          <div className="max-w-3xl">
+            <Eyebrow>Scope vs. swingers</Eyebrow>
+            <h2 className="mt-3 text-2xl font-bold text-ink sm:text-3xl">
+              {c.includesVsSwingers.heading}
+            </h2>
+            <p className="mt-4 text-lg leading-relaxed text-body">{c.includesVsSwingers.intro}</p>
+          </div>
+          <div className="mt-10 grid gap-8 lg:grid-cols-2">
+            <div className="rounded-[2px] border border-hairline bg-paper p-7">
+              <h3 className="text-xl font-bold text-ink">{c.includesVsSwingers.includesHeading}</h3>
+              <ul className="mt-5 space-y-4">
+                {c.includesVsSwingers.includes.map((item) => (
+                  <li key={item.label} className="flex items-start gap-2 text-body">
+                    <span aria-hidden className="mt-1 text-maroon">
+                      ✓
+                    </span>
+                    <span>
+                      <span className="font-semibold text-ink">{item.label}.</span> {item.note}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-[2px] border border-hairline bg-paper p-7">
+              <h3 className="text-xl font-bold text-ink">{c.includesVsSwingers.swingersHeading}</h3>
+              <ul className="mt-5 space-y-4">
+                {c.includesVsSwingers.swingers.map((item) => (
+                  <li key={item.label} className="flex items-start gap-2 text-body">
+                    <span aria-hidden className="mt-1 text-maroon">
+                      ✓
+                    </span>
+                    <span>
+                      <span className="font-semibold text-ink">{item.label}.</span> {item.note}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <p className="mt-8 max-w-3xl leading-relaxed text-body">
+            {c.includesVsSwingers.after}
+            {c.includesVsSwingers.alsoLink ? (
+              <>
+                {' '}
+                <Link
+                  href={c.includesVsSwingers.alsoLink.href}
+                  className="font-semibold text-maroon hover:text-maroon-dark"
+                >
+                  {c.includesVsSwingers.alsoLink.label} →
+                </Link>
+              </>
+            ) : null}
+          </p>
+          <Link
+            href={c.includesVsSwingers.insightHref}
+            className="mt-4 inline-block font-semibold text-maroon hover:text-maroon-dark"
+          >
+            {c.includesVsSwingers.insightLabel} →
+          </Link>
+        </Section>
+      )}
 
       {c.includesVsSwingers && (
         <Section>
