@@ -66,7 +66,7 @@ export function Footer({
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={s.label}
-                    className="text-cream-muted transition-colors hover:text-cream"
+                    className="inline-flex h-9 w-9 items-center justify-center text-cream transition-colors hover:text-rose"
                   >
                     <Icon size={20} weight="regular" aria-hidden="true" />
                   </a>
