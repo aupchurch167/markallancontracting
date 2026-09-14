@@ -28,8 +28,11 @@ export function pageMetadata({
   const image =
     ogImage ||
     `/api/og?title=${encodeURIComponent(ogTitle)}${ogEyebrow ? `&eyebrow=${encodeURIComponent(ogEyebrow)}` : ''}`;
+  // Titles that already include the brand must skip the layout template
+  // (`%s · Mark Allan Contracting`) or the document title doubles the name.
+  const branded = title.includes(SITE.name);
   return {
-    title,
+    title: branded ? { absolute: title } : title,
     description,
     alternates: {
       canonical: url,

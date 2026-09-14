@@ -8,7 +8,34 @@ import type { ServiceKey } from './site-data';
  * answering — not homepage rhythm. Ranges/timelines are typical industry
  * defaults framed as "typical"; verify against MAC's real numbers before launch
  * and move into Sanity. No responsiveness guarantees (claim honesty).
+ *
+ * Optional money-page fields expand a hub without inventing a second template.
+ * Leave them off and the page stays the original short layout.
  */
+export interface ServiceProofProject {
+  slug: string;
+  title: string;
+  clientType?: string;
+  cityName?: string;
+  cityState?: string;
+  scopeSummary?: string;
+  imageUrl?: string;
+}
+
+export interface ServiceRelatedLink {
+  href: string;
+  title: string;
+  blurb: string;
+}
+
+export interface ServiceCostRow {
+  item: string;
+  typical: string;
+  note: string;
+  href?: string;
+  linkLabel?: string;
+}
+
 export interface ServiceContent {
   h1: string;
   metaTitle: string;
@@ -19,6 +46,45 @@ export interface ServiceContent {
   typicalTimeline: string;
   planIntro: string;
   faqs: { q: string; a: string }[];
+  includesVsSwingers?: {
+    heading: string;
+    intro: string;
+    includesHeading: string;
+    includes: { label: string; note: string }[];
+    swingersHeading: string;
+    swingers: { label: string; note: string }[];
+    after: string;
+    insightHref: string;
+    insightLabel: string;
+    alsoLink?: { href: string; label: string };
+  };
+  kitchenScope?: {
+    heading: string;
+    intro: string;
+    items: { label: string; note: string; critical?: boolean }[];
+  };
+  costTable?: {
+    heading: string;
+    intro: string;
+    caption?: string;
+    rows: ServiceCostRow[];
+    after: string;
+  };
+  franchisePlaybook?: {
+    heading: string;
+    intro: string;
+    items: { label: string; note: string }[];
+    after: string;
+    aboutHref: string;
+    aboutLabel: string;
+  };
+  proofHeading?: string;
+  proofIntro?: string;
+  proofProjects?: ServiceProofProject[];
+  relatedReading?: ServiceRelatedLink[];
+  crossLinks?: ServiceRelatedLink[];
+  ctaHeading?: string;
+  ctaBody?: string;
 }
 
 export const SERVICE_CONTENT: Record<ServiceKey, ServiceContent> = {
@@ -136,16 +202,17 @@ export const SERVICE_CONTENT: Record<ServiceKey, ServiceContent> = {
   },
   'restaurant-buildout': {
     h1: 'Restaurant Buildout & Construction in Metro Atlanta',
-    metaTitle: 'Restaurant Construction Company Atlanta | Mark Allan Contracting',
+    metaTitle: 'Restaurant Buildout Contractor Atlanta | Mark Allan Contracting',
     metaDescription:
-      'Restaurant buildouts across Metro Atlanta. Kitchen, hood, grease, and finish work coordinated to open on time. Over a hundred franchise buildouts.',
+      'Restaurant buildouts in Metro Atlanta — kitchen, hood, grease, dining. 100+ franchise jobs. Typical $100K–$500K, 8–16 weeks. Call (404) 724-8709 before locking an open date.',
     problem:
       'Every day past your target open date is revenue you do not get back, and a restaurant build has more ways to slip than any other interior — health department, hood and grease, equipment lead times, and a franchisor watching the schedule. You need a GC who has run this exact play before.',
     scope: [
-      'Kitchen build-out and equipment set',
       'Hood, make-up air, and exhaust',
-      'Grease interceptor and plumbing',
+      'Grease interceptor and kitchen plumbing',
       'Walk-in coolers and freezers',
+      'MEP upgrades for kitchen load — power, gas, water',
+      'Kitchen equipment set and connections',
       'Dining room framing, finishes, and millwork',
       'Bar construction and equipment',
       'Restrooms and ADA compliance',
@@ -156,22 +223,222 @@ export const SERVICE_CONTENT: Record<ServiceKey, ServiceContent> = {
     typicalTimeline: '8–16 weeks depending on kitchen scope',
     planIntro:
       'We have done over a hundred franchise buildouts. The sequence is not new to us.',
+    kitchenScope: {
+      heading: 'Kitchen first — then dining, then punch',
+      intro:
+        'A restaurant build is a kitchen job that happens to have a dining room. Hood and make-up air, grease interceptor, refrigeration, then the MEP a kitchen actually pulls, then dining and bar, then health department and franchisor punch. The items marked schedule-critical are the ones that miss an open date if they are ordered late or left out of the work letter.',
+      items: [
+        {
+          label: 'Hood, make-up air, and exhaust',
+          note: 'Code-driven mechanical, not a finish choice. Built to order, so the lead time starts the day the scope is set — not the day the ceiling is ready to close.',
+          critical: true,
+        },
+        {
+          label: 'Grease interceptor and kitchen plumbing',
+          note: 'Often below-slab and jurisdiction-specific. A change of occupancy from retail to restaurant is where this lands, and missing it early is how a budget and a slab both get opened twice.',
+          critical: true,
+        },
+        {
+          label: 'Walk-in coolers and freezers',
+          note: 'Refrigeration, drainage, and the power to run them. Factory lead times, not a warehouse pull. Order with the hood.',
+          critical: true,
+        },
+        {
+          label: 'MEP upgrades for kitchen load',
+          note: 'Power, gas, and water the space was rarely built for. Panel and service size, gas routing, and exhaust are budget swingers — not dining-room decisions.',
+        },
+        {
+          label: 'Kitchen equipment set',
+          note: 'Connections and coordination around owner-furnished or GC-furnished equipment. Late owner deliveries are a finished kitchen that still cannot cook.',
+        },
+        {
+          label: 'Dining room, bar, restrooms, storefront',
+          note: 'Framing, finishes, millwork, bar equipment, ADA restrooms, signage and patio. Visible, and usually not where the date slips.',
+        },
+        {
+          label: 'Health department and franchisor punch',
+          note: 'Building final and health-department approval are different inspections on different clocks. Franchisor punch is a third list. Plan the open date off the last one, not the last day of construction.',
+        },
+      ],
+    },
+    costTable: {
+      heading: 'Typical kitchen cost and timeline — not a bid',
+      intro:
+        'Most restaurant buildouts we do land in $100K–$500K and eight to sixteen weeks of construction depending on kitchen scope. Those are typical bands, not a number for your space. The kitchen drives both columns more than the dining room does.',
+      caption:
+        'Typical restaurant buildout cost and timeline bands, with related reading',
+      rows: [
+        {
+          item: 'Typical restaurant buildout',
+          typical: '$100K–$500K',
+          note: 'Kitchen systems — hood, grease, refrigeration, MEP — swing the number more than dining finishes. A site walk is the only figure worth locking an open date against.',
+        },
+        {
+          item: 'Typical construction',
+          typical: '8–16 weeks',
+          note: 'Construction depending on kitchen scope, plus permitting. Hoods and walk-ins are long-lead; order them when the scope is set.',
+          href: '/insights/commercial-buildout-timeline',
+          linkLabel: 'What actually moves a commercial buildout date',
+        },
+        {
+          item: 'Change of occupancy (retail → restaurant)',
+          typical: 'Deeper permit review',
+          note: 'Turning a retail bay into a restaurant is a different occupancy, not a finish upgrade. Expect grease waste, ventilation, exiting, and accessibility on the reviewer’s list.',
+          href: '/insights/permitting',
+          linkLabel: 'Change of occupancy in Metro Atlanta permitting',
+        },
+        {
+          item: 'Work letter gaps — grease, gas, exhaust',
+          typical: 'Tenant cost if unclaimed',
+          note: 'A restaurant adds grease interceptor, gas service, and exhaust routing to the usual HVAC and panel gaps. Unclaimed items are yours after you sign.',
+          href: '/insights/tenant-improvement',
+          linkLabel: 'Who pays for what in a work letter',
+        },
+        {
+          item: 'City of Atlanta / Metro AHJ',
+          typical: 'Confirm by address',
+          note: 'City of Atlanta is its own AHJ — not Fulton County. Confirm jurisdiction before you write the open date.',
+          href: '/locations/atlanta-ga',
+          linkLabel: 'Commercial GC in Atlanta, GA',
+        },
+      ],
+      after:
+        'Call (404) 724-8709 before you lock an open date. We will walk the space, read the work letter against the kitchen the building can actually support, and give you a scoped number — not a range copied from this table.',
+    },
+    franchisePlaybook: {
+      heading: 'Franchise and multi-unit, without relearning the job',
+      intro:
+        'We have done over a hundred Domino’s buildouts and have worked for Darden since. The franchise sequence — brand standards, health department, equipment lead times, a date that does not move — is familiar territory.',
+      items: [
+        {
+          label: 'Brand package vs. the actual building',
+          note: 'Franchisor drawings assume a clean shell. The grease line, gas service, and exhaust path in the real bay are rarely what the prototype shows. Reconcile that before you treat the prototype as the budget.',
+        },
+        {
+          label: 'Health department and franchisor punch as one sequence',
+          note: 'Building final, health, and brand punch are three lists. A store that is “done” on the construction schedule is not open until the last of them clears.',
+        },
+        {
+          label: 'Multi-unit is where the first store pays off',
+          note: 'Store two and store three collect on the submittals, the punch items, and the trade sequence you already ran. That is the argument for keeping the same GC — not a promise that every market is identical.',
+        },
+        {
+          label: 'Independent vs. franchise',
+          note: 'An independent still has health department, hood, grease, and an open date. A franchise adds brand standards, corporate reviewers, and a prototype that has to be forced onto a real building. Same kitchen physics; more people on the calendar.',
+        },
+      ],
+      after:
+        'The published proof of that history is the company story — a founder who learned the trade building Domino’s stores, and later Darden work including Olive Garden — not a restaurant project page. We have not published a kitchen case study on this site yet.',
+      aboutHref: '/about',
+      aboutLabel: 'How we learned this on Domino’s stores',
+    },
+    proofHeading: 'Specialty interiors we handed back on a clock',
+    proofIntro:
+      'There is no dedicated restaurant or kitchen case study on this site yet. Until there is, these are live interiors delivered against a fixed open date or a hard number — specialty interiors, not kitchens, and not a substitute for one.',
+    proofProjects: [
+      {
+        slug: 'verizon-retail-buildout-glenwood-park-atlanta',
+        title: 'Verizon Retail Buildout in Glenwood Park — Six Weeks to Handoff',
+        clientType: 'Verizon retail operator',
+        cityName: 'Atlanta',
+        cityState: 'ga',
+        scopeSummary:
+          'Atlanta retail interior in Glenwood Park, handed back in six weeks on a fixed clock so the operator could stock, train, and open. Not a kitchen — a date that did not move.',
+      },
+      {
+        slug: 'iv-nutrition-clinic-buildout-flowery-branch',
+        title: 'IV Nutrition Clinic Buildout in Flowery Branch, GA',
+        clientType: 'IV nutrition clinic',
+        cityName: 'Flowery Branch',
+        cityState: 'ga',
+        scopeSummary:
+          'Specialty interior: ~2,000 SF clinic buildout, 10 weeks of construction at about $200,000. Demo, framing, insulation, drywall, lighting, and finishes — a hard number, not a restaurant kitchen.',
+      },
+      {
+        slug: 'tanning-salon-buildout-fixed-open-date',
+        title: '1,500 SF Tanning Salon Buildout Delivered on a Fixed Open Date',
+        clientType: 'Tanning salon operator',
+        cityName: 'Gainesville',
+        cityState: 'ga',
+        scopeSummary:
+          'Eight-week interior of a 1,500-square-foot salon in Gainesville, scoped and sequenced around a fixed open date the operator could not move.',
+      },
+    ],
+    relatedReading: [
+      {
+        href: '/insights/permitting',
+        title: 'Permitting a commercial buildout in Metro Atlanta',
+        blurb:
+          'Change of occupancy — retail to restaurant — is the swing factor. City vs county, grease, fire review, and the CO.',
+      },
+      {
+        href: '/insights/commercial-buildout-timeline',
+        title: 'How long a commercial buildout takes',
+        blurb:
+          'Hoods and walk-ins are long-lead. Construction is the predictable part; the factory queue is not.',
+      },
+      {
+        href: '/insights/tenant-improvement',
+        title: 'Who pays for what in a work letter',
+        blurb:
+          'Grease interceptor, gas service, and exhaust routing are the restaurant gaps that become tenant cost after you sign.',
+      },
+      {
+        href: '/insights/restaurant-buildout-budget-breakdown',
+        title: 'Restaurant buildout budget breakdown',
+        blurb:
+          'Where the money goes — kitchen, hood, grease, refrigeration, MEP — and why the dining room is rarely the overrun.',
+      },
+    ],
+    crossLinks: [
+      {
+        href: '/project-types/tenant-improvements',
+        title: 'Tenant improvements',
+        blurb:
+          'A kitchen is a different TI. Same lease, same work letter, different systems — and a date that is lost revenue if it slips.',
+      },
+      {
+        href: '/locations/atlanta-ga',
+        title: 'Commercial GC in Atlanta, GA',
+        blurb:
+          'City of Atlanta is its own AHJ — not Fulton County. Home-base page for permitting, metro jurisdictions, and how we work here.',
+      },
+    ],
+    ctaHeading: 'Got a kitchen that has to open on a date?',
+    ctaBody:
+      "Call us before you lock the open date. We'll come walk the space and tell you what we think the kitchen will take.",
     faqs: [
       {
         q: 'How much does a restaurant buildout cost?',
-        a: 'Most restaurant buildouts we do land in the $100K–$500K range. The budget is driven by the kitchen — hood and make-up air, grease interceptor, refrigeration, and the MEP upgrades a kitchen requires — far more than by the dining room.',
-      },
-      {
-        q: 'Do you have franchise experience?',
-        a: 'Yes. We have done over a hundred Domino’s buildouts and have worked for Darden since. The franchise sequence — franchisor standards, health department, equipment coordination — is familiar territory.',
+        a: 'Most restaurant buildouts we do land in the $100K–$500K range. The budget is driven by the kitchen — hood and make-up air, grease interceptor, refrigeration, and the MEP upgrades a kitchen requires — far more than by the dining room. The only number worth locking an open date against is a scoped estimate from your space. [Where a restaurant budget actually goes](/insights/restaurant-buildout-budget-breakdown).',
       },
       {
         q: 'How long does a restaurant buildout take?',
-        a: 'Typically eight to sixteen weeks of construction depending on kitchen scope, plus permitting. Long-lead equipment and health-department requirements are the usual schedule drivers, so we plan around them early.',
+        a: 'Typically eight to sixteen weeks of construction depending on kitchen scope, plus permitting. Long-lead equipment and health-department requirements are the usual schedule drivers, so we plan around them early. [What actually moves a commercial buildout date](/insights/commercial-buildout-timeline).',
+      },
+      {
+        q: 'Do you have franchise experience?',
+        a: 'Yes. We have done over a hundred Domino’s buildouts and have worked for Darden since. The franchise sequence — franchisor standards, health department, equipment coordination — is familiar territory. The published story of how that started is on [our about page](/about), not a Domino’s project URL. We have not published a restaurant case study on this site yet.',
       },
       {
         q: 'Do you handle the hood, grease interceptor, and health department requirements?',
-        a: 'Yes — those are core to a restaurant build and among the first things we scope, because they are the lines most likely to blow up a budget or a schedule if they are missed.',
+        a: 'Yes — those are core to a restaurant build and among the first things we scope, because they are the lines most likely to blow up a budget or a schedule if they are missed. Hood and walk-in are schedule-critical long-leads; grease is often below-slab and tied to a change of occupancy.',
+      },
+      {
+        q: 'What does a change of occupancy from retail to restaurant do to permitting?',
+        a: 'It is the single biggest swing factor. Turning a retail bay into a restaurant is a different occupancy classification, not a finish upgrade. Expect deeper review on exiting, restrooms, ventilation, accessibility, and grease waste. Plan the schedule around that review, not a best case. [Permitting a commercial buildout in Metro Atlanta](/insights/permitting) · [Atlanta location](/locations/atlanta-ga).',
+      },
+      {
+        q: 'What’s the difference between health department approval and a building final?',
+        a: 'They are different inspections on different clocks. A building final (and the certificate of occupancy) says the permitted construction is complete. Health department approval says the kitchen can operate — hood, grease, sinks, surfaces, the items that inspector grades. You need both to open. Franchisor punch, when it applies, is a third list. Plan the open date off the last one.',
+      },
+      {
+        q: 'When should we order the hood and the walk-in?',
+        a: 'The day the scope is set — not the day the ceiling is ready to close. Commercial kitchen hoods and walk-in coolers are built to order. A late release slides every trade behind them. Permitting can still change a detail, so lock the equipment that the drawings have already decided and keep a buffer for comments. [Long-lead items on a commercial buildout timeline](/insights/commercial-buildout-timeline).',
+      },
+      {
+        q: 'How is an independent restaurant different from a franchise buildout?',
+        a: 'The kitchen physics are the same: hood, make-up air, grease, refrigeration, MEP, health department. A franchise adds brand standards, corporate reviewers, and a prototype that has to be forced onto a real building — more people on the calendar, not a different set of trades. An independent still has an open date that is lost revenue if it slips. Either way we scope kitchen-first. [How a work letter splits grease, gas, and exhaust](/insights/tenant-improvement).',
       },
     ],
   },
