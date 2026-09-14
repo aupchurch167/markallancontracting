@@ -191,7 +191,7 @@ export const SERVICE_CONTENT: Record<ServiceKey, ServiceContent> = {
         cityName: 'Flowery Branch',
         cityState: 'ga',
         scopeSummary:
-          'Interior buildout of a ~2,000 SF leased space: demolition, framing, insulation, drywall with curved ceiling features, paint, flooring, lighting. Ten weeks of construction at about $200K.',
+          '~2,000 SF / ~10 weeks / ~$200K clinic buildout in Flowery Branch: demolition, framing, insulation, drywall with curved ceiling features, paint, flooring, lighting.',
       },
       {
         slug: 'pilates-studio-buildout-kennesaw-ga',
