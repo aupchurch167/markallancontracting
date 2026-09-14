@@ -98,3 +98,20 @@ export async function getAllProjectSlugs(): Promise<string[]> {
   const sanity = await getProjectSlugs();
   return Array.from(new Set([...sanity, ...FALLBACK_PROJECTS.map((p) => p.slug)]));
 }
+
+/**
+ * Proof-strip cards for a curated slug list. CMS rows win (photos, quotes);
+ * authored fallbacks fill in so the strip still renders when the database
+ * isn't connected. Unknown slugs are dropped — never invent a project URL.
+ */
+export async function getSummariesForSlugs(
+  fallbacks: ProjectSummary[],
+): Promise<ProjectSummary[]> {
+  if (!fallbacks.length) return [];
+  const published = await getAllProjectSummaries();
+  const bySlug = new Map(published.map((p) => [p.slug, p]));
+  return fallbacks.map((fb) => {
+    const live = bySlug.get(fb.slug);
+    return live ? { ...fb, ...live, id: live.id } : fb;
+  });
+}
