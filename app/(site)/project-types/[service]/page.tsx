@@ -383,24 +383,24 @@ export default async function ServiceHubPage({
       {/* Project examples */}
       {projects.length > 0 ? (
         <Section muted={!c.franchisePlaybook}>
-          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              {c.proofHeading ? <Eyebrow>Proof</Eyebrow> : null}
+          <div className="mb-8">
+            {c.proofHeading ? <Eyebrow>Proof</Eyebrow> : null}
+            <div className="flex flex-wrap items-baseline justify-between gap-4">
               <h2
-                className={`text-2xl font-bold text-ink sm:text-3xl ${c.proofHeading ? 'mt-3' : ''}`}
+                className={`max-w-3xl text-2xl font-bold text-ink sm:text-3xl ${c.proofHeading ? 'mt-3' : ''}`}
               >
                 {c.proofHeading || 'Recent work'}
               </h2>
-              {c.proofIntro && (
-                <p className="mt-3 max-w-2xl text-lg leading-relaxed text-body">{c.proofIntro}</p>
-              )}
+              <Link
+                href="/projects"
+                className="shrink-0 text-sm font-semibold text-maroon hover:text-maroon-dark"
+              >
+                See more projects →
+              </Link>
             </div>
-            <Link
-              href="/projects"
-              className="text-sm font-semibold text-maroon hover:text-maroon-dark"
-            >
-              See more projects →
-            </Link>
+            {c.proofIntro && (
+              <p className="mt-3 max-w-2xl text-lg leading-relaxed text-body">{c.proofIntro}</p>
+            )}
           </div>
           <div
             className={`grid gap-6 sm:grid-cols-2 ${projects.length === 3 ? 'lg:grid-cols-3' : ''}`}
