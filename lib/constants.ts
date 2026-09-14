@@ -53,6 +53,16 @@ export const CONTACT = {
 } as const;
 
 /**
+ * Public social profiles. Exact URLs for NAP/citation consistency — Instagram,
+ * Facebook, and LinkedIn only. Used by the site footer and LocalBusiness sameAs.
+ */
+export const SOCIAL = [
+  { label: 'Instagram', href: 'https://instagram.com/markallancontracting' },
+  { label: 'Facebook', href: 'https://www.facebook.com/MAContracting99/' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/company/markallancontractinginc' },
+] as const;
+
+/**
  * Tracking IDs, verified from the live site. Public client-side IDs (not secrets).
  * Env vars override so staging can point elsewhere. CallRail DNI needs both the
  * company id and the per-account swap resource.
