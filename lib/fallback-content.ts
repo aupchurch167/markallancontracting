@@ -59,17 +59,40 @@ export interface ServiceContent {
     insightLabel: string;
     alsoLink?: { href: string; label: string };
   };
+  /**
+   * Kitchen-first "what's included" sequence, authored for kitchen-driven builds
+   * (e.g. restaurant buildout). When present it replaces the plain trade list.
+   */
+  kitchenScope?: {
+    heading: string;
+    intro: string;
+    items: { label: string; note: string; critical?: boolean }[];
+  };
   costTable?: {
     heading: string;
     intro: string;
+    /** Optional caption shown under the table (also used as the table's accessible caption). */
+    caption?: string;
     rows: ServiceCostRow[];
     after: string;
+  };
+  /** Franchise / multi-unit playbook block, authored for franchise-heavy trades. */
+  franchisePlaybook?: {
+    heading: string;
+    intro: string;
+    items: { label: string; note: string }[];
+    after: string;
+    aboutHref: string;
+    aboutLabel: string;
   };
   proofHeading?: string;
   proofIntro?: string;
   proofProjects?: ServiceProofProject[];
   relatedReading?: ServiceRelatedLink[];
   crossLinks?: ServiceRelatedLink[];
+  /** Optional closing-CTA copy overrides for kitchen/franchise-driven pages. */
+  ctaHeading?: string;
+  ctaBody?: string;
 }
 
 export const SERVICE_CONTENT: Record<ServiceKey, ServiceContent> = {
