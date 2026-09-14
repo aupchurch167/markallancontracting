@@ -57,13 +57,19 @@ export async function generateMetadata({
   const state = (doc?.state || fb?.state || '').toUpperCase();
   if (!name) return {};
   const label = `${name}, ${state}`;
-  return pageMetadata({
-    title: fb?.metaTitle || `Commercial General Contractor in ${label}`,
+  const title = fb?.metaTitle || `Commercial General Contractor in ${label}`;
+  const meta = pageMetadata({
+    title,
     description:
       fb?.metaDescription ||
       `Commercial buildouts, renovations, and repairs in ${label}. Family-owned since 1999. Get a scoped number, not a range.`,
     path: `/locations/${city}`,
   });
+  // City money-page titles already include the brand; skip the layout template suffix.
+  if (fb?.metaTitle) {
+    meta.title = { absolute: fb.metaTitle };
+  }
+  return meta;
 }
 
 export default async function CityHubPage({
