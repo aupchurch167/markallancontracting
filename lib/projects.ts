@@ -112,13 +112,6 @@ export async function getSummariesForSlugs(
   const bySlug = new Map(published.map((p) => [p.slug, p]));
   return fallbacks.map((fb) => {
     const live = bySlug.get(fb.slug);
-    if (!live) return fb;
-    return {
-      ...fb,
-      ...live,
-      id: live.id,
-      imageUrl: live.imageUrl || fb.imageUrl,
-      scopeSummary: live.scopeSummary || fb.scopeSummary,
-    };
+    return live ? { ...fb, ...live, id: live.id } : fb;
   });
 }

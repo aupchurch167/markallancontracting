@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto';
 import { query, queryOne, safeQuery, safeQueryOne, ensureSchema, isDbConfigured } from './db';
 import type { Attachment, Post, PostCard, Project, ProjectCard, ServiceCity } from './types';
 import type { HomepageMedia } from './homepage-media';
+import { isRedirectedInsightSlug } from './insight-redirects.mjs';
 
 /**
  * The content layer for the custom CMS. Reads return published rows from
@@ -161,7 +162,7 @@ export async function getPublishedPostCards(): Promise<PostCard[]> {
   const rows = await safeQuery<PostRow>(
     `SELECT ${POST_COLS} FROM posts WHERE status = 'published' ORDER BY published_at DESC NULLS LAST`,
   );
-  return rows.map(toPost);
+  return rows.map(toPost).filter((p) => !isRedirectedInsightSlug(p.slug));
 }
 
 export async function getPublishedPost(slug: string): Promise<Post | null> {
@@ -177,15 +178,16 @@ export async function getPublishedPost(slug: string): Promise<Post | null> {
        AND cluster IS NOT DISTINCT FROM $2 ORDER BY published_at DESC NULLS LAST LIMIT 2`,
     [slug, row.cluster],
   );
-  post.relatedPosts = related.map(toPost);
+  post.relatedPosts = related.map(toPost).filter((p) => !isRedirectedInsightSlug(p.slug));
   return post;
 }
 
 export async function getPublishedPostSlugs(): Promise<string[]> {
+  await readyForRead();
   const rows = await safeQuery<{ slug: string }>(
     `SELECT slug FROM posts WHERE status = 'published'`,
   );
-  return rows.map((r) => r.slug);
+  return rows.map((r) => r.slug).filter((slug) => !isRedirectedInsightSlug(slug));
 }
 
 export async function getPublishedProjectCards(): Promise<ProjectCard[]> {
@@ -215,6 +217,7 @@ export async function getPublishedProject(slug: string): Promise<Project | null>
 }
 
 export async function getPublishedProjectSlugs(): Promise<string[]> {
+  await readyForRead();
   const rows = await safeQuery<{ slug: string }>(
     `SELECT slug FROM projects WHERE status = 'published'`,
   );

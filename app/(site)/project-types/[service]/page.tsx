@@ -83,12 +83,7 @@ export default async function ServiceHubPage({
   const range = doc?.typicalRange || c.typicalRange;
   const timeline = doc?.typicalTimeline || c.typicalTimeline;
   const extras = Boolean(
-    c.includesVsSwingers ||
-      c.kitchenScope ||
-      c.costTable ||
-      c.franchisePlaybook ||
-      c.proofProjects?.length ||
-      c.relatedReading?.length,
+    c.includesVsSwingers || c.costTable || c.proofProjects?.length || c.relatedReading?.length,
   );
 
   const rangeAndTable = (
@@ -116,8 +111,7 @@ export default async function ServiceHubPage({
           <div className="mt-8 overflow-x-auto">
             <table className="w-full min-w-[36rem] border-collapse text-left text-sm">
               <caption className="sr-only">
-                {c.costTable.caption ||
-                  'Typical cost and timeline bands, with related reading'}
+                Typical tenant improvement cost and timeline bands, with related reading
               </caption>
               <thead className="bg-paper-alt text-ink">
                 <tr>
@@ -166,7 +160,7 @@ export default async function ServiceHubPage({
     </>
   );
 
-  // Curated proof strip (money pages) wins; else Sanity related projects;
+  // Curated proof strip (TI money page) wins; else Sanity related projects;
   // else delivered fallback work for this service.
   const projects = c.proofProjects?.length
     ? await getSummariesForSlugs(c.proofProjects.map(proofToSummary))
@@ -333,8 +327,72 @@ export default async function ServiceHubPage({
         </Section>
       )}
 
+      {c.includesVsSwingers && (
+        <Section>
+          <div className="max-w-3xl">
+            <Eyebrow>Scope vs. swingers</Eyebrow>
+            <h2 className="mt-3 text-2xl font-bold text-ink sm:text-3xl">
+              {c.includesVsSwingers.heading}
+            </h2>
+            <p className="mt-4 text-lg leading-relaxed text-body">{c.includesVsSwingers.intro}</p>
+          </div>
+          <div className="mt-10 grid gap-8 lg:grid-cols-2">
+            <div className="rounded-[2px] border border-hairline bg-paper p-7">
+              <h3 className="text-xl font-bold text-ink">{c.includesVsSwingers.includesHeading}</h3>
+              <ul className="mt-5 space-y-4">
+                {c.includesVsSwingers.includes.map((item) => (
+                  <li key={item.label} className="flex items-start gap-2 text-body">
+                    <span aria-hidden className="mt-1 text-maroon">
+                      ✓
+                    </span>
+                    <span>
+                      <span className="font-semibold text-ink">{item.label}.</span> {item.note}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-[2px] border border-hairline bg-paper p-7">
+              <h3 className="text-xl font-bold text-ink">{c.includesVsSwingers.swingersHeading}</h3>
+              <ul className="mt-5 space-y-4">
+                {c.includesVsSwingers.swingers.map((item) => (
+                  <li key={item.label} className="flex items-start gap-2 text-body">
+                    <span aria-hidden className="mt-1 text-maroon">
+                      ✓
+                    </span>
+                    <span>
+                      <span className="font-semibold text-ink">{item.label}.</span> {item.note}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <p className="mt-8 max-w-3xl leading-relaxed text-body">
+            {c.includesVsSwingers.after}
+            {c.includesVsSwingers.alsoLink ? (
+              <>
+                {' '}
+                <Link
+                  href={c.includesVsSwingers.alsoLink.href}
+                  className="font-semibold text-maroon hover:text-maroon-dark"
+                >
+                  {c.includesVsSwingers.alsoLink.label} →
+                </Link>
+              </>
+            ) : null}
+          </p>
+          <Link
+            href={c.includesVsSwingers.insightHref}
+            className="mt-4 inline-block font-semibold text-maroon hover:text-maroon-dark"
+          >
+            {c.includesVsSwingers.insightLabel} →
+          </Link>
+        </Section>
+      )}
+
       {/* Plan */}
-      <Section muted={Boolean(c.includesVsSwingers || c.kitchenScope)}>
+      <Section muted={Boolean(c.includesVsSwingers)}>
         <Eyebrow>How it works</Eyebrow>
         <p className="mt-2 max-w-2xl text-body">{c.planIntro}</p>
         <div className="mt-8">
@@ -350,57 +408,27 @@ export default async function ServiceHubPage({
 
       {c.costTable ? <Section>{rangeAndTable}</Section> : null}
 
-      {c.franchisePlaybook && (
-        <Section muted>
-          <div className="max-w-3xl">
-            <Eyebrow>Franchise &amp; multi-unit</Eyebrow>
-            <h2 className="mt-3 text-2xl font-bold text-ink sm:text-3xl">
-              {c.franchisePlaybook.heading}
-            </h2>
-            <p className="mt-4 text-lg leading-relaxed text-body">{c.franchisePlaybook.intro}</p>
-          </div>
-          <ul className="mt-10 grid gap-6 sm:grid-cols-2">
-            {c.franchisePlaybook.items.map((item) => (
-              <li
-                key={item.label}
-                className="rounded-[2px] border border-hairline bg-paper p-7 text-body"
-              >
-                <h3 className="text-xl font-bold text-ink">{item.label}</h3>
-                <p className="mt-3 leading-relaxed">{item.note}</p>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-8 max-w-3xl leading-relaxed text-body">{c.franchisePlaybook.after}</p>
-          <Link
-            href={c.franchisePlaybook.aboutHref}
-            className="mt-4 inline-block font-semibold text-maroon hover:text-maroon-dark"
-          >
-            {c.franchisePlaybook.aboutLabel} →
-          </Link>
-        </Section>
-      )}
-
       {/* Project examples */}
       {projects.length > 0 ? (
-        <Section muted={!c.franchisePlaybook}>
-          <div className="mb-8">
-            {c.proofHeading ? <Eyebrow>Proof</Eyebrow> : null}
-            <div className="flex flex-wrap items-baseline justify-between gap-4">
+        <Section muted>
+          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              {c.proofHeading ? <Eyebrow>Proof</Eyebrow> : null}
               <h2
-                className={`max-w-3xl text-2xl font-bold text-ink sm:text-3xl ${c.proofHeading ? 'mt-3' : ''}`}
+                className={`text-2xl font-bold text-ink sm:text-3xl ${c.proofHeading ? 'mt-3' : ''}`}
               >
                 {c.proofHeading || 'Recent work'}
               </h2>
-              <Link
-                href="/projects"
-                className="shrink-0 text-sm font-semibold text-maroon hover:text-maroon-dark"
-              >
-                See more projects →
-              </Link>
+              {c.proofIntro && (
+                <p className="mt-3 max-w-2xl text-lg leading-relaxed text-body">{c.proofIntro}</p>
+              )}
             </div>
-            {c.proofIntro && (
-              <p className="mt-3 max-w-2xl text-lg leading-relaxed text-body">{c.proofIntro}</p>
-            )}
+            <Link
+              href="/projects"
+              className="text-sm font-semibold text-maroon hover:text-maroon-dark"
+            >
+              See more projects →
+            </Link>
           </div>
           <div
             className={`grid gap-6 sm:grid-cols-2 ${projects.length === 3 ? 'lg:grid-cols-3' : ''}`}
@@ -482,14 +510,11 @@ export default async function ServiceHubPage({
       <CallCTA
         phone={phone}
         phoneRaw={phoneRaw}
-        heading={
-          c.ctaHeading || (extras ? 'Got a space that needs a buildout?' : undefined)
-        }
+        heading={extras ? 'Got a space that needs a buildout?' : undefined}
         body={
-          c.ctaBody ||
-          (extras
+          extras
             ? "Call us. We'll come walk the space and tell you what we think it'll take."
-            : undefined)
+            : undefined
         }
       />
     </>
