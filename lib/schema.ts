@@ -101,6 +101,52 @@ export function localBusinessSchema({ phone }: Nap) {
   };
 }
 
+/**
+ * Reviews + aggregate rating, attached to the business node by its shared @id so
+ * crawlers merge them onto the site-wide GeneralContractor. Emitted only on pages
+ * where the reviews are actually visible, and each Review matches a quote shown on
+ * the page. `aggregateRating` is included only when the real GMB numbers are set —
+ * it must reflect the true source, never the curated subset.
+ */
+export function reviewsSchema({
+  reviews,
+  aggregateRating,
+  reviewCount,
+}: {
+  reviews: { author: string; rating: number; body: string; date?: string }[];
+  aggregateRating?: number | null;
+  reviewCount?: number | null;
+}) {
+  const node: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'GeneralContractor',
+    '@id': `${SITE.url}/#business`,
+    name: SITE.name,
+  };
+
+  if (typeof aggregateRating === 'number' && typeof reviewCount === 'number' && reviewCount > 0) {
+    node.aggregateRating = {
+      '@type': 'AggregateRating',
+      ratingValue: aggregateRating,
+      reviewCount,
+      bestRating: 5,
+      worstRating: 1,
+    };
+  }
+
+  if (reviews.length) {
+    node.review = reviews.map((r) => ({
+      '@type': 'Review',
+      reviewRating: { '@type': 'Rating', ratingValue: r.rating, bestRating: 5, worstRating: 1 },
+      author: { '@type': 'Person', name: r.author },
+      reviewBody: r.body,
+      ...(r.date ? { datePublished: r.date } : {}),
+    }));
+  }
+
+  return node;
+}
+
 export function serviceSchema({
   name,
   description,

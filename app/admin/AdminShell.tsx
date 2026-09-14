@@ -20,14 +20,16 @@ import { SectionCovers } from './SectionCovers';
 import { ClientLogos } from './ClientLogos';
 import { CityBuilder } from './CityBuilder';
 import { LinksManager } from './LinksManager';
+import { ReviewsManager } from './ReviewsManager';
 
-type View = 'dashboard' | 'list' | 'editor' | 'homepage' | 'sections' | 'logos' | 'cities' | 'links';
+type View = 'dashboard' | 'list' | 'editor' | 'homepage' | 'sections' | 'logos' | 'cities' | 'links' | 'reviews';
 
 const NAV: { id: View; label: string; icon: IconName; type?: ContentType }[] = [
   { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
   { id: 'list', label: 'Posts', icon: 'posts', type: 'post' },
   { id: 'list', label: 'Projects', icon: 'projects', type: 'project' },
   { id: 'cities', label: 'City pages', icon: 'home' },
+  { id: 'reviews', label: 'Reviews', icon: 'star' },
   { id: 'links', label: 'Links page', icon: 'external' },
   { id: 'sections', label: 'Section covers', icon: 'image' },
   { id: 'logos', label: 'Client logos', icon: 'projects' },
@@ -211,6 +213,8 @@ function Shell() {
               <CityBuilder />
             ) : view === 'links' ? (
               <LinksManager />
+            ) : view === 'reviews' ? (
+              <ReviewsManager />
             ) : view === 'sections' ? (
               <SectionCovers />
             ) : view === 'logos' ? (

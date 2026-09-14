@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getSiteSettings } from '@/lib/queries';
+import { GoogleReviews } from '@/components/GoogleReviews';
 import { SITE, CONTACT, telHref } from '@/lib/constants';
 import { pageMetadata } from '@/lib/seo';
 
@@ -21,6 +22,7 @@ export default async function ContactPage() {
   const { phone, phoneRaw, email, raw } = settings;
 
   return (
+    <>
     <div className="container-page py-16 sm:py-[72px]">
       <div className="grid items-start gap-14 lg:grid-cols-[1.05fr_1fr] lg:gap-[72px]">
         {/* Left */}
@@ -101,5 +103,7 @@ export default async function ContactPage() {
         </form>
       </div>
     </div>
+    <GoogleReviews />
+    </>
   );
 }

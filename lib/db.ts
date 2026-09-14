@@ -202,6 +202,27 @@ CREATE TABLE IF NOT EXISTS link_subscribers (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Curated Google reviews shown on the site (homepage, contact, about). These are
+-- REAL reviews the owner pastes from their Google Business Profile — never
+-- scraped, never invented. The owner hand-picks which to feature (curation is
+-- allowed); each row carries its own star rating so on-page stars and the
+-- matching Review JSON-LD reflect the real quote. The true GMB aggregate (rating
+-- + count) lives in the 'reviews-settings' singleton and is shown/marked up only
+-- when the owner enters the real numbers.
+CREATE TABLE IF NOT EXISTS reviews (
+  id           TEXT PRIMARY KEY,
+  author       TEXT NOT NULL,
+  role         TEXT,
+  rating       INT NOT NULL DEFAULT 5,
+  body         TEXT NOT NULL,
+  review_date  DATE,
+  source       TEXT NOT NULL DEFAULT 'Google',
+  visible      BOOLEAN NOT NULL DEFAULT true,
+  sort_order   INT NOT NULL DEFAULT 0,
+  created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at   TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 -- Forward-compatible column adds (CREATE TABLE IF NOT EXISTS won't alter existing tables).
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS card_quote TEXT;
 ALTER TABLE posts ADD COLUMN IF NOT EXISTS gbp_post TEXT;

@@ -317,6 +317,7 @@ export type IconName =
   | 'upload'
   | 'download'
   | 'copy'
+  | 'star'
   | 'arrowLeft';
 
 const PATHS: Record<IconName, ReactNode> = {
@@ -438,6 +439,7 @@ const PATHS: Record<IconName, ReactNode> = {
       <path d="M5 15V5a2 2 0 012-2h8" />
     </>
   ),
+  star: <path d="M12 3l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 18.3 6.1 21.4l1.1-6.5L2.5 9.8l6.5-.9L12 3z" />,
   arrowLeft: (
     <>
       <path d="M19 12H5" />

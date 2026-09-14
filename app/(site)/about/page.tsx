@@ -6,6 +6,7 @@ import { CallButton } from '@/components/PhoneLink';
 import { CallCTA } from '@/components/CallCTA';
 import { Reveal } from '@/components/Reveal';
 import { CountUp } from '@/components/CountUp';
+import { GoogleReviews } from '@/components/GoogleReviews';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = pageMetadata({
@@ -270,6 +271,8 @@ export default async function AboutPage() {
           </Reveal>
         </div>
       </section>
+
+      <GoogleReviews />
 
       <CallCTA
         phone={phone}

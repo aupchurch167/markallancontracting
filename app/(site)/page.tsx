@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { getSiteSettings } from '@/lib/queries';
 import { getAllProjectSummaries } from '@/lib/projects';
 import { getHomepageMedia } from '@/lib/homepage-media';
+import { GoogleReviews } from '@/components/GoogleReviews';
 import { telHref, CONTACT } from '@/lib/constants';
 import { pageMetadata } from '@/lib/seo';
 
@@ -288,7 +289,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 11. CTA + FORM */}
+      {/* 11. REVIEWS (renders only when real reviews are entered) */}
+      <GoogleReviews className="bg-paper" />
+
+      {/* 12. CTA + FORM */}
       <section className="bg-ink text-cream">
         <div className="container-page grid items-start gap-16 py-20 lg:grid-cols-[1.1fr_1fr] sm:py-24">
           <div>
