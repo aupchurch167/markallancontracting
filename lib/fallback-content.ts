@@ -353,7 +353,7 @@ export const SERVICE_CONTENT: Record<ServiceKey, ServiceContent> = {
   },
   'restaurant-buildout': {
     h1: 'Restaurant Buildout & Construction in Metro Atlanta',
-    metaTitle: 'Restaurant Construction Company Atlanta | Mark Allan Contracting',
+    metaTitle: 'Restaurant Buildout Contractor Atlanta | Mark Allan Contracting',
     metaDescription:
       'Restaurant buildouts across Metro Atlanta. Kitchen, hood, grease, and finish work coordinated to open on time. Over a hundred franchise buildouts.',
     problem:
