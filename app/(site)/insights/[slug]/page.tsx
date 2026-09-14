@@ -12,6 +12,7 @@ import {
   FALLBACK_POSTS_BY_SLUG,
   type FallbackPost,
 } from '@/lib/fallback-insights';
+import { excludeRedirectedInsights } from '@/lib/insight-redirects.mjs';
 import { urlForImage } from '@/lib/image';
 import { telHref } from '@/lib/constants';
 import { PortableText } from '@/components/PortableText';
@@ -107,7 +108,9 @@ export default async function PostPage({
   const related =
     sanityPost?.relatedPosts?.length
       ? sanityPost.relatedPosts.map((r) => ({ slug: r.slug, title: r.title }))
-      : FALLBACK_POSTS.filter((p) => p.cluster === clusterValue && p.slug !== slug)
+      : excludeRedirectedInsights(
+          FALLBACK_POSTS.filter((p) => p.cluster === clusterValue && p.slug !== slug),
+        )
           .slice(0, 2)
           .map((p) => ({ slug: p.slug, title: p.title }));
 
