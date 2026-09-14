@@ -8,7 +8,35 @@ import type { ServiceKey } from './site-data';
  * answering — not homepage rhythm. Ranges/timelines are typical industry
  * defaults framed as "typical"; verify against MAC's real numbers before launch
  * and move into Sanity. No responsiveness guarantees (claim honesty).
+ *
+ * Optional money-page fields (tenant improvements first) expand a hub without
+ * inventing a second template. Leave them off and the page stays the original
+ * short layout.
  */
+export interface ServiceProofProject {
+  slug: string;
+  title: string;
+  clientType?: string;
+  cityName?: string;
+  cityState?: string;
+  scopeSummary?: string;
+  imageUrl?: string;
+}
+
+export interface ServiceRelatedLink {
+  href: string;
+  title: string;
+  blurb: string;
+}
+
+export interface ServiceCostRow {
+  item: string;
+  typical: string;
+  note: string;
+  href?: string;
+  linkLabel?: string;
+}
+
 export interface ServiceContent {
   h1: string;
   metaTitle: string;
@@ -19,6 +47,29 @@ export interface ServiceContent {
   typicalTimeline: string;
   planIntro: string;
   faqs: { q: string; a: string }[];
+  includesVsSwingers?: {
+    heading: string;
+    intro: string;
+    includesHeading: string;
+    includes: { label: string; note: string }[];
+    swingersHeading: string;
+    swingers: { label: string; note: string }[];
+    after: string;
+    insightHref: string;
+    insightLabel: string;
+    alsoLink?: { href: string; label: string };
+  };
+  costTable?: {
+    heading: string;
+    intro: string;
+    rows: ServiceCostRow[];
+    after: string;
+  };
+  proofHeading?: string;
+  proofIntro?: string;
+  proofProjects?: ServiceProofProject[];
+  relatedReading?: ServiceRelatedLink[];
+  crossLinks?: ServiceRelatedLink[];
 }
 
 export const SERVICE_CONTENT: Record<ServiceKey, ServiceContent> = {
@@ -26,7 +77,7 @@ export const SERVICE_CONTENT: Record<ServiceKey, ServiceContent> = {
     h1: 'Tenant Improvement Contractor in Metro Atlanta',
     metaTitle: 'Tenant Improvement Contractor Atlanta | Mark Allan Contracting',
     metaDescription:
-      'Commercial tenant improvements across Metro Atlanta. Scoped estimates, on-schedule crews, $50K–$500K. Call to walk your space.',
+      'Metro Atlanta tenant improvements. Scoped estimates, not a per-foot guess. Typical jobs $50K–$300K, 4–12 weeks. Call (404) 724-8709 to walk the space.',
     problem:
       'You have a lease signed and a build-out allowance to spend, and the clock started the day you took the keys. You need a contractor who can price the work against the landlord’s scope, pull the permit, and turn the space over before rent commencement catches up with you.',
     scope: [
@@ -45,22 +96,188 @@ export const SERVICE_CONTENT: Record<ServiceKey, ServiceContent> = {
     typicalTimeline: '4–12 weeks depending on scope and permitting',
     planIntro:
       'Same three steps on every job. What changes is the scope, not the process.',
+    includesVsSwingers: {
+      heading: 'What a TI includes vs. what swings the budget',
+      intro:
+        'A tenant improvement is the interior work that makes a leased space work for your use. Demo, framing, drywall, ceilings, lighting, flooring, and paint are the usual package. The budget swingers are the systems — HVAC, the electrical panel, restrooms, and a change of occupancy — not the finishes.',
+      includesHeading: 'Usually in the package',
+      includes: [
+        { label: 'Demo and selective demolition', note: 'What has to come out before the new layout goes in.' },
+        { label: 'Framing, drywall, ceilings', note: 'Metal stud partitions, ACT or hard-lid, storefront and interior glass.' },
+        { label: 'Lighting and branch electrical', note: 'Rough-in, fixtures, and trim — assuming the panel can carry it.' },
+        { label: 'Flooring and paint', note: 'LVT, tile, carpet, sealed concrete, and interior finishes.' },
+        { label: 'HVAC distribution', note: 'Duct and diffusers inside the suite, when the unit already has capacity.' },
+        { label: 'Restroom finishes', note: 'Fixtures and ADA upgrades in restrooms that stay where they are.' },
+      ],
+      swingersHeading: 'What actually swings the number',
+      swingers: [
+        {
+          label: 'HVAC capacity or replacement',
+          note: 'Tonnage, a rooftop unit that is not actually delivered, or distribution that cannot serve the new layout.',
+        },
+        {
+          label: 'Electrical panel and service size',
+          note: 'Amps at the panel vs. amps your use needs. A service upgrade is a different job than swapping fixtures.',
+        },
+        {
+          label: 'Moving restrooms',
+          note: 'Bathrooms tie to gravity waste lines in the slab. Relocating one is a plumbing project with a finish attached, not a layout preference.',
+        },
+        {
+          label: 'Change of occupancy',
+          note: 'Retail to restaurant, office to clinic, storage to assembly. That is a different review — exiting, restrooms, ventilation, accessibility — not a finish upgrade.',
+        },
+      ],
+      after:
+        'We do not publish a per-foot number you can write a check against. The range is too wide, and the average is someone else’s building.',
+      insightHref: '/insights/tenant-improvement-cost-per-square-foot',
+      insightLabel: 'What actually moves TI cost (no $/SF guess)',
+      alsoLink: { href: '/project-types/restaurant-buildout', label: 'A kitchen is a different job' },
+    },
+    costTable: {
+      heading: 'Cost and timeline',
+      intro:
+        'A per-foot average is a sanity check, not a budget. Typical tenant improvements we run land in the $50K–$300K band, over 4–12 weeks of construction. Company-wide, interiors sit in a $50K–$500K sweet spot — most TIs are in the lower part of that range. The number that matters is built from your space.',
+      rows: [
+        {
+          item: 'Typical TI we run',
+          typical: '$50K–$300K',
+          note: 'Use, existing conditions, systems, and finishes drive the spread. Company-wide interiors run $50K–$500K; most TIs sit in $50K–$300K.',
+          href: '/insights/tenant-improvement-cost-per-square-foot',
+          linkLabel: 'Why we don’t quote $/SF',
+        },
+        {
+          item: 'Construction',
+          typical: '4–12 weeks',
+          note: 'The build is the predictable part. Permitting and long-lead items are what usually move the date.',
+          href: '/insights/commercial-buildout-timeline',
+          linkLabel: 'What actually moves your date',
+        },
+        {
+          item: 'Work letter / TI allowance',
+          typical: 'Read before you sign',
+          note: 'The allowance is a landlord contribution, not the budget. Gaps in the work letter become tenant cost after signature.',
+          href: '/insights/tenant-improvement',
+          linkLabel: 'Who pays for what',
+        },
+        {
+          item: 'Permitting',
+          typical: 'Jurisdiction’s clock',
+          note: 'City of Atlanta, DeKalb, Gwinnett, and Cobb each run their own review. Confirm the AHJ by address, not mailing city.',
+          href: '/insights/permitting',
+          linkLabel: 'How Metro Atlanta permitting works',
+        },
+      ],
+      after:
+        'A site walk replaces the band with a number and a schedule you can defend.',
+    },
+    proofHeading: 'TIs we have handed back',
+    proofIntro:
+      'Real suites, real dates — not a stock photo of someone else’s storefront. Numbers below are from the project pages, not estimates.',
+    proofProjects: [
+      {
+        slug: 'proud-moments-aba-therapy-clinic-buildout',
+        title: 'ABA Therapy Clinic Buildout — Proud Moments ABA',
+        clientType: 'Pediatric ABA therapy provider',
+        cityName: 'Austell',
+        cityState: 'ga',
+        scopeSummary:
+          'Full interior tenant improvement of a shell office suite into a pediatric ABA therapy clinic: partial demo, partition framing, ceilings and lighting, LVT flooring, painted accent walls, electrical, fire alarm and sprinkler work, plus an interior climbing wall, dimensional signage, and themed wall graphics.',
+      },
+      {
+        slug: 'iv-nutrition-clinic-buildout-flowery-branch',
+        title: 'IV Nutrition Clinic Buildout in Flowery Branch, GA',
+        clientType: 'IV nutrition clinic',
+        cityName: 'Flowery Branch',
+        cityState: 'ga',
+        scopeSummary:
+          '~2,000 SF / ~10 weeks / ~$200K clinic buildout in Flowery Branch: demolition, framing, insulation, drywall with curved ceiling features, paint, flooring, lighting.',
+      },
+      {
+        slug: 'pilates-studio-buildout-kennesaw-ga',
+        title: 'Pilates Studio Buildout in Kennesaw, GA',
+        clientType: 'Pilates studio',
+        cityName: 'Kennesaw',
+        cityState: 'ga',
+        scopeSummary:
+          'Full tenant buildout of a Pilates studio — open workout floor, custom millwork including a built fitness wall and sliding barn doors, high-end finishes. Delivered in an 8-week turnaround.',
+        imageUrl: '/projects/kennesaw-pilates-studio/4.jpg',
+      },
+      {
+        slug: 'tanning-salon-buildout-fixed-open-date',
+        title: '1,500 SF Tanning Salon Buildout Delivered on a Fixed Open Date',
+        clientType: 'Tanning salon operator',
+        cityName: 'Gainesville',
+        cityState: 'ga',
+        scopeSummary:
+          'Eight-week interior buildout of a 1,500-square-foot tanning salon in Gainesville — retail display walls, reception, waiting area, and 12 private tanning rooms, sequenced around a fixed open date.',
+        imageUrl: '/projects/tanning-salon-buildout/1.jpg',
+      },
+    ],
+    relatedReading: [
+      {
+        href: '/insights/tenant-improvement-cost-per-square-foot',
+        title: 'Tenant improvement cost per square foot',
+        blurb: 'Why the per-foot range is so wide, and how to get a number you can actually use.',
+      },
+      {
+        href: '/insights/commercial-buildout-timeline',
+        title: 'How long a commercial buildout takes',
+        blurb: 'Construction is the predictable part. Permitting and long-lead items move the date.',
+      },
+      {
+        href: '/insights/tenant-improvement',
+        title: 'Who pays for what in a work letter',
+        blurb: 'The lease exhibit that decides your out-of-pocket cost — read it against the space before you sign.',
+      },
+      {
+        href: '/insights/permitting',
+        title: 'Permitting a commercial buildout in Metro Atlanta',
+        blurb: 'City vs county, trade permits, change of occupancy, and fire review as a separate track.',
+      },
+    ],
+    crossLinks: [
+      {
+        href: '/project-types/restaurant-buildout',
+        title: 'Restaurant buildout',
+        blurb:
+          'A kitchen is a different TI. Hood, grease, make-up air, and health department review drive the budget more than the dining room.',
+      },
+      {
+        href: '/locations/atlanta-ga',
+        title: 'Commercial GC in Atlanta, GA',
+        blurb:
+          'City of Atlanta is its own AHJ — not Fulton County. Home-base page for permitting, metro jurisdictions, and how we work here.',
+      },
+    ],
     faqs: [
       {
         q: 'How much does a tenant improvement cost?',
-        a: 'It depends heavily on use, existing conditions, and finishes. Most of the interiors we do land in the $50K–$300K range, but the only number worth budgeting against is a scoped estimate built from your space. A site walk gets you one.',
+        a: 'It depends heavily on use, existing conditions, and finishes. Most tenant improvements we do land in the $50K–$300K range. Company-wide, interiors sit in a $50K–$500K sweet spot — most TIs are in the lower part of that band. The only number worth budgeting against is a scoped estimate built from your space. A site walk gets you one. [Why we don’t quote a $/SF average](/insights/tenant-improvement-cost-per-square-foot).',
       },
       {
         q: 'How long does a tenant improvement take?',
-        a: 'Typically four to twelve weeks of construction depending on scope, but permitting and long-lead items often drive the calendar more than the build itself. We give you a realistic schedule with the estimate.',
+        a: 'Typically four to twelve weeks of construction depending on scope, but permitting and long-lead items often drive the calendar more than the build itself. We give you a realistic schedule with the estimate. [What actually moves a commercial buildout date](/insights/commercial-buildout-timeline).',
       },
       {
-        q: 'Do you handle permitting?',
-        a: 'Yes. We pull the building and trade permits and coordinate with the jurisdiction. Which authority reviews your project depends on the address, and we plan the schedule around that.',
+        q: 'Do you handle permitting across City of Atlanta, DeKalb, Gwinnett, and Cobb?',
+        a: 'Yes. We pull the building and trade permits and coordinate with the jurisdiction. If the address sits inside a city, that city usually permits the job — not the county. City of Atlanta is its own AHJ, not Fulton County. DeKalb, Gwinnett, and Cobb each run a county process in unincorporated areas; cities inside those counties permit their own. Confirm the AHJ by address, not mailing city. [Permitting a commercial buildout in Metro Atlanta](/insights/permitting) · [Atlanta location](/locations/atlanta-ga).',
       },
       {
         q: 'Can you work around the landlord’s work letter?',
-        a: 'Yes — and we read it against the space before we price, so the split between landlord and tenant scope is clear and the gaps get caught before they become change orders.',
+        a: 'Yes — and we read it against the space before we price, so the split between landlord and tenant scope is clear and the gaps get caught before they become change orders. [Who pays for what in a tenant improvement](/insights/tenant-improvement).',
+      },
+      {
+        q: 'Does the landlord’s TI allowance cover the actual cost?',
+        a: 'Usually not, or not all of it. The allowance is a dollar contribution negotiated in the lease — not a scope. Everything past it is yours, and anything the work letter left unclaimed becomes a tenant cost after you sign. Read what it covers, when it is paid (up front vs. reimbursed after CO), and have a contractor walk the space against that letter before you treat the allowance as the budget. [How a work letter actually splits cost](/insights/tenant-improvement).',
+      },
+      {
+        q: 'What’s the difference between second-generation space and a shell?',
+        a: 'Second-generation space was already built out, usually for a similar use. You may inherit restrooms, HVAC, electrical distribution, and a ceiling grid — which cuts a meaningful share of scope before design starts. A cold dark shell is slab, exterior walls, and utility stubs. Same floor area, very different job. Two identical plans in the same building can land far apart on cost because of this column alone. [What existing conditions do to a TI number](/insights/tenant-improvement-cost-per-square-foot).',
+      },
+      {
+        q: 'Should I walk the space before I sign the lease?',
+        a: 'Yes. A contractor reading the work letter against the actual panel, HVAC unit, and drain locations will find the items neither party claimed — while they are still negotiable. After signature, those same items are tenant cost. Bring drawings, the lease exhibit, and your target date. It takes about an hour. [Atlanta office and how to reach us](/locations/atlanta-ga).',
       },
     ],
   },
