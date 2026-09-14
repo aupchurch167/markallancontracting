@@ -1,4 +1,4 @@
-import { SITE, CONTACT } from './constants';
+import { SITE, CONTACT, SOCIAL } from './constants';
 import { SERVICE_LINES, SERVICES } from './site-data';
 
 /**
@@ -24,9 +24,8 @@ const SERVICE_AREA_CITIES = [
 
 /**
  * Rich LocalBusiness (GeneralContractor) schema for the whole site. Only real,
- * verified values — a hosted logo/photo and social profiles don't exist yet, so
- * `image`/`logo` use the site's branded OG image and `sameAs` is omitted until
- * real profile URLs are supplied.
+ * verified values — `image`/`logo` use the site's branded OG image; `sameAs`
+ * lists the public Instagram, Facebook, and LinkedIn profiles.
  */
 export function localBusinessSchema({ phone }: Nap) {
   const a = CONTACT.address;
@@ -78,6 +77,7 @@ export function localBusinessSchema({ phone }: Nap) {
       closes: h.closes,
     })),
     hasMap: CONTACT.gbpUrl,
+    sameAs: SOCIAL.map((s) => s.href),
     areaServed: [
       ...SITE.statesServed.map((name) => ({ '@type': 'State', name })),
       ...SERVICE_AREA_CITIES.map((name) => ({ '@type': 'City', name })),

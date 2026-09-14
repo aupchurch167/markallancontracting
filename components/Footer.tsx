@@ -1,8 +1,15 @@
 import Link from 'next/link';
-import { SITE, CONTACT } from '@/lib/constants';
+import { FacebookLogo, InstagramLogo, LinkedinLogo } from '@phosphor-icons/react/dist/ssr';
+import { SITE, CONTACT, SOCIAL } from '@/lib/constants';
 import { SERVICES, MARKETS, SERVICE_LINES } from '@/lib/site-data';
 import { PhoneLink } from './PhoneLink';
 import type { SiteSettings } from '@/lib/types';
+
+const SOCIAL_ICONS = {
+  Instagram: InstagramLogo,
+  Facebook: FacebookLogo,
+  LinkedIn: LinkedinLogo,
+} as const;
 
 /**
  * Jobsite Editorial footer: ink-deep ground, four columns, faint small-caps
@@ -47,6 +54,26 @@ export function Footer({
               </a>
             </div>
           </address>
+          <nav aria-label="Social" className="mt-6">
+            <div className={label}>Follow</div>
+            <div className="mt-3 flex items-center gap-3">
+              {SOCIAL.map((s) => {
+                const Icon = SOCIAL_ICONS[s.label];
+                return (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={s.label}
+                    className="text-cream-muted transition-colors hover:text-cream"
+                  >
+                    <Icon size={20} weight="regular" aria-hidden="true" />
+                  </a>
+                );
+              })}
+            </div>
+          </nav>
         </div>
 
         {/* Services */}
