@@ -4,6 +4,9 @@ import { GoogleReviews } from '@/components/GoogleReviews';
 import { SITE, CONTACT, telHref } from '@/lib/constants';
 import { pageMetadata } from '@/lib/seo';
 
+// Curated reviews live in Postgres, which Railway can reach only at runtime.
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = pageMetadata({
   title: 'Contact — Call or Send Us Your Scope',
   description:

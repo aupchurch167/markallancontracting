@@ -9,6 +9,9 @@ import { Section, Eyebrow } from '@/components/Section';
 import { SITE } from '@/lib/constants';
 import { pageMetadata } from '@/lib/seo';
 
+// Ground-up insight cards are read from Postgres, reachable only at runtime.
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = pageMetadata({
   title: 'Ground-Up Commercial Construction in Georgia — Where We Start',
   description:

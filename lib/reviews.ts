@@ -1,6 +1,6 @@
 import 'server-only';
 import { randomUUID } from 'crypto';
-import { query, queryOne, safeQuery, safeQueryOne, ensureSchema, isDbConfigured } from './db';
+import { query, queryOne, safeQuery, safeQueryOne, ensureSchema, ensureSchemaForRead, isDbConfigured } from './db';
 
 /**
  * Content layer for curated Google reviews shown on the marketing site.
@@ -65,7 +65,7 @@ const DEFAULT_SETTINGS: ReviewsSettings = {
 // ---------- settings (singleton) ----------
 export async function getReviewsSettings(): Promise<ReviewsSettings> {
   if (!isDbConfigured) return DEFAULT_SETTINGS;
-  await ensureSchema();
+  if (!(await ensureSchemaForRead())) return DEFAULT_SETTINGS;
   const row = await safeQueryOne<{ value: Partial<ReviewsSettings> }>(
     `SELECT value FROM singletons WHERE key = 'reviews-settings'`,
   );
@@ -129,7 +129,7 @@ const toReview = (r: ReviewRow): Review => ({
 /** Visible reviews for the public block, in display order. */
 export async function getPublicReviews(limit = 6): Promise<Review[]> {
   if (!isDbConfigured) return [];
-  await ensureSchema();
+  if (!(await ensureSchemaForRead())) return [];
   const rows = await safeQuery<ReviewRow>(
     `SELECT * FROM reviews WHERE visible = true ORDER BY sort_order ASC, created_at DESC LIMIT $1`,
     [limit],
@@ -140,7 +140,7 @@ export async function getPublicReviews(limit = 6): Promise<Review[]> {
 /** All reviews for the admin, in order. */
 export async function listReviews(): Promise<Review[]> {
   if (!isDbConfigured) return [];
-  await ensureSchema();
+  if (!(await ensureSchemaForRead())) return [];
   const rows = await safeQuery<ReviewRow>(
     `SELECT * FROM reviews ORDER BY sort_order ASC, created_at DESC`,
   );

@@ -24,6 +24,11 @@ function getPool(): Pool | null {
       ssl: needsSsl ? { rejectUnauthorized: false } : undefined,
       max: 5,
     });
+    // An idle client error is emitted on the pool. With no listener Node
+    // treats it as an uncaught exception, which fails `next build` prerender.
+    pool.on('error', (err) => {
+      console.warn('[db] connection error (ignored):', err.message);
+    });
   }
   return pool;
 }
@@ -229,12 +234,38 @@ ALTER TABLE posts ADD COLUMN IF NOT EXISTS gbp_post TEXT;
 `;
 
 let schemaReady: Promise<void> | null = null;
-/** Create tables if they don't exist. Idempotent; runs at most once per process. */
+/**
+ * Create tables if they don't exist. Idempotent while it succeeds. A failed
+ * attempt (the usual case: Railway's private host is unresolvable at build
+ * time) is forgotten so the next call can retry once the database is up.
+ * Writes await this directly so a real failure still surfaces to the admin.
+ */
 export async function ensureSchema(): Promise<void> {
   const p = getPool();
   if (!p) return;
   if (!schemaReady) {
-    schemaReady = p.query(DDL).then(() => undefined);
+    schemaReady = p
+      .query(DDL)
+      .then(() => undefined)
+      .catch((err: unknown) => {
+        schemaReady = null;
+        throw err;
+      });
   }
   return schemaReady;
+}
+
+/**
+ * Schema setup for public reads. Never throws — a build-time or runtime
+ * outage falls through to shipped content instead of failing prerender.
+ * Returns false when the schema could not be ensured.
+ */
+export async function ensureSchemaForRead(): Promise<boolean> {
+  try {
+    await ensureSchema();
+    return true;
+  } catch (err) {
+    console.warn('[db] read failed, using fallback:', (err as Error).message);
+    return false;
+  }
 }

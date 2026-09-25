@@ -1,6 +1,6 @@
 import 'server-only';
 import { randomUUID } from 'crypto';
-import { query, queryOne, safeQuery, safeQueryOne, ensureSchema, isDbConfigured } from './db';
+import { query, queryOne, safeQuery, safeQueryOne, ensureSchema, ensureSchemaForRead, isDbConfigured } from './db';
 import type { Attachment, Post, PostCard, Project, ProjectCard, ServiceCity } from './types';
 import type { HomepageMedia } from './homepage-media';
 import { isRedirectedInsightSlug } from './insight-redirects.mjs';
@@ -146,15 +146,14 @@ const PROJECT_COLS = `id, slug, title, client_type, city_name, city_state, servi
  * public read, without ever throwing. Reads reference the full column list, so
  * right after a deploy that adds a column the SELECT would otherwise fail until
  * the first admin write ran ensureSchema — blanking the page. ensureSchema is
- * memoized, so this is a one-time cost per process. Guarded so a DDL hiccup
- * still degrades to the fallback content rather than crashing the page.
+ * memoized while it succeeds. A failed attempt is forgotten so the next read
+ * can retry, and it never throws — a DDL or connection hiccup degrades to the
+ * fallback content rather than crashing the page.
  */
 async function readyForRead(): Promise<void> {
-  try {
-    await ensureSchema();
-  } catch {
-    /* fall through — safeQuery below still degrades to fallback */
-  }
+  // Swallows connection failures (private Railway host at build time). The
+  // SELECT below uses safeQuery, which also returns [] instead of throwing.
+  await ensureSchemaForRead();
 }
 
 export async function getPublishedPostCards(): Promise<PostCard[]> {
