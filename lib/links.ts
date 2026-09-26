@@ -1,6 +1,7 @@
 import 'server-only';
 import { randomUUID } from 'crypto';
 import { query, queryOne, safeQuery, safeQueryOne, ensureSchema, isDbConfigured } from './db';
+import { sanitizeAttribution, type Attribution } from './lead-attribution';
 
 /**
  * Content layer for the /links link-in-bio page. Buttons, jobsite updates,
@@ -76,6 +77,9 @@ export interface LinkLead {
   notes: string;
   status: string;
   source: string;
+  /** Canonical "how did you hear about us" key. Empty on leads captured before the field existed. */
+  leadSource: string;
+  attribution: Attribution;
   createdAt: string;
 }
 
@@ -341,6 +345,8 @@ interface LeadRow {
   notes: string | null;
   status: string;
   source: string | null;
+  lead_source: string | null;
+  attribution: unknown;
   created_at: string;
 }
 const toLead = (r: LeadRow): LinkLead => ({
@@ -351,8 +357,20 @@ const toLead = (r: LeadRow): LinkLead => ({
   notes: r.notes || '',
   status: r.status,
   source: r.source || '',
+  leadSource: r.lead_source || '',
+  attribution: sanitizeAttribution(
+    typeof r.attribution === 'string' ? safeJson(r.attribution) : r.attribution,
+  ),
   createdAt: r.created_at,
 });
+
+function safeJson(value: string): unknown {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
+}
 
 export async function createLead(input: {
   name: string;
@@ -360,13 +378,24 @@ export async function createLead(input: {
   projectType?: string;
   notes?: string;
   source?: string;
+  leadSource: string;
+  attribution: Attribution;
 }): Promise<string> {
   await ensureSchema();
   const id = randomUUID();
   await query(
-    `INSERT INTO link_leads (id, name, phone, project_type, notes, status, source)
-     VALUES ($1,$2,$3,$4,$5,'New',$6)`,
-    [id, input.name, input.phone, input.projectType || null, input.notes || null, input.source || 'links'],
+    `INSERT INTO link_leads (id, name, phone, project_type, notes, status, source, lead_source, attribution)
+     VALUES ($1,$2,$3,$4,$5,'New',$6,$7,$8::jsonb)`,
+    [
+      id,
+      input.name,
+      input.phone,
+      input.projectType || null,
+      input.notes || null,
+      input.source || 'links',
+      input.leadSource,
+      JSON.stringify(input.attribution),
+    ],
   );
   return id;
 }

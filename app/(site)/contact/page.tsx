@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getSiteSettings } from '@/lib/queries';
 import { GoogleReviews } from '@/components/GoogleReviews';
+import { LeadFormFields } from '@/components/LeadFormFields';
 import { SITE, CONTACT, telHref } from '@/lib/constants';
 import { pageMetadata } from '@/lib/seo';
 
@@ -95,6 +96,7 @@ export default async function ContactPage() {
             <span className="field-label">Email</span>
             <input name="email" type="email" required className="field-input" />
           </label>
+          <LeadFormFields />
           <label className="flex flex-col gap-1.5">
             <span className="field-label">What&apos;s the project?</span>
             <textarea name="scope" rows={6} required placeholder="Space, location, rough timeline" className="field-input resize-y" />

@@ -231,6 +231,8 @@ CREATE TABLE IF NOT EXISTS reviews (
 -- Forward-compatible column adds (CREATE TABLE IF NOT EXISTS won't alter existing tables).
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS card_quote TEXT;
 ALTER TABLE posts ADD COLUMN IF NOT EXISTS gbp_post TEXT;
+ALTER TABLE link_leads ADD COLUMN IF NOT EXISTS lead_source TEXT;
+ALTER TABLE link_leads ADD COLUMN IF NOT EXISTS attribution JSONB;
 `;
 
 let schemaReady: Promise<void> | null = null;

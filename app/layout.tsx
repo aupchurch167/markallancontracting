@@ -18,6 +18,7 @@ const barlowCondensed = Barlow_Condensed({
 });
 import { CallRail } from '@/components/CallRail';
 import { Analytics } from '@/components/Analytics';
+import { AttributionCapture } from '@/components/AttributionCapture';
 import { ConversionTracking } from '@/components/ConversionTracking';
 import { JsonLd } from '@/components/JsonLd';
 import { getSiteSettings } from '@/lib/queries';
@@ -80,6 +81,7 @@ export default async function RootLayout({
         <JsonLd data={localBusinessSchema({ phone: settings.phone, email: settings.email })} />
         {children}
         <Analytics ga4Id={settings.ga4Id} />
+        <AttributionCapture />
         <ConversionTracking />
       </body>
     </html>
