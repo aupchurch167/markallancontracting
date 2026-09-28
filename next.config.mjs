@@ -79,11 +79,22 @@ const staticRedirects = [
     destination: '/construction-process',
     statusCode: 301,
   },
-  // Legacy "products"
+  // Legacy "products" — specific rules before the /product/:slug* catch-all.
   { source: '/product/general-contracting', destination: '/general-contracting', statusCode: 301 },
   { source: '/product/electrical', destination: '/general-contracting', statusCode: 301 },
   { source: '/product/estimating-and-planning', destination: '/pre-construction', statusCode: 301 },
   { source: '/product/facility-maintenance', destination: '/markets/facility-managers', statusCode: 301 },
+  { source: '/product/tenant-buildout', destination: '/project-types/tenant-improvements', statusCode: 301 },
+  { source: '/product/tenant-buildouts', destination: '/project-types/tenant-improvements', statusCode: 301 },
+  { source: '/product/commercial-construction', destination: '/general-contracting', statusCode: 301 },
+  { source: '/product/kitchen-renovation', destination: '/project-types/restaurant-buildout', statusCode: 301 },
+  { source: '/product/roof-replacement', destination: '/project-types/building-repair', statusCode: 301 },
+  // No painting/repaint project type. /remodeling is the live service page.
+  { source: '/product/painting', destination: '/remodeling', statusCode: 301 },
+  { source: '/calendar', destination: '/contact', statusCode: 301 },
+  { source: '/untitled', destination: '/', statusCode: 301 },
+  // Must precede /services/:type, which would send this to a missing project type.
+  { source: '/services/general-contracting', destination: '/general-contracting', statusCode: 301 },
   // Legacy blog posts — map to the closest new article where one exists.
   // Destinations are the long-form keepers (not the thin twins that 301 away).
   {
@@ -121,6 +132,7 @@ const movedProjectTypeRedirects = [
 
 // Catch-alls — must come AFTER the specific rules above.
 const fallbackRedirects = [
+  { source: '/product/:slug*', destination: '/services', statusCode: 301 },
   { source: '/service-city/:slug*', destination: '/project-types', statusCode: 301 },
   { source: '/project/:slug*', destination: '/projects', statusCode: 301 },
   { source: '/post/:slug*', destination: '/insights', statusCode: 301 },

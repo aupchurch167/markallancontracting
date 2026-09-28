@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { Buildings } from '@phosphor-icons/react/dist/ssr';
 import { getSiteSettings } from '@/lib/queries';
 import { getAboutPhotos } from '@/lib/content';
@@ -267,6 +268,11 @@ export default async function AboutPage() {
           <Reveal delay={120}>
             <p className="mx-auto mt-14 max-w-2xl text-center text-2xl font-bold uppercase leading-snug tracking-heading text-ink">
               Three generations of lessons, one family, still building.
+            </p>
+            <p className="mt-6 text-center">
+              <Link href="/team" className="font-semibold text-maroon hover:text-maroon-dark">
+                Our team
+              </Link>
             </p>
           </Reveal>
         </div>

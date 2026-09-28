@@ -125,6 +125,9 @@ export function Footer({
             © {SITE.established}–present {SITE.name}. Commercial general contractor serving {SITE.statesServed.join(', ')}.
           </div>
           <div className="flex items-center gap-5">
+            <Link href="/locations" className="hover:text-cream">
+              Locations
+            </Link>
             <Link href="/privacy" className="hover:text-cream">
               Privacy
             </Link>

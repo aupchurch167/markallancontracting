@@ -207,6 +207,16 @@ export default async function ServiceHubPage({
           ) : (
             <p className="mt-3 text-lg leading-relaxed text-body">{c.problem}</p>
           )}
+          {service === 'building-repair' ? (
+            <p className="mt-5 text-lg leading-relaxed text-body">
+              <Link
+                href="/projects/12-building-office-portfolio-exterior-repaint"
+                className="font-semibold text-maroon hover:text-maroon-dark"
+              >
+                Repainting a 12-building office portfolio
+              </Link>
+            </p>
+          ) : null}
         </div>
       </Section>
 
