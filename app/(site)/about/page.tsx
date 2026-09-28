@@ -274,6 +274,33 @@ export default async function AboutPage() {
 
       <GoogleReviews />
 
+      {/* Draft copy, pending final OK. */}
+      <section className="border-y border-hairline bg-paper-alt" aria-labelledby="where-you-can-find-us">
+        <div className="container-page flex flex-col items-start gap-6 py-10 sm:flex-row sm:items-center sm:justify-between sm:gap-10 sm:py-12">
+          <div className="max-w-2xl">
+            <h2 id="where-you-can-find-us" className="text-2xl font-bold uppercase tracking-heading text-ink sm:text-3xl">
+              Where you can find us
+            </h2>
+            <p className="mt-3 text-[17px] leading-relaxed text-body">
+              We&apos;re listed in Greater ATL, the Metro Atlanta directory for commercial construction and real estate.
+            </p>
+          </div>
+          <a
+            href="https://greateratl.news/directory/mark-allan-contracting"
+            className="inline-flex shrink-0 rounded-[2px] focus:outline-none focus-visible:ring-2 focus-visible:ring-maroon focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/badges/greater-atl-listed.svg"
+              alt="Listed on Greater ATL. View Mark Allan Contracting's profile on greateratl.news."
+              width={280}
+              height={72}
+              loading="lazy"
+            />
+          </a>
+        </div>
+      </section>
+
       <CallCTA
         phone={phone}
         phoneRaw={phoneRaw}
