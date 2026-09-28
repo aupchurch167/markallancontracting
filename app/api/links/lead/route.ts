@@ -1,10 +1,16 @@
 import { NextResponse } from 'next/server';
 import { createLead } from '@/lib/links';
 import { isDbConfigured } from '@/lib/db';
+import { evaluateLeadRequest } from '@/lib/lead-attribution';
 
 export const runtime = 'nodejs';
 
-/** Public lead capture from the /links contact form. Honeypot + length guards. */
+/**
+ * Public lead capture from the /links contact form.
+ * Honeypot + length guards + required canonical leadSource.
+ * Stored in Postgres (link_leads). Nothing is emailed and nothing is posted
+ * to an external CRM.
+ */
 export async function POST(req: Request) {
   let body: Record<string, unknown>;
   try {
@@ -28,13 +34,27 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Name and phone are required.' }, { status: 422 });
   }
 
+  const decision = evaluateLeadRequest(body);
+  if (decision.action !== 'accept') {
+    const error = decision.action === 'reject' ? decision.error : 'Tell us how you heard about us.';
+    return NextResponse.json({ error }, { status: 422 });
+  }
+
   if (!isDbConfigured) {
     // Never lose a lead silently: surface the phone-fallback path to the UI.
     return NextResponse.json({ error: 'Lead storage is not configured.' }, { status: 503 });
   }
 
   try {
-    await createLead({ name, phone, projectType, notes, source: 'links' });
+    await createLead({
+      name,
+      phone,
+      projectType,
+      notes,
+      source: 'links',
+      leadSource: decision.leadSource,
+      attribution: decision.attribution,
+    });
     return NextResponse.json({ ok: true });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Could not save.';

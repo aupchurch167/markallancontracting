@@ -9,6 +9,7 @@ import { getSiteSettings } from '@/lib/queries';
 import { getAllProjectSummaries } from '@/lib/projects';
 import { getHomepageMedia } from '@/lib/homepage-media';
 import { GoogleReviews } from '@/components/GoogleReviews';
+import { LeadFormFields } from '@/components/LeadFormFields';
 import { telHref, CONTACT } from '@/lib/constants';
 import { pageMetadata } from '@/lib/seo';
 
@@ -325,6 +326,7 @@ export default async function HomePage() {
               <span className="text-[13px] font-semibold uppercase tracking-[0.08em] text-cream-muted">Email</span>
               <input name="email" type="email" required className="rounded-[2px] border border-cream/15 bg-ink px-3.5 py-3 text-[15px] text-cream outline-none focus:border-rose" />
             </label>
+            <LeadFormFields variant="dark" />
             <label className="flex flex-col gap-1.5">
               <span className="text-[13px] font-semibold uppercase tracking-[0.08em] text-cream-muted">What&apos;s the project?</span>
               <textarea name="project" rows={4} placeholder="Space, location, rough timeline" className="rounded-[2px] border border-cream/15 bg-ink px-3.5 py-3 text-[15px] text-cream outline-none placeholder:text-faint focus:border-rose" />

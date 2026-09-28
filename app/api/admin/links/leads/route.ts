@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin-guard';
 import { isDbConfigured } from '@/lib/db';
 import { listLeads, setLeadStatus, deleteLead, LEAD_STATUSES } from '@/lib/links';
+import { ATTRIBUTION_FIELDS, labelFor } from '@/lib/lead-attribution';
 
 export const runtime = 'nodejs';
 
@@ -21,9 +22,33 @@ export async function GET(req: Request) {
     return NextResponse.json({ leads });
   }
 
-  const header = ['Name', 'Phone', 'Project', 'Notes', 'Status', 'Came in', 'Source'];
+  const header = [
+    'Name',
+    'Phone',
+    'Project',
+    'Notes',
+    'Status',
+    'Came in',
+    'Source',
+    'How did you hear about us',
+    'Lead source',
+    ...ATTRIBUTION_FIELDS.map((field) => field.label),
+  ];
   const rows = leads.map((l) =>
-    [l.name, l.phone, l.projectType, l.notes, l.status, l.createdAt, l.source].map((v) => csvCell(String(v ?? ''))).join(','),
+    [
+      l.name,
+      l.phone,
+      l.projectType,
+      l.notes,
+      l.status,
+      l.createdAt,
+      l.source,
+      labelFor(l.leadSource),
+      l.leadSource,
+      ...ATTRIBUTION_FIELDS.map((field) => l.attribution?.[field.key] || ''),
+    ]
+      .map((v) => csvCell(String(v ?? '')))
+      .join(','),
   );
   const csv = [header.join(','), ...rows].join('\n');
   return new NextResponse(csv, {

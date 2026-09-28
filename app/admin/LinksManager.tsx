@@ -2,6 +2,7 @@
 
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import { Button, Card, Field, StatusBadge, Spinner, Icon, inputClass, useToast } from './ui';
+import { ATTRIBUTION_FIELDS, labelFor, type Attribution } from '@/lib/lead-attribution';
 
 /**
  * Links page management, folded into the main admin console (light theme, same
@@ -34,6 +35,8 @@ interface LinkLead {
   projectType: string;
   notes: string;
   status: string;
+  leadSource?: string;
+  attribution?: Attribution;
   createdAt: string;
 }
 interface Social {
@@ -779,6 +782,7 @@ function LeadsTab({ leads, reload, toast }: { leads: LinkLead[]; reload: () => P
                 <th className="px-4 py-2 font-medium">Name</th>
                 <th className="px-4 py-2 font-medium">Phone</th>
                 <th className="px-4 py-2 font-medium">Project</th>
+                <th className="px-4 py-2 font-medium">Heard via</th>
                 <th className="px-4 py-2 font-medium">Came in</th>
                 <th className="px-4 py-2 font-medium">Status</th>
                 <th className="px-4 py-2" />
@@ -799,6 +803,7 @@ function LeadsTab({ leads, reload, toast }: { leads: LinkLead[]; reload: () => P
                       </a>
                     </td>
                     <td className="px-4 py-2.5 text-body">{l.projectType || '—'}</td>
+                    <td className="px-4 py-2.5 text-body">{labelFor(l.leadSource || '') || '—'}</td>
                     <td className="px-4 py-2.5 text-faint">{fmt(l.createdAt)}</td>
                     <td className="px-4 py-2.5">
                       <select
@@ -819,10 +824,27 @@ function LeadsTab({ leads, reload, toast }: { leads: LinkLead[]; reload: () => P
                       </button>
                     </td>
                   </tr>
-                  {open === l.id && l.notes && (
+                  {open === l.id && (
                     <tr>
-                      <td colSpan={6} className="bg-paper px-4 py-3 text-sm text-body">
-                        <span className="font-medium text-muted">Notes:</span> {l.notes}
+                      <td colSpan={7} className="bg-paper px-4 py-3 text-sm text-body">
+                        <div>
+                          <span className="font-medium text-muted">How they heard about us:</span>{' '}
+                          {labelFor(l.leadSource || '') || '—'}
+                          {l.leadSource ? <span className="text-faint"> ({l.leadSource})</span> : null}
+                        </div>
+                        {l.notes && (
+                          <div className="mt-2">
+                            <span className="font-medium text-muted">Notes:</span> {l.notes}
+                          </div>
+                        )}
+                        <dl className="mt-3 grid gap-x-6 gap-y-1 sm:grid-cols-2">
+                          {ATTRIBUTION_FIELDS.map((field) => (
+                            <div key={field.key}>
+                              <dt className="text-muted">{field.label}</dt>
+                              <dd className="break-all text-ink">{l.attribution?.[field.key] || '—'}</dd>
+                            </div>
+                          ))}
+                        </dl>
                       </td>
                     </tr>
                   )}

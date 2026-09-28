@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { LeadFormFields } from '@/components/LeadFormFields';
+import { captureFirstTouch } from '@/lib/first-touch';
+import { ATTRIBUTION_FIELDS, type Attribution } from '@/lib/lead-attribution';
 import {
   PhoneCall,
   EnvelopeSimple,
@@ -136,11 +139,31 @@ export function SocialRow({ socials, shareUrl }: { socials: PublicSocial[]; shar
 
 export function ContactForm() {
   const [state, setState] = useState<'idle' | 'submitting' | 'sent' | 'error'>('idle');
+  const [error, setError] = useState('');
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    const touch = captureFirstTouch();
+    const attribution: Attribution = {
+      utm_source: touch.utm_source,
+      utm_medium: touch.utm_medium,
+      utm_campaign: touch.utm_campaign,
+      utm_term: touch.utm_term,
+      utm_content: touch.utm_content,
+      gclid: touch.gclid,
+      fbclid: touch.fbclid,
+      landing_page: touch.landing_page,
+      referrer: touch.referrer,
+      submitted_from: window.location.href,
+    };
+    for (const field of ATTRIBUTION_FIELDS) {
+      if (field.key === 'submitted_from') continue;
+      const fromForm = fd.get(field.key);
+      if (typeof fromForm === 'string' && fromForm && !attribution[field.key]) attribution[field.key] = fromForm;
+    }
     setState('submitting');
+    setError('');
     try {
       const res = await fetch('/api/links/lead', {
         method: 'POST',
@@ -151,11 +174,20 @@ export function ContactForm() {
           projectType: fd.get('type'),
           notes: fd.get('notes'),
           company: fd.get('company'), // honeypot
+          leadSource: fd.get('leadSource'),
+          attribution,
         }),
       });
+      if (res.status === 422) {
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
+        setError(data.error || 'Tell us how you heard about us.');
+        setState('error');
+        return;
+      }
       if (!res.ok) throw new Error();
       setState('sent');
     } catch {
+      setError("Something went wrong. Please call (404) 724-8709 and we'll take it from there.");
       setState('error');
     }
   }
@@ -185,6 +217,7 @@ export function ContactForm() {
           <input name="phone" type="tel" required className={FIELD} />
         </label>
       </div>
+      <LeadFormFields />
       <label className="block">
         <Label>Project type</Label>
         <input name="type" type="text" placeholder="Restaurant, retail, office, warehouse…" className={FIELD} />
@@ -193,10 +226,8 @@ export function ContactForm() {
         <Label>What needs doing</Label>
         <textarea name="notes" rows={3} placeholder="Address, square footage, target open date" className={`${FIELD} resize-y`} />
       </label>
-      {/* Honeypot */}
-      <input type="text" name="company" tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-px w-px opacity-0" />
       {state === 'error' && (
-        <p className="text-[14px] text-muted">Something went wrong. Please call (404) 724-8709 and we&apos;ll take it from there.</p>
+        <p className="text-[14px] text-muted" role="alert">{error}</p>
       )}
       <button type="submit" disabled={state === 'submitting'} className="btn-maroon w-full disabled:opacity-60">
         {state === 'submitting' ? 'Sending…' : 'Send it over'}
