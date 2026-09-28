@@ -28,6 +28,7 @@ export const metadata: Metadata = {
     description: 'Call or text, book a buildout call, and see recent jobsite updates.',
     images: ['/api/og?eyebrow=Call%20%C2%B7%20Book%20%C2%B7%20Download'],
   },
+  robots: { index: false, follow: true },
 };
 
 function fmtDate(iso: string): string {

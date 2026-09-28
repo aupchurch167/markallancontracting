@@ -18,9 +18,10 @@ import {
 export const dynamic = 'force-dynamic';
 
 /**
- * Generated sitemap. Excludes /lp/* (campaign) and all gated routes
- * (/trade-partners/*, /development). Matrix, project, and post URLs come from
- * the CMS (plus authored fallbacks) so pages that don't exist yet never appear.
+ * Generated sitemap. Excludes /lp/* (campaign), /links (noindex link-in-bio),
+ * and all gated routes (/trade-partners/*, /development). Matrix, project, and
+ * post URLs come from the CMS (plus authored fallbacks) so pages that don't
+ * exist yet never appear.
  * Redirected thin insight twins are omitted — only keepers stay indexed.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -40,6 +41,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Project types
     '/project-types',
     ...SERVICE_SLUGS.map((s) => `/project-types/${s}`),
+    // Locations hub (city pages are added from FALLBACK_CITIES / CMS below)
+    '/locations',
     // Who we work for
     '/markets',
     ...MARKETS.map((m) => `/markets/${m.slug}`),

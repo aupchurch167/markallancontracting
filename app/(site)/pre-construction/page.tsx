@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { getSiteSettings } from '@/lib/queries';
 import { CallButton } from '@/components/PhoneLink';
 import { CallCTA } from '@/components/CallCTA';
@@ -338,6 +339,28 @@ export default async function PreConstructionPage() {
             </figcaption>
           </figure>
         </div>
+      </Section>
+
+      <Section>
+        <Eyebrow>Related reading</Eyebrow>
+        <ul className="mt-4 max-w-3xl space-y-3 text-lg">
+          <li>
+            <Link
+              href="/insights/commercial-construction-bid-package"
+              className="font-semibold text-maroon hover:text-maroon-dark"
+            >
+              Commercial construction bid package
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/insights/pre-construction-process"
+              className="font-semibold text-maroon hover:text-maroon-dark"
+            >
+              Site visits and the pre-construction process
+            </Link>
+          </li>
+        </ul>
       </Section>
 
       <CallCTA

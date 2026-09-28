@@ -13,7 +13,7 @@ import { SITE } from '@/lib/constants';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Commercial General Contractor in Metro Atlanta',
+  title: 'General Contracting Services in Atlanta',
   description:
     'Family-owned commercial general contractor since 1999. We run the whole build — self-performed interior trades, one team accountable. Projects from $50K to $500K.',
   path: '/general-contracting',
