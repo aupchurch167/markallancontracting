@@ -64,16 +64,16 @@ export default async function InsightsPage() {
           </p>
         </div>
 
-        {/* TODO: final copy */}
+        {/* Draft copy, pending final OK. */}
         <p className="mb-11 max-w-[68ch] text-[17px] leading-relaxed text-muted">
-          TODO final copy: For weekly Metro Atlanta commercial construction news, read the{' '}
+          For Metro Atlanta commercial construction news, read{' '}
           <a
             href="https://greateratl.news/"
             className="font-semibold text-maroon underline decoration-1 underline-offset-2 hover:text-maroon-light"
           >
-            Greater ATL brief
+            Greater ATL&apos;s weekly brief
           </a>
-          . Greater ATL is published by our family.
+          , and you&apos;ll find us in its directory too. Greater ATL is published by our family.
         </p>
 
         {/* Featured */}
