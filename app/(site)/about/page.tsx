@@ -283,7 +283,6 @@ export default async function AboutPage() {
             </h2>
             <p className="mt-3 text-[17px] leading-relaxed text-body">
               We&apos;re listed in Greater ATL, the Metro Atlanta directory for commercial construction and real estate.
-              Our family publishes it.
             </p>
           </div>
           <a
