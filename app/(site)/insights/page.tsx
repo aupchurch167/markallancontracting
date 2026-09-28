@@ -57,12 +57,24 @@ export default async function InsightsPage() {
     <>
       <div className="container-page pt-16 sm:pt-[72px]">
         <div className="kicker mb-5 text-maroon">From the field</div>
-        <div className="mb-11 flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-end">
+        <div className="mb-4 flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-end">
           <h1 className="font-display text-[15vw] leading-[0.92] sm:text-[72px] lg:text-[88px]">Insights</h1>
           <p className="max-w-[44ch] text-[17px] leading-relaxed text-muted lg:mb-2">
             What we&apos;ve learned building commercial space since 1999. No fluff — the stuff we tell clients on the phone.
           </p>
         </div>
+
+        {/* TODO: final copy */}
+        <p className="mb-11 max-w-[68ch] text-[17px] leading-relaxed text-muted">
+          TODO final copy: For weekly Metro Atlanta commercial construction news, read the{' '}
+          <a
+            href="https://greateratl.news/"
+            className="font-semibold text-maroon underline decoration-1 underline-offset-2 hover:text-maroon-light"
+          >
+            Greater ATL brief
+          </a>
+          . Greater ATL is published by our family.
+        </p>
 
         {/* Featured */}
         {featured && (
