@@ -30,6 +30,69 @@ export interface FallbackPost {
 const AUTHOR = 'Mark Allan Contracting';
 
 export const FALLBACK_POSTS: FallbackPost[] = [
+  {
+    slug: 'cheap-painter-sprinkler-heads',
+    title: 'The Cheap Painter and 200 Sprinkler Heads',
+    excerpt:
+      'A client hired their own painter to save money. He painted over 200+ sprinkler heads. You can\'t clean paint off a head. You replace it.',
+    cluster: 'cost-budget',
+    author: AUTHOR,
+    publishedAt: '2026-10-12',
+    metaTitle: 'The Cheap Painter and 200 Sprinkler Heads',
+    metaDescription:
+      'A client hired their own painter to save money. He painted over 200+ sprinkler heads. You can\'t clean paint off a head. You replace it. And that gets expensive fast.',
+    body: [
+      { p: 'A client wanted to save money.' },
+      { p: 'Painting looked easy. They hired their own painter.' },
+      { p: 'I\'m not kidding. The painter painted over 200+ sprinkler heads.' },
+      {
+        p: 'The cheap painter is going to cost the client thousands. So much more than what we would have cost.',
+      },
+      { h2: 'You can\'t clean it' },
+      {
+        p: 'You can\'t have even a spec of paint on a sprinkler head. You\'re not even allowed to clean it. You have to replace it.',
+      },
+      {
+        p: 'That means a licensed fire-protection contractor. Impairment. Drains. Tests. Sometimes lifts. Sometimes the ceiling comes down so someone can get to the heads. Then the ceiling has to go back.',
+      },
+      { p: 'None of that is "touching up paint."' },
+      { h2: 'What it can run' },
+      {
+        p: 'For a batch like that around here, I\'ve seen it land in the mid-$20ks to mid-$50ks pretty often. Concealed heads, or access that gets ugly, and it can push toward $80k+.',
+      },
+      { p: 'Two hundred heads. Sometimes 250.' },
+      {
+        p: 'Per head, when you\'re replacing a bunch at once, you\'re often looking at something like $100 to $250. Low end closer to $75 to $125. High end $250 to $400 if the head type or the access is a pain.',
+      },
+      {
+        p: 'These aren\'t a bid on anybody\'s job. Just what this kind of mess usually costs in our market.',
+      },
+      { h2: 'Why "saving" wasn\'t saving' },
+      { p: 'They saved our markup on painting.' },
+      {
+        p: 'They bought a fire-protection change order. A licensed contractor. Ceiling work. Possible downtime while the system is down. And a conversation nobody wanted to have with the owner.',
+      },
+      {
+        p: 'I\'ve watched this on other trades too. Electrical. Plumbing. Fire alarm. Anything that needs a license or an inspection. The trade that "anybody can do" is often the one that creates the expensive problem.',
+      },
+      { h2: 'How we run it' },
+      { p: 'Mark Allan Contracting. Commercial GC in Metro Atlanta since 1999.' },
+      {
+        p: 'If a trade needs a license, an inspection, or an impairment procedure, it stays in our scope. Painting that can stay paint stays paint. Painting that hits a sprinkler head does not.',
+      },
+      { p: 'We\'ll tell you that before anyone picks up a brush near the ceiling.' },
+      { h2: 'Call us before you self-perform the wrong trade' },
+      {
+        p: 'If you\'re planning a TI and somebody wants to self-perform painting, or anything that sits next to fire protection or other licensed work, call us first.',
+      },
+      {
+        p: 'We\'ll tell you what can be DIY and what can\'t. We won\'t pretend a roller is a fire-protection contractor.',
+      },
+      { p: 'Mark Allan Contracting' },
+      { p: 'macont.com' },
+      { p: '(404) 724-8709' },
+    ],
+  },
   // ---------------------------------------------------------------------------
   // Ground-up authority (priority cluster)
   // ---------------------------------------------------------------------------
