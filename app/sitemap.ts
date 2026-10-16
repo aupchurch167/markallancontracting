@@ -35,6 +35,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/general-contracting',
     '/remodeling',
     '/new-construction',
+    '/insurance-claim-rebuilds',
+    '/fire-damage-reconstruction-atlanta',
+    '/commercial-fire-water-restoration',
     // Process
     '/how-we-build',
     '/construction-process',

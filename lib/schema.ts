@@ -181,7 +181,7 @@ export function breadcrumbSchema(crumbs: { name: string; path: string }[]) {
 
 /** Turn `[label](/path)` FAQ markup into plain text with absolute URLs for JSON-LD. */
 export function faqAnswerPlain(text: string): string {
-  return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label: string, href: string) => {
+  return text.replace(/\{\{PLACEHOLDER: [^}]+\}\}\s*/g, '').replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label: string, href: string) => {
     const url = href.startsWith('/') ? `${SITE.url}${href}` : href;
     return `${label} (${url})`;
   });
