@@ -147,6 +147,12 @@ export const SERVICE_LINES: ServiceLine[] = [
     href: '/new-construction',
     blurb: 'Ground-up, from the owner’s side — strongest at the shell and the pre-construction that sets the budget.',
   },
+  {
+    slug: 'insurance-claim-rebuilds',
+    name: 'Insurance Claim Rebuilds',
+    href: '/insurance-claim-rebuilds',
+    blurb: 'Fire and water losses rebuilt to the approved scope — we walk it with your insurance company and put the building back.',
+  },
 ];
 
 // Jobsite Editorial nav — slim, flat. Project Types lives in the footer.

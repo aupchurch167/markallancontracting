@@ -2,11 +2,26 @@ import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { JsonLd } from './JsonLd';
 import { faqSchema } from '@/lib/schema';
+import { Placeholder } from './Placeholder';
 
 const LINK = /\[([^\]]+)\]\(([^)]+)\)/g;
+const PLACEHOLDER = /\{\{PLACEHOLDER: ([^}]+)\}\}\s*/;
 
-/** Render FAQ answer text, turning `[label](/path)` into in-page links. */
+/**
+ * Render FAQ answer text, turning `[label](/path)` into in-page links and a
+ * leading-or-inline `{{PLACEHOLDER: …}}` into a visible staging mark.
+ */
 function FaqAnswer({ text }: { text: string }) {
+  const ph = PLACEHOLDER.exec(text);
+  if (ph) {
+    return (
+      <>
+        <FaqAnswer text={text.slice(0, ph.index)} />
+        <Placeholder>{ph[1]}</Placeholder>{' '}
+        <FaqAnswer text={text.slice(ph.index + ph[0].length)} />
+      </>
+    );
+  }
   const nodes: ReactNode[] = [];
   let last = 0;
   let match: RegExpExecArray | null;
@@ -45,6 +60,7 @@ function FaqAnswer({ text }: { text: string }) {
  * Renders a genuine FAQ block + FAQPage schema. Only used where real questions
  * exist — never fabricate FAQs to earn the markup. Answers may include
  * `[label](/internal-path)` deep-links; schema flattens those to plain text.
+ * `{{PLACEHOLDER: …}}` renders as a staging mark and is left out of the schema.
  */
 export function FAQ({ faqs }: { faqs: { q: string; a: string }[] }) {
   if (!faqs.length) return null;
