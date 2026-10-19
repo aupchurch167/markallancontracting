@@ -100,8 +100,10 @@ export default async function PostPage({
   const description = sanityPost?.metaDescription || sanityPost?.excerpt || fb?.excerpt;
   const heroUrl =
     urlForImage(sanityPost?.mainImage)?.width(1600).height(900).url() ||
-    sanityPost?.heroImageUrl;
-  const rt = readingTime(sanityPost?.body, fb, sanityPost?.bodyMarkdown);
+    sanityPost?.heroImageUrl ||
+    fb?.heroImageUrl;
+  const markdown = sanityPost?.bodyMarkdown || fb?.bodyMarkdown;
+  const rt = readingTime(sanityPost?.body, fb, markdown);
   const tags = sanityPost?.tags;
 
   // Related: Sanity-curated first, else other posts in the same cluster.
@@ -174,8 +176,8 @@ export default async function PostPage({
       {/* Body */}
       <div className="container-page">
         <div className="prose-article mx-auto max-w-[720px] pt-12">
-          {sanityPost?.bodyMarkdown ? (
-            <MarkdownBody>{sanityPost.bodyMarkdown}</MarkdownBody>
+          {markdown ? (
+            <MarkdownBody>{markdown}</MarkdownBody>
           ) : sanityPost?.body?.length ? (
             <PortableText value={sanityPost.body} />
           ) : fb ? (

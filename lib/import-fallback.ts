@@ -58,7 +58,7 @@ export async function importFallbackContent(): Promise<ImportResult> {
       title: p.title,
       excerpt: p.excerpt,
       cluster: p.cluster,
-      bodyMarkdown: blocksToMarkdown(p.body),
+      bodyMarkdown: p.bodyMarkdown || blocksToMarkdown(p.body),
       metaTitle: p.metaTitle,
       metaDescription: p.metaDescription,
       publishedAt: p.publishedAt,

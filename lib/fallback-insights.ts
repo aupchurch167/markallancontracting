@@ -1,13 +1,16 @@
 /**
  * Blog cluster content, authored in the site voice (down-funnel: plain,
- * specific, answers the question). These render until the Sanity `post`
- * documents are authored, at which point Sanity wins with zero code changes.
+ * specific, answers the question). These render until a Postgres `posts` row
+ * exists for the slug, at which point `posts.body_markdown` wins.
  *
- * Body is a small block union rendered by components/FallbackArticle.tsx.
+ * Body is a small block union rendered by components/FallbackArticle.tsx,
+ * unless `bodyMarkdown` is set (rendered by MarkdownBody).
  * Ground-up cluster is first — it carries the most strategic weight per the
  * spec (developer credibility ahead of a ground-up portfolio). No responsiveness
  * guarantees; no invented project references.
  */
+
+import { readRepoInsight } from './insight-repo-posts';
 
 export type Block =
   | { h2: string }
@@ -25,6 +28,9 @@ export interface FallbackPost {
   metaTitle: string;
   metaDescription: string;
   body: Block[];
+  /** When set, the public page renders this with MarkdownBody (GFM tables). */
+  bodyMarkdown?: string;
+  heroImageUrl?: string;
 }
 
 const AUTHOR = 'Mark Allan Contracting';
@@ -526,6 +532,58 @@ export const FALLBACK_POSTS: FallbackPost[] = [
         p: 'Before you sign, get a contractor to read the work letter against the space and flag the gaps while they are still negotiable. We do this with brokers and tenants regularly. Call us and we will help you read the split before it costs you.',
       },
     ],
+  },
+  // Repo copies of posts that are already published from Postgres. The
+  // database row wins on the live site; these render only when that row is
+  // absent. Edit `posts.body_markdown` for the same slug to change production.
+  {
+    slug: 'emergency-roof-tarping',
+    title:
+      'Emergency Roof Tarping After Fire or Storm Damage: Why the First 24 Hours Decide Your Repair Bill',
+    excerpt:
+      'Emergency roof tarping stops a fire or storm loss from spreading. What same-day response looks like, what it costs, and the mistakes that grow your repair bill.',
+    cluster: 'process-timeline',
+    author: AUTHOR,
+    publishedAt: '2026-08-08',
+    metaTitle: 'Emergency Roof Tarping: Why Same-Day Response Matters',
+    metaDescription:
+      'Emergency roof tarping stops a fire or storm loss from spreading. What same-day response looks like, what it costs, and the mistakes that grow your repair bill.',
+    heroImageUrl:
+      'https://pub-afd6decbed4946b784c9e7c7bc462b18.r2.dev/covers/b8ffba1e-ac8b-494d-a8bf-122e4b307d14-019fd80e-3f22-777f-b2d7-c61c4e3a713c.jpeg',
+    body: [],
+    bodyMarkdown: readRepoInsight('emergency-roof-tarping'),
+  },
+  {
+    slug: 'residential-fire-damage',
+    title: 'Residential Fire Damage: How to Mitigate First, Then Rebuild',
+    excerpt:
+      'A step-by-step guide to residential fire damage: emergency mitigation, smoke cleanup, the insurance scope of work, and how the rebuild gets sequenced.',
+    cluster: 'process-timeline',
+    author: AUTHOR,
+    publishedAt: '2026-08-01',
+    metaTitle: 'Residential Fire Damage: Mitigate, Then Rebuild',
+    metaDescription:
+      'A step-by-step guide to residential fire damage: emergency mitigation, smoke cleanup, the insurance scope of work, and how the rebuild gets sequenced.',
+    heroImageUrl:
+      'https://pub-afd6decbed4946b784c9e7c7bc462b18.r2.dev/covers/f09e2dd5-2850-4018-9642-0982b6ff122c-gemini-generated-image-crpbqpcrpbqpcrpb.png',
+    body: [],
+    bodyMarkdown: readRepoInsight('residential-fire-damage'),
+  },
+  {
+    slug: 'demo-phase',
+    title: 'The Demo Phase: What Actually Comes Out of Your Space First',
+    excerpt:
+      'What happens during the demo phase of a commercial buildout: walls, ceiling grid, lighting, flooring, permits, hidden conditions, and how long demo really takes.',
+    cluster: 'process-timeline',
+    author: AUTHOR,
+    publishedAt: '2026-08-11',
+    metaTitle: 'Demo Phase: What Comes Out of Your Space First',
+    metaDescription:
+      'What happens during the demo phase of a commercial buildout: walls, ceiling grid, lighting, flooring, permits, hidden conditions, and how long demo really takes.',
+    heroImageUrl:
+      'https://pub-afd6decbed4946b784c9e7c7bc462b18.r2.dev/covers/9a808ba8-a9f0-4719-b0ef-ae97f0f37e5c-photo.jpg',
+    body: [],
+    bodyMarkdown: readRepoInsight('demo-phase'),
   },
 ];
 
