@@ -1,4 +1,5 @@
 import { SITE, CONTACT, SOCIAL } from './constants';
+import { publicFaqAnswer } from './public-copy';
 import { SERVICE_LINES, SERVICES } from './site-data';
 
 /**
@@ -181,21 +182,30 @@ export function breadcrumbSchema(crumbs: { name: string; path: string }[]) {
 
 /** Turn `[label](/path)` FAQ markup into plain text with absolute URLs for JSON-LD. */
 export function faqAnswerPlain(text: string): string {
-  return text.replace(/\{\{PLACEHOLDER: [^}]+\}\}\s*/g, '').replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label: string, href: string) => {
+  const visible = publicFaqAnswer(text) ?? '';
+  return visible.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label: string, href: string) => {
     const url = href.startsWith('/') ? `${SITE.url}${href}` : href;
     return `${label} (${url})`;
   });
 }
 
 export function faqSchema(faqs: { q: string; a: string }[]) {
+  const mainEntity = faqs.flatMap((f) => {
+    const text = faqAnswerPlain(f.a);
+    if (!text) return [];
+    return [
+      {
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text },
+      },
+    ];
+  });
+  if (!mainEntity.length) return null;
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: faqs.map((f) => ({
-      '@type': 'Question',
-      name: f.q,
-      acceptedAnswer: { '@type': 'Answer', text: faqAnswerPlain(f.a) },
-    })),
+    mainEntity,
   };
 }
 

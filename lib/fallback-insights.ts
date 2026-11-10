@@ -535,7 +535,8 @@ export const FALLBACK_POSTS: FallbackPost[] = [
   },
   // Repo copies of posts that are already published from Postgres. The
   // database row wins on the live site; these render only when that row is
-  // absent. Edit `posts.body_markdown` for the same slug to change production.
+  // absent. On startup, lib/insight-body-fix-run.ts applies the same wording
+  // fixes to the published rows when the old text is still in body_markdown.
   {
     slug: 'emergency-roof-tarping',
     title:

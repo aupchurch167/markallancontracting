@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto';
 import { query, queryOne, safeQuery, safeQueryOne, ensureSchema, ensureSchemaForRead, isDbConfigured } from './db';
 import type { Attachment, Post, PostCard, Project, ProjectCard, ServiceCity } from './types';
 import type { HomepageMedia } from './homepage-media';
+import { applyPublishedInsightFixes } from './insight-body-fix-run';
 import { isRedirectedInsightSlug } from './insight-redirects.mjs';
 
 /**
@@ -154,6 +155,13 @@ async function readyForRead(): Promise<void> {
   // Swallows connection failures (private Railway host at build time). The
   // SELECT below uses safeQuery, which also returns [] instead of throwing.
   await ensureSchemaForRead();
+  try {
+    // Patches three published Insights bodies when they still have the old
+    // text. No-ops with no DATABASE_URL and on every later call.
+    await applyPublishedInsightFixes();
+  } catch {
+    // The runner already logged the failure. Reads continue.
+  }
 }
 
 export async function getPublishedPostCards(): Promise<PostCard[]> {

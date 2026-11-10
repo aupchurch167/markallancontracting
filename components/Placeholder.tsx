@@ -1,15 +1,13 @@
 import type { ReactNode } from 'react';
 
 /**
- * Visible amber mark for copy the owner hasn't supplied yet. Staging only —
- * every one of these blocks launch and must be replaced or removed.
+ * Unfilled copy. The children stay in the source file so they can be replaced
+ * with a real fact later. Nothing is rendered: the public site must not show
+ * an unfinished note.
  */
 export function Placeholder({ children }: { children: ReactNode }) {
-  return (
-    <mark className="rounded-[2px] bg-brass/15 px-1.5 py-px font-mono text-[13px] text-brass-700">
-      [PLACEHOLDER: {children}]
-    </mark>
-  );
+  void children;
+  return null;
 }
 
 /** Striped slot for a job photo the owner still has to supply. */

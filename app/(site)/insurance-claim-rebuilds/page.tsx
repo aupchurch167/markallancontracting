@@ -6,7 +6,7 @@ import { CallCTA } from '@/components/CallCTA';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Section, Eyebrow } from '@/components/Section';
 import { FAQ } from '@/components/FAQ';
-import { Placeholder, PhotoSlot } from '@/components/Placeholder';
+import { PhotoSlot } from '@/components/Placeholder';
 import { JsonLd } from '@/components/JsonLd';
 import { serviceSchema } from '@/lib/schema';
 import { pageMetadata } from '@/lib/seo';
@@ -201,7 +201,7 @@ export default async function InsuranceClaimRebuildsPage() {
           for an insurance claim contractor near me and you’re in{' '}
           <Link href="/locations/atlanta-ga" className={LINK}>Atlanta</Link> or the
           surrounding counties, we can get someone out to walk it.{' '}
-          <Placeholder>links to remaining location pages, Adam to confirm list</Placeholder>{' '}
+          {/* {{PLACEHOLDER: links to remaining location pages, Adam to confirm list}} */}
           Property managers can also see{' '}
           <Link href="/markets/property-managers" className={LINK}>how we work with management companies</Link>.
         </p>

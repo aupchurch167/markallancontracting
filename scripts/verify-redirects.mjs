@@ -132,6 +132,9 @@ function sourceMatcher(source) {
 const sourceMatchers = redirects.map((r) => ({
   source: r.source,
   re: sourceMatcher(r.source),
+  // A host condition (apex → www) does not redirect a path that already
+  // landed on www, so it is not a chain for the relative rules below.
+  hostGated: Array.isArray(r.has) && r.has.some((h) => h && h.type === 'host'),
 }));
 
 /**
@@ -170,6 +173,7 @@ for (const r of redirects) {
     // Chain check: would the destination itself be redirected again?
     for (const sm of sourceMatchers) {
       if (sm.source === r.source) continue; // a rule matching its own source is fine
+      if (sm.hostGated) continue;
       if (sm.re.test(dest)) {
         failures.push(
           `CHAIN: ${r.source} → ${r.destination}, but "${dest}" is itself caught by source "${sm.source}"`
