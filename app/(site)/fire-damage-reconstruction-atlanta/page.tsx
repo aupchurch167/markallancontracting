@@ -7,7 +7,7 @@ import { CallCTA } from '@/components/CallCTA';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Section, Eyebrow } from '@/components/Section';
 import { FAQ } from '@/components/FAQ';
-import { Placeholder, PhotoSlot } from '@/components/Placeholder';
+import { PhotoSlot } from '@/components/Placeholder';
 import { JsonLd } from '@/components/JsonLd';
 import { serviceSchema } from '@/lib/schema';
 import { pageMetadata } from '@/lib/seo';
@@ -209,9 +209,7 @@ export default async function FireDamageReconstructionPage() {
           <h2 className="mt-2 text-2xl font-bold text-ink sm:text-3xl">
             What fire damage repair costs
           </h2>
-          <p className="mt-5">
-            <Placeholder>fire cost ranges from Justin</Placeholder>
-          </p>
+          {/* Hidden until a real range is supplied. {{PLACEHOLDER: fire cost ranges from Justin}} */}
           <p className="prose-copy mt-5">
             We won’t throw out a number before we’ve seen it, because fire damage
             restoration cost swings hard with a few things:

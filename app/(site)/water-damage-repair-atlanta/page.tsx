@@ -7,7 +7,7 @@ import { CallCTA } from '@/components/CallCTA';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Section, Eyebrow } from '@/components/Section';
 import { FAQ } from '@/components/FAQ';
-import { Placeholder, PhotoSlot } from '@/components/Placeholder';
+import { PhotoSlot } from '@/components/Placeholder';
 import { JsonLd } from '@/components/JsonLd';
 import { serviceSchema } from '@/lib/schema';
 import { pageMetadata } from '@/lib/seo';
@@ -186,8 +186,8 @@ export default async function WaterDamageRepairPage() {
               </h2>
               <p className="prose-copy mt-5">
                 We don’t do mold remediation. A licensed remediator does that work.
-                After they finish and clearance is documented, we rebuild.{' '}
-                <Placeholder>Adam to confirm wording</Placeholder>
+                After they finish and clearance is documented, we rebuild.
+                {/* {{PLACEHOLDER: Adam to confirm wording}} */}
               </p>
             </div>
             <div>

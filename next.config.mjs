@@ -69,6 +69,41 @@ const serviceCityRedirects = Object.entries(SERVICE_CITY_MAP)
     statusCode: 301,
   }));
 
+// Short insurance URLs people type or that old links used. The hub page is
+// /insurance-claim-rebuilds. Exact paths only, so a future page under one of
+// these prefixes is not swallowed.
+const insuranceHubRedirects = [
+  '/insurance',
+  '/insurance-claims',
+  '/insurance-claim',
+  '/insurance-restoration',
+  '/insurance-rebuilds',
+].map((source) => ({
+  source,
+  destination: '/insurance-claim-rebuilds',
+  statusCode: 301,
+}));
+
+// Apex host → www, same path and query. Harmless while GoDaddy still answers
+// the apex (that forwarder drops the path before Railway sees it). If the
+// apex is later pointed at this app, the request lands on www in one hop.
+// Host-conditional, so it does not chain with the path rules below: those
+// run on www, where this rule does not match.
+const apexHostRedirects = [
+  {
+    source: '/',
+    has: [{ type: 'host', value: 'macont.com' }],
+    destination: 'https://www.macont.com',
+    statusCode: 301,
+  },
+  {
+    source: '/:path*',
+    has: [{ type: 'host', value: 'macont.com' }],
+    destination: 'https://www.macont.com/:path*',
+    statusCode: 301,
+  },
+];
+
 const staticRedirects = [
   { source: '/our-services', destination: '/services', statusCode: 301 },
   { source: '/blog', destination: '/insights', statusCode: 301 },
@@ -196,6 +231,8 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      ...apexHostRedirects,
+      ...insuranceHubRedirects,
       ...staticRedirects,
       ...serviceCityRedirects,
       ...movedProjectTypeRedirects,
